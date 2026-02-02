@@ -1,8 +1,8 @@
-# Code written for NE8 Computational Reactor Modelling Assignment 1 - Diffusion
+# Code written for NE8 Computational Reactor Modelling Assignment 2 - Discrete Ordinates
 # Andy Zhang
-# January 2026
+# February 2026
 
-# This code is loosely based on the method outlined in the "NE8 Workshop 1 Finite Elements_Handout (1).pdf" handout
+# This code is loosely based on the methods outlined in the "NE8 Workshop 1 Finite Elements_Handout (1).pdf" and "NE8 Lecture 4: the discrete ordinates/SN method" handouts by Paul Cosgrove and Zi Liang Tan
 
 # Naming convention: (slightly unual but i've always used these as it helps me more easily determine what a variable is)
 # CONSTANTS
@@ -14,6 +14,7 @@
 # Import packages
 import numpy as np
 import numpy.typing as np_type
+from numpy.polynomial.legendre import leggauss
 import copy
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
@@ -26,6 +27,10 @@ ELEMENTARY_CHARGE = 1.602176634e-19 # C
 # Randomizer
 SEED = 1 # Set seed to a constant so the graphs in exercise 3 are deterministic
 np.random.seed(SEED)
+
+
+
+#RAPPORT: GEEN XENON OF SAMARIUM!!!
 
 
 
@@ -103,6 +108,9 @@ def product_operator(points, delta, multiplier):
 
     return out # return output matrix
 
+def interpolate(input):
+    return np.array([(input[i] + input[i + 1])/2 for i in range(len(input) - 1)])
+
 # Integrates a signal
 # - Technically it's a sum function 
 # Inputs:
@@ -112,6 +120,8 @@ def product_operator(points, delta, multiplier):
 # - float of the integral 
 def integrate(signal, delta):
     return np.sum(signal) * delta
+
+
 
 
 
@@ -222,15 +232,7 @@ H2OMass = 2 * H1.mass + O16.mass # [u]
 H1.density = H2O_DENSITY * (2 * H1.mass) / H2OMass # [u]
 O16.density = H2O_DENSITY * O16.mass / H2OMass + UO2_DENSITY * (2 * O16.mass) / (U_mass + 2 * O16.mass) # [u]
 
-# macroscopic crosssection calculations
-slab_macro_t = sum([i.get_macro_t() for i in slab_elements]) # [cm-1]
-slab_macro_s = sum([i.get_macro_s() for i in slab_elements]) # [cm-1]
-slab_macro_a = sum([i.get_macro_a() for i in slab_elements]) # [cm-1]
-slab_macro_f = sum([i.get_macro_f() for i in slab_elements]) # [cm-1]
-slab_macro_f_nu = sum([i.get_macro_f_nu() for i in slab_elements]) # [cm-1]
-slab_macro_f_pow = slab_macro_f * ENERGY_PER_FISSION # [j / cm]
 
-SM149.number_density = SM149.fission_yield * slab_macro_f / SM149.get_micro_a() # [cm-3] equation given in NE1 lecture 10 notes
 
 # ----------------------Iteration constants class----------------------
 # - this class stores constants that may chagne depending on the exercise
@@ -241,13 +243,21 @@ class IterationConstants:
                     doPrint = True # Print the outputs?
                 ):
         
+        # macroscopic crosssection calculations
+        self.slab_macro_t = sum([i.get_macro_t() for i in slab_elements]) # [cm-1]
+        self.slab_macro_s = sum([i.get_macro_s() for i in slab_elements]) # [cm-1]
+        self.slab_macro_a = sum([i.get_macro_a() for i in slab_elements]) # [cm-1]
+        self.slab_macro_f = sum([i.get_macro_f() for i in slab_elements]) # [cm-1]
+        self.slab_macro_f_nu = sum([i.get_macro_f_nu() for i in slab_elements]) # [cm-1]
+        self.slab_macro_f_pow = self.slab_macro_f * ENERGY_PER_FISSION # [j / cm]
+        
         # calculate diffusion coefficient
         self.mu_bar = sum(
                 [i.get_macro_s() * i.get_mean_cos_scatter_angle() for i in slab_elements]
-            ) / slab_macro_s # [cm-1] equation given in the handout
+            ) / self.slab_macro_s # [cm-1] equation given in the handout
         if is_isotropic:
             self.mu_bar = 0
-        self.slab_macro_tr = slab_macro_t - slab_macro_s * self.mu_bar # [cm-1]
+        self.slab_macro_tr = self.slab_macro_t - self.slab_macro_s * self.mu_bar # [cm-1]
         self.diffusion_coefficient = 1 / (3 * self.slab_macro_tr) # [cm]
         
         # define mesh
@@ -257,9 +267,10 @@ class IterationConstants:
         self.x_axis = np.linspace(-SLAB_THICKNESS/2, SLAB_THICKNESS/2, self.mesh_points) # [cm] the x values of the mesh points
 
         # initialize matrices
-        self.macro_f_nu_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, slab_macro_f_nu)) # matrix to perform the fnu multiplication 
+        self.macro_f_nu_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, self.slab_macro_f_nu)) # matrix to perform the fnu multiplication 
         self.diffusion_matrix = diffusion_operator(self.mesh_points, self.delta_x) * self.diffusion_coefficient # matrix for the diffusion
-        self.absorption_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, slab_macro_a)) # matrix for the absorption
+        self.scatter_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, self.slab_macro_s)) # matrix for the scatter
+        self.absorption_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, self.slab_macro_a)) # matrix for the absorption
         self.M_matrix = self.diffusion_matrix + self.absorption_matrix # the M matrix in the handout, the iteration is trying to find the eigenvalues of this matrix
         self.M_matrix[0,0] += 1/2 # left boundary
         self.M_matrix[-1,-1] += 1/2 # right boundary
@@ -267,13 +278,13 @@ class IterationConstants:
 
         # print values
         if doPrint:
-            print("Macroscopic total = " + str(slab_macro_t) + " cm-1")
-            print("Macroscopic scatter = " + str(slab_macro_s) + " cm-1")
+            print("Macroscopic total = " + str(self.slab_macro_t) + " cm-1")
+            print("Macroscopic scatter = " + str(self.slab_macro_s) + " cm-1")
             print("Avg cosine of scattering = " + str(self.mu_bar) + " cm-1")
-            print("Sigma_s * mu_bar = " + str(slab_macro_s * self.mu_bar) + " cm-1")
+            print("Sigma_s * mu_bar = " + str(self.slab_macro_s * self.mu_bar) + " cm-1")
             print("Diffusion Coefficient = " + str(self.diffusion_coefficient) + " cm") # 0.5214833759422001 cm
-            print("Macroscopic absorption = " + str(slab_macro_a) + " cm-1")
-            print("Macroscopic neutron production = " + str(slab_macro_f_nu) + " cm-1")
+            print("Macroscopic absorption = " + str(self.slab_macro_a) + " cm-1")
+            print("Macroscopic neutron production = " + str(self.slab_macro_f_nu) + " cm-1")
 
 
 
@@ -320,10 +331,6 @@ def solvePowerIteration(convergenceCriteria = 1, # 0 is k, 1 is S
     loss = -1 # stores the error in the convergence criteria
     convIt = 1 # counts number of iterations
 
-    # normalize the flux if necessary
-    if doNormalize:
-        fluxNext *= powerTarget / integrate(slab_macro_f_pow * fluxNext, ic.delta_x)
-
     # initialize the S vector
     S = np.array([]) # S_n
     SNext = ic.macro_f_nu_matrix @ fluxNext # S_n+1
@@ -352,11 +359,6 @@ def solvePowerIteration(convergenceCriteria = 1, # 0 is k, 1 is S
         # calculate n+1 values of keff, phi and S     
         fluxNext = ic.M_inv @ ((1/eigen) * S) # phi_n+1 = M_inv * (S_n/k_n)
         SNext = ic.macro_f_nu_matrix @ fluxNext # S_n+1 = F * phi_n+1
-        if doNormalize: # normalize phi if necessary
-            powErrRatio = powerTarget / integrate(slab_macro_f_pow * fluxNext, ic.delta_x) # calculate fraction by which phi and S need to be changed
-            fluxNext *= powErrRatio # rescale phi_n+1
-            S *= powErrRatio # rescale S_n
-            SNext *= powErrRatio # rescale S_n+1
         eigenNext = eigen * np.sum(SNext) / np.sum(S) # calculate keff_n+1
 
         # store values
@@ -365,6 +367,9 @@ def solvePowerIteration(convergenceCriteria = 1, # 0 is k, 1 is S
             fluxHist = np.append(fluxHist, fluxNext, axis=1)
 
         convIt += 1 # count iteration
+    
+    if doNormalize: # normalize phi if necessary
+        fluxNext *= powerTarget / integrate(ic.slab_macro_f_pow * fluxNext, ic.delta_x) # normalize by the fraction such that the power equals the target
         
     # save to file if necessary
     if doSave:
@@ -432,6 +437,143 @@ def solvePowerIteration(convergenceCriteria = 1, # 0 is k, 1 is S
 
     return (float(eigenNext), convIt, fluxNext[:,0]) # return values found
 
+
+
+
+
+
+
+
+
+
+
+
+def solveDiscreteOrdinates(
+                        convergenceCriteria = 1, # 0 is k, 1 is S,
+                        order = 2,
+                        fluxGuess = None, 
+                        eigenGuess = 1.0, 
+                        doPlot = True,
+                        doSave = False,
+                        saveFile = 'flux.npy',
+                        doNormalize = False,
+                        powerTarget = 100e3, # W/cm2
+                        ic = IterationConstants(resolution=10, is_isotropic=False, doPrint=False)
+                        ) -> tuple[float, int, np_type.NDArray[np.float64]]:
+    
+    # initialize variables
+    if fluxGuess is None:
+        fluxNext = np.full(ic.mesh_points, 1.0)[:,np.newaxis] # phi_n+1
+    else:
+        fluxNext = fluxGuess[:,np.newaxis] # phi_n+1
+    flux = np.array([]) # phi_n
+    eigenNext = eigenGuess # keff_n+1
+    eigen = None # keff_n
+    abscissa, weight = leggauss(order)
+    QNext = np.array([])
+    eigenHist = np.array([eigenNext]) # stores the histary of keff iterations
+    fluxHist = np.empty((ic.mesh_points, 0)) # stores the history of phi iterations
+    fluxHist = np.append(fluxHist, fluxNext, axis=1) # add first guess
+    loss = -1 # stores the error in the convergence criteria
+    convIt = 1 # counts number of iterations
+
+    # initialize the S vector
+    S = np.array([]) # S_n
+    SNext = ic.macro_f_nu_matrix @ fluxNext # S_n+1
+
+
+    def getPsi(abscissa):
+        psi = np.zeros(ic.mesh_points) # This will become our output angular nuetron flux. Note that the vacuum boundary condition is already set since the edges of the array are 0   
+        psi_in = np.zeros(ic.mesh_intervals) # These are the values in between the mesh points of psi
+        
+        psiPrev = 0
+        for it in range(0, ic.mesh_intervals):
+            if abscissa > 0:
+                iNow = it 
+                iNext = it + 1
+            else:
+                iNow = -(it + 1)
+                iNext = -(it + 2)
+            
+            psi_int = (ic.delta_x * QNext[iNow] + 2 * np.abs(abscissa) * psiPrev) / (
+                                ic.delta_x * ic.slab_macro_t + 2 * np.abs(abscissa)
+                            )
+            psi[iNext] = 
+
+        return 1
+
+
+    # function to check if converged
+    def hasConverged(): 
+        if eigen is None: # First iteration? 
+            return False # return NOT CONVERGED
+        
+        nonlocal loss
+        if convergenceCriteria == 0:
+            loss = abs((eigenNext - eigen)/eigen) # |k(n+1) - k(n) / k(n)| < 0.00001
+        else:
+            loss = np.max(np.abs(S[0] - SNext[0])/S[0]) # max|S(n+1) - S(n) / S(n)| < 0.00001
+        
+        return loss < 0.00001 # return if converged
+
+
+
+    # main loop
+    while not hasConverged():
+        # update keff, phi and S
+        eigen = eigenNext 
+        flux = fluxNext
+        S = SNext
+
+        # calculate n+1 values of keff, phi and S   
+        QNext = interpolate((1/2) * (ic.scatter_matrix + ic.macro_f_nu_matrix/eigen) @ flux)
+        fluxNext = np.zeros(ic.mesh_points)
+        for i in range(order):#
+            fluxNext += weight[i] * getpsi
+
+
+
+        SNext = ic.macro_f_nu_matrix @ fluxNext # S_n+1 = F * phi_n+1
+        eigenNext = eigen * np.sum(SNext) / np.sum(S) # calculate keff_n+1
+
+        # store values
+        if doPlot: 
+            eigenHist = np.append(eigenHist, eigenNext) 
+            fluxHist = np.append(fluxHist, fluxNext, axis=1)
+
+        convIt += 1 # count iteration
+        
+
+    if doNormalize: # normalize phi if necessary
+        fluxNext *= powerTarget / integrate(ic.slab_macro_f_pow * fluxNext, ic.delta_x) # normalize by the fraction such that the power equals the target
+
+    # save to file if necessary
+    if doSave:
+        np.save(saveFile, fluxNext)
+
+    # return values found
+    if not doPlot:
+        return (float(eigenNext), convIt, fluxNext[:,0]) 
+    
+    
+
+    # print the values found
+    print("EV = " + str(eigenNext))
+    print("loss = " + str(loss))
+    print("attempts = " + str(convIt))
+    
+
+    return (float(eigenNext), convIt, fluxNext[:,0]) # return values found
+
+
+
+
+
+
+
+
+
+
 # ----------------------Exercise 1----------------------
 # -"Calculate all the macroscopic constants (D, Σa, and νΣf ) necessary for solving the neutron diffusion equation for the slab."
 
@@ -446,369 +588,6 @@ icBase = IterationConstants(resolution=10, is_isotropic=False, doPrint=True)
 print("Convergence k keff = " + str(kEigenResult))
 print("Convergence S keff = " + str(SEigenResult))
 print("difference in keff = " + str(SEigenResult - kEigenResult))
-
-
-
-# ----------------------Exercise 3----------------------
-# - "Repeat the calculations using initial guesses for the flux values at each mesh point which are random numbers sampled from a uniform distribution between 0 and 2."
-# - I used this function to optimize the power iteration (make it faster) 
-# Inputs:
-# - Samples: number of times to generate a new random flux array [INTEGER]
-# - Convergence criteria: 0 is k criteria, 1 is S criteria [0 OR 1]
-def q3(samples = 1000, convergenceCriteria = 1):
-    convItHist = np.array([]) # array to store the number of iterations needed
-
-    # main loop
-    for i in range(samples):
-        fluxRand = np.random.uniform(0, 2, size=icBase.mesh_points) # generate a random phi with uniform distribution
-        (_, conv, _) = solvePowerIteration(convergenceCriteria = convergenceCriteria, fluxGuess=fluxRand, eigenGuess = 1.0, doPlot = i in [0, 100], ic=icBase) # solve the power iteration
-        print(str(i) + " " + str(conv)) # print the iterations needed
-        convItHist = np.append(convItHist, conv) # store the number of iterations
-
-    bins = np.arange(convItHist.min() - 0.5, convItHist.max() + 1.5, 1)
-
-    # plot a histogram
-    plt.figure(figsize=([8,4]))
-    (_, edges, _) = plt.hist(
-        convItHist,
-        bins=bins,
-        facecolor="lightgrey",
-        linewidth=1
-    )
-
-    # calculate mu, U_mu and sigma
-    mean = np.mean(convItHist)
-    std = np.std(convItHist, ddof=1)
-    meanU = std / np.sqrt(convItHist.size)
-
-    # generates the gaussian
-    # note the gaussian is not plotted for S convergence as it is not normally distributed
-    x = np.linspace(edges[0], edges[-1], 500)
-    pdf = (1/(std*np.sqrt(2*np.pi))) * np.exp(-0.5*((x - mean)/std)**2) * samples
-    if convergenceCriteria == 0:
-        plt.plot(x, pdf, color = "dimgray", linestyle="solid", linewidth=1.3, label="Gaussian fit")
-        refernceIterations = kConvNormal
-    else: 
-        refernceIterations = SConvNormal
-
-    # finish plot
-    plt.axvline(refernceIterations, linestyle="dashdot", linewidth=1.5, color="k", label="Reference iterations")
-    plt.axvline(mean, linestyle="--", linewidth=1.5, color="dimgray", label="Sample mean")
-    plt.axvline(float(mean - std), color="grey", linestyle=":", linewidth=1, label="Standard deviation")
-    plt.axvline(float(mean + std), color="grey", linestyle=":", linewidth=1)
-    plt.xlabel("Iterations", fontsize=12)
-    plt.ylabel("Counts", fontsize=12)
-    plt.legend(fontsize=11.5)
-    plt.tight_layout()
-    plt.show()
-
-    # print results
-    print("Mean (mu) = " + str(mean))
-    print("Std (sigma) = " + str(std))
-    print("Uncertainty in mean (SE) = " + str(meanU) + "(N=" + str(convItHist.size))
-
-# Uncomment the lines below to run lineprofiler on exercise 3, really handy for optimization
-#lp = LineProfiler()
-#lp.add_function(q3)
-#lp.add_function(solvePowerIteration)
-#lp.run('q3()')
-#lp.print_stats()
-
-# Uncomment to run exercise 3
-#q3(samples = 10000, convergenceCriteria = 0)
-#q3(samples = 10000, convergenceCriteria = 1)
-
-
-
-
-#----------------------Exercise 4----------------------
-#- "Obtain the analytic solution to the problem and an analytic value of k. Perform a mesh-size sensitivity study"
-
-
-def q4():
-
-    # Analytic value of keff, for derivation see: report
-    kAnal = slab_macro_f_nu / (
-        icBase.diffusion_coefficient/4 
-        * (np.pi/(50 + 0.7104/icBase.slab_macro_tr))**2 + slab_macro_a)
-    print("Analytic keff = " + str(kAnal))
-
-    # Analytic value of phi, for derivation see: report
-    L = np.sqrt(icBase.diffusion_coefficient / ((slab_macro_f_nu/kAnal) - slab_macro_a))
-    fluxAnal = np.cos(icBase.x_axis/L)
-
-    eigenResHist = np.array([]) # stores the keff found at different resolutions
-    res = np.arange(0.02, 1, 0.01) # [points/cm] resolutions to be checked
-
-    # loop 1: plotting keff
-    for i in res:
-        ic = IterationConstants(resolution=i, is_isotropic=False, doPrint=False) # generate new iteration constants object with the resolution i
-        (eigenRes, iter, _) = solvePowerIteration(convergenceCriteria=1, ic=ic, doPlot=False) # solve the power iteration
-        print(str(i) + " cells/cm --> keff = " + str(eigenRes) + " after " + str(iter) + " iterations") # print the outputs
-        eigenResHist = np.append(eigenResHist, eigenRes) # store keff
-    
-    # plot the result
-    plt.figure(figsize=((8,3)))
-    plt.plot(res, eigenResHist, color = 'k', linewidth = 1.5, label="Interpolated values")
-    plt.scatter(res, eigenResHist, color='darkgray', marker='x', linewidths = 0.8, s = 15, label=r"$k_{eff}$ estimations")
-    plt.hlines(kAnal, res[0], res[-1], colors = 'gray', linestyle = 'dotted', linewidth=1, label="Analytic")
-    plt.legend(fontsize=11.5)
-    plt.text(
-        0.6, 0.83, 
-        r"First $k_{eff}$ = " + f"{eigenResHist[0]:.7f}\nFinal " + r"$k_{eff}$" + f" = {eigenResHist[-1]:.7f}\nAnalytic " + r"$k_{eff}$" + f" = {kAnal:.7f}",
-        transform=plt.gca().transAxes,
-        ha="left",
-        va="top",
-        fontsize=14,
-        linespacing=1.5
-    )  
-    plt.xlabel("Resolution [points/cm]", fontsize=12)
-    plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
-    plt.tight_layout()
-    plt.show()
-
-
-    res = np.array([0.02, 0.03, 0.04, 0.05, 0.1, 1, 10, 100]) # resolutions for plotting the flulx
-    analArea = integrate(fluxAnal, icBase.delta_x) # area of the analytic phi
-    fluxAnal /= analArea # normalize phi
-
-    # now phi will be plotted
-    plt.figure(figsize=((8,3)))
-    plt.xlim(-51, 51)
-    plt.plot(icBase.x_axis, fluxAnal, linestyle = "solid", color = 'lightgray', linewidth = 2, label='Analytic') # plot the analytic phi
-
-    # loop2: plotting phi
-    for i in res:
-        ic = IterationConstants(resolution=i, is_isotropic=False, doPrint=False) # generate new iteration constants object with the resolution i
-        (eigenRes, iter, flux) = solvePowerIteration(convergenceCriteria=1, ic=ic, doPlot=False) # solve the power iteration
-        flux /= integrate(flux, ic.delta_x) # normalize
-
-        # determine and print the error
-        maxAbs = 0
-        maxRel = 0
-        maxAbsX = -1
-        maxRelX = -1
-        for j in range(len(ic.x_axis)):
-            diff = np.abs(flux[j] - np.cos(ic.x_axis[j]/L)/analArea)
-            if diff > maxAbs:
-                maxAbs = diff
-                maxAbsX = ic.x_axis[j]
-            if diff / np.cos(ic.x_axis[j]/L)/analArea > maxRel:
-                maxRel = diff
-                maxRelX = ic.x_axis[j]
-        print("Max absolute flux err = " + str(maxAbs) + " @ " + str(maxAbsX) + ", max relative flux err = " + str(maxRel) + " @ " + str(maxRelX))
-        print(str(i) + " cells/cm --> keff = " + str(eigenRes) + " after " + str(iter) + " it. error of " + str(kAnal - eigenRes))
-
-        # plot phi
-        if i == 0.02:
-            plt.scatter(ic.x_axis, flux, marker='x', linewidths = 0.8, s = 15, color = 'red', label='0.02 points/cm')
-        if i == 0.03:
-            plt.scatter(ic.x_axis, flux, marker='o', linewidths = 0.8, s = 15, color = 'gold', label='0.03 points/cm')
-        if i == 0.05:
-            plt.scatter(ic.x_axis, flux, marker='1', linewidths = 1.5, s = 50, color = 'teal', label='0.05 points/cm')
-        if i == 0.1:
-            plt.scatter(ic.x_axis, flux, marker='^', linewidths = 0.8, s = 15, color = 'blue', label='0.1 points/cm')
-        if i == 1:
-            plt.plot(ic.x_axis, flux, linestyle = "dotted", color = 'k', label='1 points/cm', linewidth = 1.5)
-    plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-    plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
-    plt.ylabel("Normalized flux", fontsize=12)
-    plt.legend(ncol=2,
-        fontsize=11.5,
-        columnspacing=1.5,
-        handletextpad=0.6,
-        frameon=True)
-    plt.tight_layout()
-    plt.show()
-
-# uncomment to run exercise 4
-#q4()
-
-
-
-
-#----------------------Exercise 5----------------------
-#- "Using your code, show and explain the effect of scattering anisotropy on reactor criticality.
-
-
-def q5():
-    # Generate the iteration constants using IS_ISOTROPIC = True.
-    # This changes the diffusion coefficient to:  0.4369374149600331 cm
-    # comapared to the original value of:         0.5214833759422001 cm
-    ic5 = IterationConstants(resolution=10, is_isotropic=True, doPrint=True) 
-
-    # Solve and compare power iterations for both the anisotropic and the isotropic case
-    # For accuracy use the fission source criterion: CONVERGENCE_CRITERIA = 1
-    # This results in:   keff = 1.4379050678144036
-    # Compared to:       keff = 1.4362695035684803 (original)
-    # A difference of:  DKeff = 0.0016355642459233
-    (eigenAniso, _ ,fluxAniso) = solvePowerIteration(convergenceCriteria=1, ic=icBase)
-    (eigenIso, _ ,fluxIso) = solvePowerIteration(convergenceCriteria=1, ic=ic5)
-    print("Isotropic keff = " + str(eigenIso))
-    print("Anisotropic keff = " + str(eigenAniso))
-    print("A difference of: " + str(eigenIso - eigenAniso))
-
-    # normalize
-    fluxIso /= integrate(fluxIso, icBase.delta_x)
-    fluxAniso /= integrate(fluxAniso, icBase.delta_x)
-
-    # plot
-    plt.figure(figsize=((16,5)))
-    plt.xlim(-50, 50)
-    plt.plot(icBase.x_axis, fluxAniso, linestyle = "-", color = 'k', label='Anisotropic scattering')
-    plt.plot(icBase.x_axis, fluxIso, linestyle = '--', color = 'red', label='Isotropic scattering')
-    plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-    plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
-    plt.ylabel("Normalized flux", fontsize=12)
-    plt.legend(ncol=2,
-        fontsize=11.5,
-        columnspacing=1.5,
-        handletextpad=0.6,
-        frameon=True,
-        loc="lower center")
-    plt.tight_layout()
-    plt.show()
-
-# uncomment to run exercise 5
-#q5()
-
-
-
-#----------------------Exercise 6----------------------
-#- "Modify the calculation scheme such that the flux is normalised to a fixed fission power production per unit area, P = 100kW/cm2, during each step of the power iteration. 
-#- Having done so, suggest and implement a calculation procedure for obtaining the steady-state flux distribution and criticality in the presence of the fission products Xe135 and Sm149."
-
-
-# As explained in the report, the idea behind the algorithm below is that after each power iteration, the equilibrium value of the fission products are recalculated
-# This should result in an equilibrium value to eventually be found. The convergence condition is based on when the change in fission product concentration becomes minimal
-# The code below runs this algorithm for multiple equilibrium powers.
-
-exit() # <--- COMMENT TO RUN EXERCISE 6
-
-
-ic6 = copy.deepcopy(icBase) # ic6 will be used for modidifying the M matrix
-eigenPowHist = np.array([]) # stores the history of keff found at different powers
-pows = np.linspace(10e6, 1000e6, 100) # [W/cm2] power to be explored
-(eigenNoFP, _, fluxNoFP) = solvePowerIteration(ic=icBase) # the default (fission-product-less) solution 
-
-
-# main loop over the different power levels
-for pow in pows:
-
-    # Initialize variables for the power iteration
-    # Note that variables ending in "Next" are the n+1 (next iteration) guesses
-    fluxNoFP *= pow / integrate(slab_macro_f_pow * fluxNoFP, icBase.delta_x) # normalize the FP-free solution to the correct power level
-    fluxFP = copy.deepcopy(fluxNoFP) # [W/cm-2] this copy is a good initial guess for what the flux should look like
-    eigenFP = eigenNoFP # again this should be a good guess for what the eigenvalue looks like
-    fluxInterval = (fluxFP[:-1] + fluxFP[1:])/2 # this array stores the average value of phi between 2 mesh points (on the interval), used in the next step
-    xenonPopNext = XE135.fission_yield * slab_macro_f * fluxInterval / (
-        np.log(2)/XE135_HALF_LIFE + XE135.get_micro_a() * fluxInterval) # [/cm3], calculate the initial number density of xenon using the equilibrium xenon equation
-    xenonPop = None # current xenon number density guess (starts empty)
-    xeLossHist = np.array([]) # stores the error in the xenon convergence criteria
-    powIt = 1 # counts the iteration number
-
-    # function that calculates the macroscopic absorption WITH fussion products
-    def get_tot_macro_a():
-        return SM149.get_macro_a() + xenonPop * XE135.get_micro_a() + slab_macro_a
-
-    # xenon convergence criteria
-    def hasConvergedXe():
-        if xenonPop is None: # if first iteration
-            return False # return NOT converged
-        
-        xeLoss = np.max(np.abs(xenonPop - xenonPopNext)/xenonPop) # max|X(n) - X(n+1) / X(n)| < 0.00001
-        global xeLossHist
-        xeLossHist = np.append(xeLossHist, xeLoss) # store the convergence error
-        return xeLoss < 0.00001 # output if converged
-
-    # main convergence loop
-    while not hasConvergedXe():
-        xenonPop = xenonPopNext #update xenon number density
-
-        # calculate new M matrix
-        totAbsorptionMatrix = product_operator(ic6.mesh_points, ic6.delta_x, get_tot_macro_a()) # calculate new absorption matrix based on the new xenon density
-        MNext = ic6.diffusion_matrix + totAbsorptionMatrix # Generate new M matrix
-        MNext[0,0] += 1/2 # left boundary
-        MNext[-1,-1] += 1/2 # right boundary
-        ic6.M_inv = np.linalg.inv(MNext) # calculate new inverse M matrix and store in iteration constant object
-
-        # Solve the power iteration using the new iteration constant, which contains the new inverse M matrix calculated from the xenon population
-        (eigenFP, _, fluxFP) = copy.deepcopy(solvePowerIteration(fluxGuess=fluxFP, eigenGuess=eigenFP, doPlot=False, doNormalize=True, powerTarget=pow, ic=ic6))
-
-        # the calculate the xenonpopulation for n+1 
-        fluxInterval = (fluxFP[:-1] + fluxFP[1:])/2
-        xenonPopNext = XE135.fission_yield * slab_macro_f * fluxInterval / (np.log(2)/XE135_HALF_LIFE + XE135.get_micro_a() * fluxInterval) # /cm3
-
-        powIt += 1
-    
-    # if the loop is exited means that the equilibrium xenon density, phi and keff have been found
-    eigenPowHist = np.append(eigenPowHist, eigenFP) # store the keff found
-
-    # print results
-    print("POW = " + str(pow))
-    print("EV = " + str(eigenFP))
-    print("loss = " + str(xeLossHist[-1]))
-    print("attempts = " + str(powIt))
-    print()
-
-    # the question asks for the specific case of 100 MW/cm2
-    if pow == 100e6:
-        # print the FP densities
-        print(SM149.get_number_density())
-        print(min(xenonPop))
-        print(max(xenonPop))
-        print(np.mean(xenonPop))
-
-        # plot phi
-        fig, ax1 = plt.subplots(figsize=((8,3)))
-        ax1.plot(ic6.x_axis[1:] - ic6.delta_x/2, xenonPop, label = "Xe-135", color = 'blue', linestyle = 'dotted')
-        ax1.plot(ic6.x_axis[1:] - ic6.delta_x/2, np.full(ic6.mesh_intervals, SM149.get_number_density()), label = "Sm-149", color = 'grey', linestyle = 'dashdot')
-        ax1.set_ylabel(r'Number density, $N$ [cm$^{-3}$]')
-        ax1.set_xlabel(r"Position, $x$ [cm]", fontsize=12)
-        ax1.set_ylim(0, 8e16)
-        ax1.set_xlim(-50, 50)
-        ax2 = ax1.twinx()
-        ax2.plot(ic6.x_axis, fluxFP, linestyle = "-", color = 'k', label=r'$\phi$ w/ FP')
-        ax2.plot(icBase.x_axis, fluxNoFP, linestyle = '--', color = 'red', label=r'$\phi$ w/o FP')
-        ax2.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-        ax2.set_ylabel(r"Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
-        ax1.legend(fontsize=11.5, loc = "upper left")
-        ax2.legend(fontsize=11.5, loc = "upper right")
-        plt.tight_layout()
-        plt.show()
-
-        
-# The relationship between the power and keff appeared to be inverse proportional
-# An inver proportional curve is fit 
-fit, _ = curve_fit(inverse_proportional, pows, eigenPowHist)
-a, b = fit
-print("a = " + str(a)) # =
-print("b = " + str(b)) # =
-y_fit = a / pows + b
-
-plt.figure(figsize=((8,3)))
-plt.plot(pows, y_fit, color='k', linewidth=1.5, label="Least-squares fit curve")
-plt.scatter(pows, eigenPowHist, color='darkgray', marker='x', linewidths = 0.7, s = 15, label=r"Values found", zorder = 10)
-plt.scatter(100e6, eigenPowHist[np.where(pows == 100e6)], color='gray', marker='x', linewidths = 1.2, s = 25, label=r"$k_{eff}$ at 100 MW/cm$^{2}$ ", zorder = 20)
-plt.legend(fontsize=11.5)
-plt.text(
-    0.2, 0.83, 
-    r"$k_{eff} = \frac{a}{P} + b$" + "\n" + r"$a=$" + f"{a:.7f}" + r" W/cm$^{2}$" + "\n" + r"$b=$" + f"{b:.7f}",
-    transform=plt.gca().transAxes,
-    ha="left",
-    va="top",
-    fontsize=14,
-    linespacing=1.5
-)  
-plt.xlabel(r"Areal power, $P$ [W/cm$^{2}$]", fontsize=12)
-plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
-plt.tight_layout()
-plt.show()
-
-
-    
-
-
 
 
 
