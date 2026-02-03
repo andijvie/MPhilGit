@@ -108,8 +108,19 @@ def product_operator(points, delta, multiplier):
 
     return out # return output matrix
 
+
+#def product_interp_operator(points, delta, multiplier):
+#    delta = 1
+#    out = np.zeros((points - 1, points))
+#    for i in np.arange(points - 1):
+#        out[i, i] = delta * multiplier[i]/2
+#        out[i, i + 1] = delta * multiplier[i]/2
+#
+#    return out
+
 def interpolate(input):
-    return np.array([(input[i] + input[i + 1])/2 for i in range(len(input) - 1)])
+    return np.array([(input[i, 0] + input[i+1, 0])/2 for i in range(len(input) - 1)])
+
 
 # Integrates a signal
 # - Technically it's a sum function 
@@ -269,8 +280,8 @@ class IterationConstants:
         # initialize matrices
         self.macro_f_nu_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, self.slab_macro_f_nu)) # matrix to perform the fnu multiplication 
         self.diffusion_matrix = diffusion_operator(self.mesh_points, self.delta_x) * self.diffusion_coefficient # matrix for the diffusion
-        self.scatter_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, self.slab_macro_s)) # matrix for the scatter
         self.absorption_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, self.slab_macro_a)) # matrix for the absorption
+        
         self.M_matrix = self.diffusion_matrix + self.absorption_matrix # the M matrix in the handout, the iteration is trying to find the eigenvalues of this matrix
         self.M_matrix[0,0] += 1/2 # left boundary
         self.M_matrix[-1,-1] += 1/2 # right boundary
@@ -469,7 +480,7 @@ def solveDiscreteOrdinates(
     flux = np.array([]) # phi_n
     eigenNext = eigenGuess # keff_n+1
     eigen = None # keff_n
-    abscissa, weight = leggauss(order)
+    abscissae, weights = leggauss(order)
     QNext = np.array([])
     eigenHist = np.array([eigenNext]) # stores the histary of keff iterations
     fluxHist = np.empty((ic.mesh_points, 0)) # stores the history of phi iterations
@@ -484,7 +495,6 @@ def solveDiscreteOrdinates(
 
     def getPsi(abscissa):
         psi = np.zeros(ic.mesh_points) # This will become our output angular nuetron flux. Note that the vacuum boundary condition is already set since the edges of the array are 0   
-        psi_in = np.zeros(ic.mesh_intervals) # These are the values in between the mesh points of psi
         
         psiPrev = 0
         for it in range(0, ic.mesh_intervals):
@@ -498,9 +508,9 @@ def solveDiscreteOrdinates(
             psi_int = (ic.delta_x * QNext[iNow] + 2 * np.abs(abscissa) * psiPrev) / (
                                 ic.delta_x * ic.slab_macro_t + 2 * np.abs(abscissa)
                             )
-            psi[iNext] = 
-
-        return 1
+            psi[iNext] = 2 * psi_int - psiPrev
+            psiPrev = psi[iNext]
+        return psi
 
 
     # function to check if converged
@@ -513,9 +523,8 @@ def solveDiscreteOrdinates(
             loss = abs((eigenNext - eigen)/eigen) # |k(n+1) - k(n) / k(n)| < 0.00001
         else:
             loss = np.max(np.abs(S[0] - SNext[0])/S[0]) # max|S(n+1) - S(n) / S(n)| < 0.00001
-        
+        print(loss)
         return loss < 0.00001 # return if converged
-
 
 
     # main loop
@@ -526,13 +535,11 @@ def solveDiscreteOrdinates(
         S = SNext
 
         # calculate n+1 values of keff, phi and S   
-        QNext = interpolate((1/2) * (ic.scatter_matrix + ic.macro_f_nu_matrix/eigen) @ flux)
-        fluxNext = np.zeros(ic.mesh_points)
-        for i in range(order):#
-            fluxNext += weight[i] * getpsi
-
-
-
+        QNext = interpolate((1/2) * (ic.slab_macro_s + ic.slab_macro_f_nu/eigen) * flux)
+        fluxNext = np.zeros(ic.mesh_points)[:, np.newaxis]
+        for i in range(order):
+            fluxNext += weights[i] * getPsi(abscissae[i])[:, np.newaxis]
+            
         SNext = ic.macro_f_nu_matrix @ fluxNext # S_n+1 = F * phi_n+1
         eigenNext = eigen * np.sum(SNext) / np.sum(S) # calculate keff_n+1
 
@@ -555,6 +562,57 @@ def solveDiscreteOrdinates(
     if not doPlot:
         return (float(eigenNext), convIt, fluxNext[:,0]) 
     
+    
+    
+    
+    # plot the iterations of k
+    plt.figure(figsize=((8,3)))
+    plt.plot(np.arange(len(eigenHist)) + 1, eigenHist, color = 'k', linewidth = 1.5, label="Interpolated values")
+    plt.scatter(np.arange(len(eigenHist)) + 1, eigenHist, color='darkgray', marker='x', linewidths = 0.8, s = 15, label=r"$k_{eff}$ iteration values")
+    plt.scatter([len(eigenHist)], [eigenHist[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, label=r"$k_{eff}$ final value")
+    plt.legend(fontsize=11.5)
+    plt.text(
+        0.6, 0.83, 
+        r"Final $k_{eff}$ = " + f"{eigenHist[-1]:.7f}\nError in " + r"$k_{eff}$" + f" = {abs((eigenNext - eigen)/eigen):.7f}\nIterations = {len(eigenHist)}",
+        transform=plt.gca().transAxes,
+        ha="left",
+        va="top",
+        fontsize=14,
+        linespacing=1.5
+    )  
+    plt.xlabel("Iteration", fontsize=12)
+    plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
+    plt.tight_layout()
+    plt.show()
+
+    # plot the normalized phi of different iterations
+    fluxHist_norm = copy.deepcopy(fluxHist)
+    for i in range(len(fluxHist_norm[0])):
+        fluxHist_norm[:, i] /= integrate(fluxHist_norm[:,i], ic.delta_x)
+    plt.figure(figsize=((8,3)))
+    plt.xlim(-50, 50)
+    plt.plot(ic.x_axis, fluxHist_norm[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha=1, label='Iteration 1 (guess)')
+    plt.plot(ic.x_axis, fluxHist_norm[:, 1], linestyle = "dashdot", color = 'gold', label='Iteration 2')
+    plt.plot(ic.x_axis, fluxHist_norm[:, 9], linestyle = "dashed", color = 'cyan', label='Iteration 10')
+    plt.plot(ic.x_axis, fluxHist_norm[:, 29], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 30')
+    plt.plot(ic.x_axis, fluxHist_norm[:, 64], linestyle = "dotted", color = 'hotpink', label='Iteration 65')
+    plt.plot(ic.x_axis, fluxHist_norm[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
+    #plt.plot(ic.x_axis, fluxHist_norm[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha = 1, label='Iteration 1 (guess)')
+    #plt.plot(ic.x_axis, fluxHist_norm[:, 1], linestyle = "dashdot", color = 'gold', label='Iteration 2')
+    #plt.plot(ic.x_axis, fluxHist_norm[:, 9], linestyle = "dashed", color = 'cyan', label='Iteration 10')
+    #plt.plot(ic.x_axis, fluxHist_norm[:, 19], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 20')
+    #plt.plot(ic.x_axis, fluxHist_norm[:, 39], linestyle = "dotted", color = 'hotpink', label='Iteration 40')
+    #plt.plot(ic.x_axis, fluxHist_norm[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
+    plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+    plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+    plt.ylabel("Normalized flux", fontsize=12)
+    plt.legend(ncol=2,
+        fontsize=11.5,
+        columnspacing=1.5,
+        handletextpad=0.6,
+        frameon=True)
+    plt.tight_layout()
+    plt.show()
     
 
     # print the values found
@@ -580,14 +638,20 @@ def solveDiscreteOrdinates(
 # icBase will be used as the default settings for the following exercises
 icBase = IterationConstants(resolution=10, is_isotropic=False, doPrint=True)
 
-# ----------------------Exercise 2----------------------
-# -"Solve the diffusion equation using the finite element approach and source iteration method."
-(kEigenResult, kConvNormal, kFluxResult) = solvePowerIteration(convergenceCriteria = 0, doPlot=True, ic=icBase)
 (SEigenResult, SConvNormal, SFluxResult) = solvePowerIteration(convergenceCriteria = 1, doPlot=True, ic=icBase)
 
-print("Convergence k keff = " + str(kEigenResult))
-print("Convergence S keff = " + str(SEigenResult))
-print("difference in keff = " + str(SEigenResult - kEigenResult))
+def lpf():
+    (SEigenResultDO, SConvNormalDO, SFluxResultDO) = solveDiscreteOrdinates(convergenceCriteria = 1, order=6, doPlot=True, ic=icBase)
+    print("Convergence S keff = " + str(SEigenResult))
+    print("Convergence S keffDO = " + str(SEigenResultDO))
+
+#lp = LineProfiler()
+#lp.add_function(lpf)
+#lp.add_function(solveDiscreteOrdinates)
+#lp.run('lpf()')
+#lp.print_stats()
+
+lpf()
 
 
 
