@@ -200,7 +200,6 @@ slab_elements = np.array([U235, U238, H1, O16]) # array of all the elements in e
 # Other given constants
 H2O_DENSITY = 0.75 # [g/cm3]
 UO2_DENSITY = 10.4 # [g/cm3]
-SLAB_THICKNESS = 100 # [cm]
 FUEL_ENRICHMENT = 0.035 # weight fraction
 ENERGY_PER_FISSION= MeV_to_j(200.0) # [J]
 
@@ -227,6 +226,7 @@ O16.density = H2O_DENSITY * O16.mass / H2OMass + UO2_DENSITY * (2 * O16.mass) / 
 class IterationConstants:
     def __init__(self,
                     resolution = 10, # [cells/cm] mesh resolution
+                    slab_thickness = 100, # [cm]
                     is_isotropic = False, # For exercise 5: This boolean changes the scattering to isotromic by setting the average scattering angle mu_bar to 0. 
                     doPrint = True # Print the outputs?
                 ):
@@ -249,10 +249,10 @@ class IterationConstants:
         self.diffusion_coefficient = 1 / (3 * self.slab_macro_tr) # [cm]
         
         # define mesh
-        self.mesh_intervals = round(resolution * SLAB_THICKNESS) # number of intervals in the mesh
-        self.mesh_points = round(resolution * SLAB_THICKNESS) + 1 # number of points in the mesh, its one more because there are 2 points on the boundary
-        self.delta_x = SLAB_THICKNESS/self.mesh_intervals # [cm] distance between points on the mesh
-        self.x_axis = np.linspace(-SLAB_THICKNESS/2, SLAB_THICKNESS/2, self.mesh_points) # [cm] the x values of the mesh points
+        self.mesh_intervals = round(resolution * slab_thickness) # number of intervals in the mesh
+        self.mesh_points = round(resolution * slab_thickness) + 1 # number of points in the mesh, its one more because there are 2 points on the boundary
+        self.delta_x = slab_thickness/self.mesh_intervals # [cm] distance between points on the mesh
+        self.x_axis = np.linspace(-slab_thickness/2, slab_thickness/2, self.mesh_points) # [cm] the x values of the mesh points
 
         # initialize matrices
         self.macro_f_nu_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, self.slab_macro_f_nu)) # matrix to perform the fnu multiplication 
@@ -271,7 +271,7 @@ class IterationConstants:
 
         # Analytic value of phi, for derivation see: report assignment 1
         self.L = np.sqrt(self.diffusion_coefficient / ((self.slab_macro_f_nu/self.kAnal) - self.slab_macro_a))
-        self.fluxAnal = np.cos(self.x_axis/self.L)
+        self.fluxAnal = np.cos(self.x_axis /self.L)
         self.fluxAnal *= 1e3 / integrate(self.slab_macro_f_pow * self.fluxAnal, self.delta_x) # normalize to 1000 W/cm2
 
         # print values
@@ -301,6 +301,7 @@ class IterationConstants:
                 maxRel = diff / (self.fluxAnal[j])
                 maxRelX = self.x_axis[j]
         print("Max absolute flux err = " + str(maxAbs) + " @ " + str(maxAbsX) + ", max relative flux err = " + str(maxRel) + " @ " + str(maxRelX))
+        return (keffIn - self.kAnal, maxRel)
 
 
 
@@ -586,10 +587,10 @@ def solveDiscreteOrdinates(
     plt.figure(figsize=((8,3)))
     plt.xlim(-50, 50)
     plt.plot(ic.x_axis, fluxHist_norm[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha=1, label='Iteration 1 (guess)')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 10], linestyle = "dashdot", color = 'gold', label='Iteration 10')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 100], linestyle = "dashed", color = 'cyan', label='Iteration 100')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 300], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 300')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 600], linestyle = "dotted", color = 'hotpink', label='Iteration 600')
+    #plt.plot(ic.x_axis, fluxHist_norm[:, int(np.floor(len(eigenHist)/100))], linestyle = "dashdot", color = 'gold', label='Iteration 10')
+    #plt.plot(ic.x_axis, fluxHist_norm[:, int(np.floor(len(eigenHist)/10))], linestyle = "dashed", color = 'cyan', label='Iteration 100')
+    #plt.plot(ic.x_axis, fluxHist_norm[:, int(np.floor(len(eigenHist)/5))], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 300')
+    #plt.plot(ic.x_axis, fluxHist_norm[:, int(np.floor(len(eigenHist)/2))], linestyle = "dotted", color = 'hotpink', label='Iteration 600')
     plt.plot(ic.x_axis, fluxHist_norm[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
     plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
     plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
@@ -614,6 +615,11 @@ def solveDiscreteOrdinates(
 
 
 
+# icBase will be used as the default settings for the following exercises
+icBase = IterationConstants(resolution=10, slab_thickness = 100, is_isotropic=False, doPrint=True)
+
+
+
 
 # ----------------------Exercise 1----------------------
 # "Write a discrete ordinates/SN solver for 1D slab geometry problems using the Gauss-Legendre quadrature, diamond-difference closure, and a ϵ < 0.00001 convergence criterion on the flux. Report k and
@@ -621,11 +627,6 @@ def solveDiscreteOrdinates(
 # to that in coursework 1. Comment on how this compares with neutron diffusion in terms of accuracy,
 # number of iterations and runtime. How does this compare with your expectations? What might explain
 # your observations?"
-
-# icBase will be used as the default settings for the following exercises
-icBase = IterationConstants(resolution=10, is_isotropic=False, doPrint=True)
-
-
 
 
 (SEigenResult, SConvNormal, SFluxResult) = solvePowerIteration(convergenceCriteria = 1, doPlot=True, ic=icBase, doSave=True)
@@ -646,11 +647,10 @@ def lpf(order = 12, doOutput = False):
 #lp.run('solvePowerIteration(convergenceCriteria = 1, doPlot=False, ic=icBase)')
 #lp.print_stats()
 
-exit()
 
-lpf(order = 2, doOutput = True)
-lpf(order = 6, doOutput = True)
-lpf(order = 12, doOutput = True)
+#lpf(order = 2, doOutput = True)
+#lpf(order = 6, doOutput = True)
+#lpf(order = 12, doOutput = True)
 
 
 eigenHist_powIt = np.load("eigen_powIt.npy")
@@ -687,6 +687,48 @@ plt.xlabel("Iteration", fontsize=12)
 plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
 plt.tight_layout()
 plt.show()
+
+
+
+
+
+
+# ----------------------Exercise 2----------------------
+# "Set the problem length to 30 cm. Generate an S12 solution using the Gauss-Legendre quadrature
+# and take this as the reference solution. Replicate the quadrature study shown in Section 1.1 of the
+# Discrete Ordinates note: study the differences in the estimation of k between various orders of the
+# Gauss-Legendre quadrature and a quadrature with equal spacing. Comment on the results."
+
+ic30 = IterationConstants(resolution=10, slab_thickness = 30, is_isotropic=False, doPrint=True)
+
+
+
+
+
+# ----------------------Exercise 3----------------------
+# "Using S12 and your diffusion solver, vary the length of the problem from 5 cm to 5 m. Compare
+# differences in k, the maximum relative difference in the flux, and show the number of iterations required.
+# Comment on the results.
+
+lengths = np.linspace(5, 500, 8)
+kErrHist = np.array([])
+phiErrHist = np.array([])
+
+for l in lengths:
+    icRes = IterationConstants(resolution=l/100, slab_thickness = l, is_isotropic=False, doPrint=True)
+    (SEigenResultDO, SConvNormalDO, SFluxResultDO) = solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icRes)
+    print("Slab Length = " + str(l) + " cm")
+    print("Discrete Ordinates, " + str(12) + " order --> keff = " + str(SEigenResultDO))
+
+    kErrHist = np.append(kErrHist, kErr)
+    print()
+
+plt.scatter(lengths, kErrHist)
+plt.show()
+
+plt.scatter(lengths, phiErrHist)
+plt.show()
+
 
 
 
