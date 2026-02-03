@@ -593,8 +593,8 @@ def q4():
             if diff > maxAbs:
                 maxAbs = diff
                 maxAbsX = ic.x_axis[j]
-            if diff / np.cos(ic.x_axis[j]/L)/analArea > maxRel:
-                maxRel = diff
+            if diff / (np.cos(ic.x_axis[j]/L)/analArea) > maxRel:
+                maxRel = diff / (np.cos(ic.x_axis[j]/L)/analArea)
                 maxRelX = ic.x_axis[j]
         print("Max absolute flux err = " + str(maxAbs) + " @ " + str(maxAbsX) + ", max relative flux err = " + str(maxRel) + " @ " + str(maxRelX))
         print(str(i) + " cells/cm --> keff = " + str(eigenRes) + " after " + str(iter) + " it. error of " + str(kAnal - eigenRes))

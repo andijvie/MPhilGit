@@ -24,16 +24,6 @@ from line_profiler import LineProfiler
 AVOGADRO_CONSTANT = 6.02214076e23 # per mol
 ELEMENTARY_CHARGE = 1.602176634e-19 # C
 
-# Randomizer
-SEED = 1 # Set seed to a constant so the graphs in exercise 3 are deterministic
-np.random.seed(SEED)
-
-
-
-#RAPPORT: GEEN XENON OF SAMARIUM!!!
-
-
-
 # ----------------------Mathematical Functions----------------------
 # - These functions are basic mathematical operations and are not a fundamental part of the code logic
 
@@ -199,16 +189,6 @@ U238 = Element(
     microC = 0.8900, # [barns]
     microS = 11.2221 # [barns]
 )
-XE135 = Element(
-    microC = 2.200e5, # [barns]
-    microS = 6.99340, # [barns]
-    fission_yield = 0.0640 # [per fission] (cumulative)
-)
-SM149 = Element(
-    microC = 7.200e3, # [barns]
-    microS = 8.65770, # [barns]
-    fission_yield = 0.0113 # [per fission] (cumulative)
-)
 H1 = Element(
     microS = 3.3723 #[barns]
 )
@@ -223,13 +203,10 @@ UO2_DENSITY = 10.4 # [g/cm3]
 SLAB_THICKNESS = 100 # [cm]
 FUEL_ENRICHMENT = 0.035 # weight fraction
 ENERGY_PER_FISSION= MeV_to_j(200.0) # [J]
-XE135_HALF_LIFE = 9.1 * 60 * 60 # [s]
 
 # Atomic mass from: https://www-nds.iaea.org/relnsd/vcharthtml/VChartHTML.html
 U235.mass = 235.0439281 # [u]
 U238.mass = 238.0507869 # [u]
-XE135.mass = 134.907231 # [u]
-SM149.mass = 148.9171912 # [u]
 H1.mass = 1.00782503190 # [u]
 O16.mass = 15.9949146193 # [u]
 
@@ -287,6 +264,16 @@ class IterationConstants:
         self.M_matrix[-1,-1] += 1/2 # right boundary
         self.M_inv = np.linalg.inv(self.M_matrix) # inverse M matrix used in the iteration
 
+        # Analytic value of keff, for derivation see: report assignment 1
+        self.kAnal = self.slab_macro_f_nu / (
+            self.diffusion_coefficient/4 
+            * (np.pi/(50 + 0.7104/self.slab_macro_tr))**2 + self.slab_macro_a)
+
+        # Analytic value of phi, for derivation see: report assignment 1
+        self.L = np.sqrt(self.diffusion_coefficient / ((self.slab_macro_f_nu/self.kAnal) - self.slab_macro_a))
+        self.fluxAnal = np.cos(self.x_axis/self.L)
+        self.fluxAnal *= 1e3 / integrate(self.slab_macro_f_pow * self.fluxAnal, self.delta_x) # normalize to 1000 W/cm2
+
         # print values
         if doPrint:
             print("Macroscopic total = " + str(self.slab_macro_t) + " cm-1")
@@ -296,6 +283,24 @@ class IterationConstants:
             print("Diffusion Coefficient = " + str(self.diffusion_coefficient) + " cm") # 0.5214833759422001 cm
             print("Macroscopic absorption = " + str(self.slab_macro_a) + " cm-1")
             print("Macroscopic neutron production = " + str(self.slab_macro_f_nu) + " cm-1")
+            print("Analytic keff = " + str(self.kAnal))
+            print("Analytic phi = A cos x/" + str(self.L))
+
+    def compare(self, keffIn, phiIn):
+        print("Abs err keff = " + str(keffIn - self.kAnal) + " relative err = " + str((keffIn - self.kAnal)/self.kAnal))
+        maxAbs = 0
+        maxRel = 0
+        maxAbsX = -1
+        maxRelX = -1
+        for j in range(len(self.x_axis)):
+            diff = np.abs(phiIn[j] - self.fluxAnal[j])
+            if diff > maxAbs:
+                maxAbs = diff
+                maxAbsX = self.x_axis[j]
+            if diff / (self.fluxAnal[j]) > maxRel:
+                maxRel = diff / (self.fluxAnal[j])
+                maxRelX = self.x_axis[j]
+        print("Max absolute flux err = " + str(maxAbs) + " @ " + str(maxAbsX) + ", max relative flux err = " + str(maxRel) + " @ " + str(maxRelX))
 
 
 
@@ -317,14 +322,15 @@ class IterationConstants:
 # - float of the keff found
 # - integer of number of iterations needed
 # - float array of the phi found
-def solvePowerIteration(convergenceCriteria = 1, # 0 is k, 1 is S
+def solvePowerIteration(
+                        convergenceCriteria = 1, # 0 is k, 1 is S
                         fluxGuess = None, 
                         eigenGuess = 1.0, 
                         doPlot = True,
                         doSave = False,
-                        saveFile = 'flux.npy',
-                        doNormalize = False,
-                        powerTarget = 100e3, # W/cm2
+                        saveFile = 'powIt.npy',
+                        doNormalize = True,
+                        powerTarget = 1e3, # W/cm2
                         ic = IterationConstants(resolution=10, is_isotropic=False, doPrint=False)
                         ) -> tuple[float, int, np_type.NDArray[np.float64]]:
     
@@ -373,7 +379,7 @@ def solvePowerIteration(convergenceCriteria = 1, # 0 is k, 1 is S
         eigenNext = eigen * np.sum(SNext) / np.sum(S) # calculate keff_n+1
 
         # store values
-        if doPlot: 
+        if doPlot or doSave: 
             eigenHist = np.append(eigenHist, eigenNext) 
             fluxHist = np.append(fluxHist, fluxNext, axis=1)
 
@@ -384,7 +390,8 @@ def solvePowerIteration(convergenceCriteria = 1, # 0 is k, 1 is S
         
     # save to file if necessary
     if doSave:
-        np.save(saveFile, fluxNext)
+        np.save("eigen_" + saveFile, eigenHist)
+        np.save("flux_" + saveFile, fluxHist)
 
     # return values found
     if not doPlot:
@@ -423,15 +430,9 @@ def solvePowerIteration(convergenceCriteria = 1, # 0 is k, 1 is S
     plt.plot(ic.x_axis, fluxHist_norm[:, 29], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 30')
     plt.plot(ic.x_axis, fluxHist_norm[:, 64], linestyle = "dotted", color = 'hotpink', label='Iteration 65')
     plt.plot(ic.x_axis, fluxHist_norm[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha = 0.2, label='Iteration 1 (guess)')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, 1], linestyle = "dashdot", color = 'gold', label='Iteration 2')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, 9], linestyle = "dashed", color = 'cyan', label='Iteration 10')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, 19], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 20')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, 39], linestyle = "dotted", color = 'hotpink', label='Iteration 40')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
     plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
     plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
-    plt.ylabel("Normalized flux", fontsize=12)
+    plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
     plt.legend(ncol=2,
         fontsize=11.5,
         columnspacing=1.5,
@@ -451,14 +452,6 @@ def solvePowerIteration(convergenceCriteria = 1, # 0 is k, 1 is S
 
 
 
-
-
-
-
-
-
-
-
 def solveDiscreteOrdinates(
                         convergenceCriteria = 1, # 0 is k, 1 is S,
                         order = 2,
@@ -466,9 +459,9 @@ def solveDiscreteOrdinates(
                         eigenGuess = 1.0, 
                         doPlot = True,
                         doSave = False,
-                        saveFile = 'flux.npy',
-                        doNormalize = False,
-                        powerTarget = 100e3, # W/cm2
+                        saveFile = 'discrOrd.npy',
+                        doNormalize = True,
+                        powerTarget = 1e3, # W/cm2
                         ic = IterationConstants(resolution=10, is_isotropic=False, doPrint=False)
                         ) -> tuple[float, int, np_type.NDArray[np.float64]]:
     
@@ -523,7 +516,7 @@ def solveDiscreteOrdinates(
             loss = abs((eigenNext - eigen)/eigen) # |k(n+1) - k(n) / k(n)| < 0.00001
         else:
             loss = np.max(np.abs(S[0] - SNext[0])/S[0]) # max|S(n+1) - S(n) / S(n)| < 0.00001
-        print(loss)
+        #print(loss)
         return loss < 0.00001 # return if converged
 
 
@@ -544,7 +537,7 @@ def solveDiscreteOrdinates(
         eigenNext = eigen * np.sum(SNext) / np.sum(S) # calculate keff_n+1
 
         # store values
-        if doPlot: 
+        if doPlot or doSave: 
             eigenHist = np.append(eigenHist, eigenNext) 
             fluxHist = np.append(fluxHist, fluxNext, axis=1)
 
@@ -556,7 +549,8 @@ def solveDiscreteOrdinates(
 
     # save to file if necessary
     if doSave:
-        np.save(saveFile, fluxNext)
+        np.save("eigen_" + saveFile, eigenHist)
+        np.save("flux_" + saveFile, fluxHist)
 
     # return values found
     if not doPlot:
@@ -592,20 +586,14 @@ def solveDiscreteOrdinates(
     plt.figure(figsize=((8,3)))
     plt.xlim(-50, 50)
     plt.plot(ic.x_axis, fluxHist_norm[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha=1, label='Iteration 1 (guess)')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 1], linestyle = "dashdot", color = 'gold', label='Iteration 2')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 9], linestyle = "dashed", color = 'cyan', label='Iteration 10')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 29], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 30')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 64], linestyle = "dotted", color = 'hotpink', label='Iteration 65')
+    plt.plot(ic.x_axis, fluxHist_norm[:, 10], linestyle = "dashdot", color = 'gold', label='Iteration 10')
+    plt.plot(ic.x_axis, fluxHist_norm[:, 100], linestyle = "dashed", color = 'cyan', label='Iteration 100')
+    plt.plot(ic.x_axis, fluxHist_norm[:, 300], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 300')
+    plt.plot(ic.x_axis, fluxHist_norm[:, 600], linestyle = "dotted", color = 'hotpink', label='Iteration 600')
     plt.plot(ic.x_axis, fluxHist_norm[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha = 1, label='Iteration 1 (guess)')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, 1], linestyle = "dashdot", color = 'gold', label='Iteration 2')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, 9], linestyle = "dashed", color = 'cyan', label='Iteration 10')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, 19], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 20')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, 39], linestyle = "dotted", color = 'hotpink', label='Iteration 40')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
     plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
     plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
-    plt.ylabel("Normalized flux", fontsize=12)
+    plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
     plt.legend(ncol=2,
         fontsize=11.5,
         columnspacing=1.5,
@@ -627,31 +615,78 @@ def solveDiscreteOrdinates(
 
 
 
-
-
-
-
-
 # ----------------------Exercise 1----------------------
-# -"Calculate all the macroscopic constants (D, Σa, and νΣf ) necessary for solving the neutron diffusion equation for the slab."
+# "Write a discrete ordinates/SN solver for 1D slab geometry problems using the Gauss-Legendre quadrature, diamond-difference closure, and a ϵ < 0.00001 convergence criterion on the flux. Report k and
+# show the flux distribution for S2, S6, and S12 on a problem with identical geometry and cross sections
+# to that in coursework 1. Comment on how this compares with neutron diffusion in terms of accuracy,
+# number of iterations and runtime. How does this compare with your expectations? What might explain
+# your observations?"
 
 # icBase will be used as the default settings for the following exercises
 icBase = IterationConstants(resolution=10, is_isotropic=False, doPrint=True)
 
-(SEigenResult, SConvNormal, SFluxResult) = solvePowerIteration(convergenceCriteria = 1, doPlot=True, ic=icBase)
 
-def lpf():
-    (SEigenResultDO, SConvNormalDO, SFluxResultDO) = solveDiscreteOrdinates(convergenceCriteria = 1, order=6, doPlot=True, ic=icBase)
-    print("Convergence S keff = " + str(SEigenResult))
-    print("Convergence S keffDO = " + str(SEigenResultDO))
+
+
+(SEigenResult, SConvNormal, SFluxResult) = solvePowerIteration(convergenceCriteria = 1, doPlot=True, ic=icBase, doSave=True)
+print("Diffusion keff = " + str(SEigenResult))
+icBase.compare(SEigenResult, SFluxResult)
+
+
+
+def lpf(order = 12, doOutput = False):
+    (SEigenResultDO, SConvNormalDO, SFluxResultDO) = solveDiscreteOrdinates(convergenceCriteria = 1, order=order, doPlot=doOutput, ic=icBase, doSave=doOutput)
+    print("Discrete Ordinates, " + str(order) + " order --> keff = " + str(SEigenResultDO))
+    icBase.compare(SEigenResultDO, SFluxResultDO)
 
 #lp = LineProfiler()
 #lp.add_function(lpf)
-#lp.add_function(solveDiscreteOrdinates)
-#lp.run('lpf()')
+#lp.add_function(solvePowerIteration)
+#lp.run('lpf(order=12)')
+#lp.run('solvePowerIteration(convergenceCriteria = 1, doPlot=False, ic=icBase)')
 #lp.print_stats()
 
-lpf()
+exit()
+
+lpf(order = 2, doOutput = True)
+lpf(order = 6, doOutput = True)
+lpf(order = 12, doOutput = True)
+
+
+eigenHist_powIt = np.load("eigen_powIt.npy")
+eigenHist_DiscOrd = np.load("eigen_discrOrd.npy")
+
+plt.figure(figsize=((8,3)))
+plt.plot(np.arange(len(eigenHist_DiscOrd)) + 1, eigenHist_DiscOrd, color = 'k', linewidth = 1.5, label="Discrete ordinates $k_{eff}$ iterations", zorder=0)
+plt.plot(np.arange(len(eigenHist_powIt)) + 1, eigenHist_powIt, color = 'k', linewidth = 1.5, label="Diffusion $k_{eff}$ iterations", linestyle = '--', zorder=0)
+plt.scatter([len(eigenHist_DiscOrd)], [eigenHist_DiscOrd[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, label=r"$k_{eff}$ final values", zorder=10)
+plt.scatter([len(eigenHist_powIt)], [eigenHist_powIt[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, zorder=10)
+plt.axvline(x=len(eigenHist_DiscOrd), linestyle = ':', color = 'grey', linewidth='1')
+plt.axvline(x=len(eigenHist_powIt), linestyle = ':', color = 'grey', linewidth='1')
+plt.legend(fontsize=11.5)
+plt.text(
+    0.12, 0.9, 
+    f"{len(eigenHist_powIt)} iterations\n",
+    transform=plt.gca().transAxes,
+    ha="left",
+    va="top",
+    fontsize=14,
+    linespacing=1.5
+)  
+plt.text(
+    0.965, 0.9, 
+    f"{len(eigenHist_DiscOrd)} iterations\n",
+    transform=plt.gca().transAxes,
+    ha="right",
+    va="top",
+    fontsize=14,
+    linespacing=1.5
+)  
+plt.xlim((0, 1400))
+plt.xlabel("Iteration", fontsize=12)
+plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
+plt.tight_layout()
+plt.show()
 
 
 
