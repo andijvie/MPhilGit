@@ -229,6 +229,9 @@ class IterationConstants:
                     resolution = 10, # [cells/cm] mesh resolution
                     slab_thickness = 100, # [cm]
                     is_isotropic = False, # For exercise 5: This boolean changes the scattering to isotromic by setting the average scattering angle mu_bar to 0. 
+                    use_scatter_ratio = False,
+                    scatter_ratio = 0.1,
+                    multiplying = True,
                     doPrint = True # Print the outputs?
                 ):
         
@@ -272,10 +275,17 @@ class IterationConstants:
 
         # Analytic value of phi, for derivation see: report assignment 1
         self.anal_x_axis = np.linspace(-100/2, 100/2, self.mesh_points)
-        self.anal_delta_x = 10/self.mesh_intervals
+        self.anal_delta_x = 100/self.mesh_intervals
         self.L = np.sqrt(self.diffusion_coefficient / ((self.slab_macro_f_nu/self.kAnal) - self.slab_macro_a))
         self.fluxAnal = np.cos(self.anal_x_axis /self.L)
         self.fluxAnal *= 1e3 / integrate(self.slab_macro_f_pow * self.fluxAnal, self.anal_delta_x) # normalize to 1000 W/cm2
+
+        if not multiplying:
+            self.slab_macro_f_nu = 0
+            self.macro_f_nu_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, self.slab_macro_f_nu)) # matrix to perform the fnu multiplication 
+        if use_scatter_ratio:
+            self.slab_macro_t -= self.slab_macro_s # ??????????????
+            self.slab_macro_s = self.slab_macro_tr * scatter_ratio
 
         # print values
         if doPrint:
@@ -402,17 +412,22 @@ def solvePowerIteration(
         # calculate n+1 values of keff, phi and S     
         fluxNext = ic.M_inv @ ((1/eigen) * S) # phi_n+1 = M_inv * (S_n/k_n)
         SNext = ic.macro_f_nu_matrix @ fluxNext # S_n+1 = F * phi_n+1
-        eigenNext = eigen * np.sum(SNext) / np.sum(S) # calculate keff_n+1
+        eigenNext = eigen * np.sum(SNext) / (np.sum(S) + 1e-99) # calculate keff_n+1
 
         # store values
         if doPlot or doSave: 
             eigenHist = np.append(eigenHist, eigenNext) 
-            fluxHist = np.append(fluxHist, fluxNext, axis=1)
+            if doNormalize:
+                fluxHist = np.append(fluxHist, fluxNext * powerTarget / integrate(ic.slab_macro_f_pow * fluxNext, ic.delta_x), axis=1)
+            else:
+                fluxHist = np.append(fluxHist, fluxNext, axis=1)
 
         convIt += 1 # count iteration
     
     if doNormalize: # normalize phi if necessary
         fluxNext *= powerTarget / integrate(ic.slab_macro_f_pow * fluxNext, ic.delta_x) # normalize by the fraction such that the power equals the target
+        if doPlot:
+            fluxHist[:,0] *= powerTarget / integrate(ic.slab_macro_f_pow * fluxHist[:,0], ic.delta_x)
         
     # save to file if necessary
     if doSave:
@@ -445,17 +460,14 @@ def solvePowerIteration(
     plt.show()
 
     # plot the normalized phi of different iterations
-    fluxHist_norm = copy.deepcopy(fluxHist)
-    for i in range(len(fluxHist_norm[0])):
-        fluxHist_norm[:, i] /= integrate(fluxHist_norm[:,i], ic.delta_x)
     plt.figure(figsize=((8,3)))
     plt.xlim(-50, 50)
-    plt.plot(ic.x_axis, fluxHist_norm[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha=0.2, label='Iteration 1 (guess)')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 1], linestyle = "dashdot", color = 'gold', label='Iteration 2')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 9], linestyle = "dashed", color = 'cyan', label='Iteration 10')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 29], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 30')
-    plt.plot(ic.x_axis, fluxHist_norm[:, 64], linestyle = "dotted", color = 'hotpink', label='Iteration 65')
-    plt.plot(ic.x_axis, fluxHist_norm[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
+    plt.plot(ic.x_axis, fluxHist[:, 0], linestyle = (0, (1, 1)), color = 'red', label='Iteration 1 (guess)')
+    plt.plot(ic.x_axis, fluxHist[:, 1], linestyle = "dashdot", color = 'gold', label='Iteration 2')
+    plt.plot(ic.x_axis, fluxHist[:, 9], linestyle = "dashed", color = 'cyan', label='Iteration 10')
+    plt.plot(ic.x_axis, fluxHist[:, 29], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 30')
+    plt.plot(ic.x_axis, fluxHist[:, 64], linestyle = "dotted", color = 'hotpink', label='Iteration 65')
+    plt.plot(ic.x_axis, fluxHist[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
     plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
     plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
     plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
@@ -480,7 +492,7 @@ def solvePowerIteration(
 
 def solveDiscreteOrdinates(
                         convergenceCriteria = 1, # 0 is k, 1 is S,
-                        order = 2,
+                        order = 12,
                         fluxGuess = None, 
                         eigenGuess = 1.0, 
                         doPlot = True,
@@ -492,7 +504,8 @@ def solveDiscreteOrdinates(
                         useRectangle = False,
                         doSavePolar = False,
                         polarIt = 1300,
-                        closure = 0 # 0 is Diamond-differencing, 1 is step method
+                        closure = 0, # 0 is Diamond-differencing, 1 is step method
+                        leftSource = .0
                         ) -> tuple[float, int, np_type.NDArray[np.float64]]:
     
     # initialize variables
@@ -522,6 +535,7 @@ def solveDiscreteOrdinates(
     def getPsi(abscissa):
         psi = np.zeros(ic.mesh_points) # This will become our output angular nuetron flux. Note that the vacuum boundary condition is already set since the edges of the array are 0   
         coeff = 2 if closure == 0 else 1
+        psi[0] = .0 if abscissa < 0 else leftSource
 
         psiPrev = 0
         for it in range(0, ic.mesh_intervals):
@@ -535,6 +549,11 @@ def solveDiscreteOrdinates(
             psi_int = (ic.delta_x * QNext[iNow] + coeff * np.abs(abscissa) * psiPrev) / (
                                 ic.delta_x * ic.slab_macro_t + coeff * np.abs(abscissa)
                             )
+            
+            if psi_int < 0:
+                print("AAAAAAAAAAA")
+                exit()
+
             psi[iNext] = 2 * psi_int - psiPrev if closure == 0 else psi_int
             psiPrev = psi[iNext]
         return psi
@@ -549,8 +568,8 @@ def solveDiscreteOrdinates(
         if convergenceCriteria == 0:
             loss = abs((eigenNext - eigen)/eigen) # |k(n+1) - k(n) / k(n)| < 0.00001
         else:
-            loss = np.max(np.abs(S[0] - SNext[0])/S[0]) # max|S(n+1) - S(n) / S(n)| < 0.00001
-        #print(loss)
+            loss = np.max(np.abs(flux[0] - fluxNext[0])/flux[0]) # max|phi(n+1) - phi(n) / phi(n)| < 0.00001
+        print(loss)
         return loss < 0.00001 # return if converged
 
 
@@ -562,7 +581,7 @@ def solveDiscreteOrdinates(
         S = SNext
 
         # calculate n+1 values of keff, phi and S   
-        QNext = interpolate((1/2) * (ic.slab_macro_s + ic.slab_macro_f_nu/eigen) * flux)
+        QNext = interpolate((1/2) * (ic.slab_macro_s + ic.slab_macro_f_nu/(eigen + 1e-99)) * flux)
         fluxNext = np.zeros(ic.mesh_points)[:, np.newaxis]
         for i in range(order):
             angFlux = getPsi(abscissae[i])[:, np.newaxis]
@@ -574,18 +593,23 @@ def solveDiscreteOrdinates(
                 np.save(f"polar_end_{i}_" + saveFile, angFlux[-1,0])
             
         SNext = ic.macro_f_nu_matrix @ fluxNext # S_n+1 = F * phi_n+1
-        eigenNext = eigen * np.sum(SNext) / np.sum(S) # calculate keff_n+1
+        eigenNext = eigen * np.sum(SNext) / (np.sum(S) + 1e-99) # calculate keff_n+1
 
         # store values
         if doPlot or doSave: 
             eigenHist = np.append(eigenHist, eigenNext) 
-            fluxHist = np.append(fluxHist, fluxNext, axis=1)
+            if doNormalize:
+                fluxHist = np.append(fluxHist, fluxNext * powerTarget / integrate(ic.slab_macro_f_pow * fluxNext, ic.delta_x), axis=1)
+            else:
+                fluxHist = np.append(fluxHist, fluxNext, axis=1)
 
         convIt += 1 # count iteration
         
 
     if doNormalize: # normalize phi if necessary
         fluxNext *= powerTarget / integrate(ic.slab_macro_f_pow * fluxNext, ic.delta_x) # normalize by the fraction such that the power equals the target
+        if doPlot:
+            fluxHist[:,0] *= powerTarget / integrate(ic.slab_macro_f_pow * fluxHist[:,0], ic.delta_x)
 
     # save to file if necessary
     if doSave:
@@ -607,7 +631,7 @@ def solveDiscreteOrdinates(
     plt.legend(fontsize=11.5)
     plt.text(
         0.6, 0.83, 
-        r"Final $k_{eff}$ = " + f"{eigenHist[-1]:.7f}\nError in " + r"$k_{eff}$" + f" = {abs((eigenNext - eigen)/eigen):.7f}\nIterations = {len(eigenHist)}",
+        r"Final $k_{eff}$ = " + f"{eigenHist[-1]:.7f}\nError in " + r"$k_{eff}$" + f" = {abs((eigenNext - eigen)/(eigen + 1e-99)):.7f}\nIterations = {len(eigenHist)}",
         transform=plt.gca().transAxes,
         ha="left",
         va="top",
@@ -620,17 +644,15 @@ def solveDiscreteOrdinates(
     plt.show()
 
     # plot the normalized phi of different iterations
-    fluxHist_norm = copy.deepcopy(fluxHist)
-    for i in range(len(fluxHist_norm[0])):
-        fluxHist_norm[:, i] /= integrate(fluxHist_norm[:,i], ic.delta_x)
     plt.figure(figsize=((8,3)))
     plt.xlim(ic.x_axis[0], ic.x_axis[-1])
-    plt.plot(ic.x_axis, fluxHist_norm[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha=1, label='Iteration 1 (guess)')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, int(np.floor(len(eigenHist)/100))], linestyle = "dashdot", color = 'gold', label='Iteration 10')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, int(np.floor(len(eigenHist)/10))], linestyle = "dashed", color = 'cyan', label='Iteration 100')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, int(np.floor(len(eigenHist)/5))], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 300')
-    #plt.plot(ic.x_axis, fluxHist_norm[:, int(np.floor(len(eigenHist)/2))], linestyle = "dotted", color = 'hotpink', label='Iteration 600')
-    plt.plot(ic.x_axis, fluxHist_norm[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
+    plt.plot(ic.x_axis, fluxHist[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha=1, label='Iteration 1 (guess)')
+    if len(fluxHist[0, :]) > 600:
+        plt.plot(ic.x_axis, fluxHist[:, 10], linestyle = "dashdot", color = 'gold', label='Iteration 10')
+        plt.plot(ic.x_axis, fluxHist[:, 100], linestyle = "dashed", color = 'cyan', label='Iteration 100')
+        plt.plot(ic.x_axis, fluxHist[:, 300], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 300')
+        plt.plot(ic.x_axis, fluxHist[:, 600], linestyle = "dotted", color = 'hotpink', label='Iteration 600')
+    plt.plot(ic.x_axis, fluxHist[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
     plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
     plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
     plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
@@ -726,7 +748,7 @@ def q1():
     plt.tight_layout()
     plt.show()
 
-
+#q1()
 
 
 
@@ -816,13 +838,13 @@ def q2():
 
 
 
-
 # ----------------------Exercise 3----------------------
 # "Using S12 and your diffusion solver, vary the length of the problem from 5 cm to 5 m. Compare
 # differences in k, the maximum relative difference in the flux, and show the number of iterations required.
 # Comment on the results.
 def q3():
-    lengths = np.linspace(5, 500, 5)
+    lengths = np.linspace(5, 500, 25)
+    #lengths = [100]
     kErrHist = np.array([])
     phiErrHist = np.array([])
     itHistDO = np.array([])
@@ -830,10 +852,11 @@ def q3():
 
     for l in lengths:
         icRes = IterationConstants(resolution=100/l, slab_thickness = l, is_isotropic=False, doPrint=True)
+        print("Slab Length = " + str(l) + " cm")
         (keffDO, itDO, phiDO) = solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icRes)
-        print("Discrete Ordinates, Slab Length = " + str(l) + " cm --> keff = " + str(keffDO) + " after " + str(itDO) + " iterations")
+        print("Discrete Ordinates --> keff = " + str(keffDO) + " after " + str(itDO) + " iterations")
         (keffDiff, itDiff, phiDiff) = solvePowerIteration(convergenceCriteria = 1, doPlot=False, ic=icRes)
-        print("Diffusion, Slab Length = " + str(l) + " cm --> keff = " + str(keffDiff) + " after " + str(itDiff) + " iterations")
+        print("Diffusion --> keff = " + str(keffDiff) + " after " + str(itDiff) + " iterations")
 
         kErr, phiErr = icRes.compare(keffDO, phiDO, reference=True, refKeff=keffDiff, refPhi=phiDiff, doPlot=True)
         kErrHist = np.append(kErrHist, kErr)
@@ -845,22 +868,31 @@ def q3():
 
     plt.figure(figsize=((8,3)))
     plt.plot(lengths, kErrHist, color='k', linestyle = '-', linewidth = '1.5', marker = 'o')
+    #plt.legend(fontsize=11.5)
+    plt.ylabel(r"$k_\text{eff}^\text{DO} - k_\text{eff}^\text{Diff}$", fontsize=12)
+    plt.xlabel(r"Slab length [cm]", fontsize=12)
+    plt.tight_layout()
     plt.show()
-
 
     plt.figure(figsize=((8,3)))
-    plt.plot(lengths, phiErrHist, color='k', linestyle = '-', linewidth = '1.5', marker = 'o')
+    plt.plot(lengths, -phiErrHist, color='k', linestyle = '-', linewidth = '1.5', marker = 'o')
+    #plt.legend(fontsize=11.5)
+    plt.ylabel(r"Max $|\phi^\text{DO} - \phi^\text{Diff}|/\phi^\text{Diff}$", fontsize=12)
+    plt.xlabel(r"Slab length [cm]", fontsize=12)
+    plt.tight_layout()
     plt.show()
-
 
     plt.figure(figsize=((8,3)))
-    plt.plot(lengths, itHistDO, color='k', linestyle = '-', linewidth = '1.5', marker = 'o')
-    plt.plot(lengths, itHistDiff)
+    plt.plot(lengths, itHistDO, color='k', linestyle = '-', linewidth = '1.5', marker = 'o', label="Discrete ordinates")
+    plt.plot(lengths, itHistDiff, color='k', linestyle = '--', linewidth = '1.5', marker = 'x', label="Diffusion")
+    plt.legend(fontsize=11.5)
+    plt.ylabel("Iterations", fontsize=12)
+    plt.xlabel(r"Slab length [cm]", fontsize=12)
+    plt.tight_layout()
     plt.show()
 
-q3()
+#q3()
 
-exit()
 
 
 # ----------------------Exercise 4----------------------
@@ -887,27 +919,27 @@ def q4():
     angFluxEnd = np.append(angFluxEnd, np.flip(angFluxEnd))
     angles = np.append(angles, -np.flip(angles))
 
-    angFluxStart = np.append(angFluxStart, angFluxStart[0])
-    angFluxMid = np.append(angFluxMid, angFluxMid[0])
-    angFluxEnd = np.append(angFluxEnd, angFluxEnd[0])
+    angFluxStart = np.append(angFluxStart, angFluxStart[0])/2
+    angFluxMid = np.append(angFluxMid, angFluxMid[0])/2
+    angFluxEnd = np.append(angFluxEnd, angFluxEnd[0])/2
     angles = np.append(angles, angles[0])
 
     plt.figure(figsize=((4,4)))
     plt.polar(angles, angFluxStart, color = 'k', linewidth = 1)
     plt.fill(angles, angFluxStart, alpha=0.3, color = 'gray') 
-    plt.yticks([0.02, 0.04, 0.06, 0.08])
+    plt.yticks([0.01, 0.02, 0.03, 0.04])
     plt.show()
 
     plt.figure(figsize=((4,4)))
     plt.polar(angles, angFluxMid, color = 'k')
     plt.fill(angles, angFluxMid, alpha=0.3, color = 'gray', linewidth = 1)
-    plt.yticks([0.3, 0.6, 0.9, 1.2])
+    plt.yticks([0.2, 0.4, 0.6])
     plt.show()
 
     plt.figure(figsize=((4,4)))
     plt.polar(angles, angFluxEnd, color = 'k', linewidth = 1)
     plt.fill(angles, angFluxEnd, alpha=0.3, color = 'gray')
-    plt.yticks([0.02, 0.04, 0.06, 0.08])
+    plt.yticks([0.01, 0.02, 0.03, 0.04])
     plt.show()
 
 #q4()
@@ -915,3 +947,248 @@ def q4():
 
 
 
+# ----------------------Exercise 5----------------------
+# "Fix the problem length at 100 cm and the quadrature at S12. Generate a reference solution and then
+# vary the mesh size using both the diamond-difference closure and the step closure. Examine and
+# comment on the maximum relative flux error versus mesh size. "
+
+def q5():
+    phiErrHistDiamond = np.array([]) # stores the maximum relative phi error found at different resolutions for diamond-difference
+    phiErrHistStep = np.array([]) # stores the maximum relative phi error found at different resolutions for step
+
+    res = np.arange(0.02, 1.01, 0.01) # [points/cm] resolutions to be checked
+    res = np.arange(1, 5.1, 0.1) # [points/cm] resolutions to be checked
+
+    # find the ultimate value
+    print()
+    print("Convergence at 100 points/cm:")
+    print("diamond-->")
+    ic = IterationConstants(resolution=100, is_isotropic=False, doPrint=False) # generate new iteration constants object with the resolution i
+    #(eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False) # solve the power iteration
+    #_, fluxErrFinD = ic.compare(eigenRes, flux, doPlot=False)
+    fluxErrFinD = 0.31298371534832575
+    print("step-->")
+    #(eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False, closure=1) # solve the power iteration
+    #_, fluxErrFinS = ic.compare(eigenRes, flux, doPlot=False)
+    fluxErrFinS = 0.3091416441667637
+    print()
+
+    # loop1: diamond-difference
+    # plot for phi
+    plt.figure(figsize=((8,3)))
+    plt.xlim(-51, 51)
+    plt.plot(icBase.x_axis, icBase.fluxAnal, linestyle = "solid", color = 'lightgray', linewidth = 2, label='Analytic') # plot the analytic phi
+    for i in res:
+        print()
+        print(f"Resolution = {i} points/cm")
+        ic = IterationConstants(resolution=i, is_isotropic=False, doPrint=False) # generate new iteration constants object with the resolution i
+        (eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False) # solve the power iteration
+
+        # determine and store the error
+        _, fluxErr = ic.compare(eigenRes, flux, doPlot=False)
+        phiErrHistDiamond = np.append(phiErrHistDiamond, fluxErr)
+
+        # plot phi
+        if np.isclose(i, 0.02):
+            plt.scatter(ic.x_axis, flux, marker='x', linewidths = 0.8, s = 15, color = 'red', label='0.02 points/cm')
+        if np.isclose(i, 0.03):
+            plt.scatter(ic.x_axis, flux, marker='o', linewidths = 0.8, s = 15, color = 'gold', label='0.03 points/cm')
+        if np.isclose(i, 0.05):
+            plt.scatter(ic.x_axis, flux, marker='1', linewidths = 1.5, s = 50, color = 'teal', label='0.05 points/cm')
+        if np.isclose(i, 0.1):
+            plt.scatter(ic.x_axis, flux, marker='^', linewidths = 0.8, s = 15, color = 'blue', label='0.1 points/cm')
+        if np.isclose(i, 1):
+            plt.plot(ic.x_axis, flux, linestyle = "dotted", color = 'k', label='1 points/cm', linewidth = 1.5)
+    plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+    plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+    plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+    plt.legend(ncol=2,
+        fontsize=11.5,
+        columnspacing=1.5,
+        handletextpad=0.6,
+        frameon=True)
+    plt.tight_layout()
+    plt.show()
+
+
+    # loop2: step
+    # plot for phi
+    plt.figure(figsize=((8,3)))
+    plt.xlim(-51, 51)
+    plt.plot(icBase.x_axis, icBase.fluxAnal, linestyle = "solid", color = 'lightgray', linewidth = 2, label='Analytic') # plot the analytic phi
+    for i in res:
+        print()
+        print(f"Resolution = {i} points/cm")
+        ic = IterationConstants(resolution=i, is_isotropic=False, doPrint=False) # generate new iteration constants object with the resolution i
+        (eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False, closure=1) # solve the power iteration
+
+        # determine and store the error
+        _, fluxErr = ic.compare(eigenRes, flux, doPlot=False)
+        phiErrHistStep = np.append(phiErrHistStep, fluxErr)
+
+        # plot phi
+        if np.isclose(i, 0.02):
+            plt.scatter(ic.x_axis, flux, marker='x', linewidths = 0.8, s = 15, color = 'red', label='0.02 points/cm')
+        if np.isclose(i, 0.03):
+            plt.scatter(ic.x_axis, flux, marker='o', linewidths = 0.8, s = 15, color = 'gold', label='0.03 points/cm')
+        if np.isclose(i, 0.05):
+            plt.scatter(ic.x_axis, flux, marker='1', linewidths = 1.5, s = 50, color = 'teal', label='0.05 points/cm')
+        if np.isclose(i, 0.1):
+            plt.scatter(ic.x_axis, flux, marker='^', linewidths = 0.8, s = 15, color = 'blue', label='0.1 points/cm')
+        if np.isclose(i, 1):
+            plt.plot(ic.x_axis, flux, linestyle = "dotted", color = 'k', label='1 points/cm', linewidth = 1.5)
+    plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+    plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+    plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+    plt.legend(ncol=2,
+        fontsize=11.5,
+        columnspacing=1.5,
+        handletextpad=0.6,
+        frameon=True)
+    plt.tight_layout()
+    plt.show()
+
+
+
+    plt.figure(figsize=((8,3)))
+    plt.plot(res, -phiErrHistDiamond, color='k', linestyle = '-', linewidth = '1', marker = 'o', markersize=3, label = "Diamond-difference")
+    plt.plot(res, np.abs(phiErrHistStep), color='k', linestyle = '--', linewidth = '1', marker = 'x', markersize=3, label = 'Step method')
+    plt.legend(fontsize=11.5)
+    plt.ylabel(r"Max $|\phi^\text{DO} - \phi^\text{Diff}|/\phi^\text{Diff}$", fontsize=12)
+    plt.xlabel(r"Resolution [points/cm]", fontsize=12)
+    plt.tight_layout()
+    plt.show()
+
+# q5()
+
+
+
+
+
+# ----------------------Exercise 6----------------------
+# "Fix the problem length at 100 cm and the quadrature at S12. Modify the solver such that there is a
+# source of neutrons at the left boundary which is isotropic across the half-sphere of directions pointing
+# to the right. The boundary remains vacuum otherwise. Define c = Σs/Σtr as the scattering ratio.
+# Make the slab non-multiplying but keep the value of Σtr fixed as before. Produce a series of flux plots
+# while varying the value of c over a wide range. Comment on the number of iterations required and
+# physical behaviour of the system as c is varied. Also report and comment on any strange numerical
+# behaviour observed. "
+
+
+
+icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=.1, multiplying=False)
+eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
+
+plt.figure(figsize=((8,3)))
+plt.xlim(icC.x_axis[0], icC.x_axis[-1])
+plt.ylim(0, 5e-3)
+plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+plt.legend(ncol=2,
+    fontsize=11.5,
+    columnspacing=1.5,
+    handletextpad=0.6,
+    frameon=True)
+plt.tight_layout()
+plt.show()
+
+
+
+icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=0.07, multiplying=False)
+eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
+
+plt.figure(figsize=((8,3)))
+plt.xlim(icC.x_axis[0], icC.x_axis[-1])
+plt.ylim(0, 5e-3)
+plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+plt.legend(ncol=2,
+    fontsize=11.5,
+    columnspacing=1.5,
+    handletextpad=0.6,
+    frameon=True)
+plt.tight_layout()
+plt.show()
+
+
+
+icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=0.05, multiplying=False)
+eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
+
+plt.figure(figsize=((8,3)))
+plt.xlim(icC.x_axis[0], icC.x_axis[-1])
+plt.ylim(0, 5e-3)
+plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+plt.legend(ncol=2,
+    fontsize=11.5,
+    columnspacing=1.5,
+    handletextpad=0.6,
+    frameon=True)
+plt.tight_layout()
+plt.show()
+
+
+
+
+icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=0.03, multiplying=False)
+eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
+
+plt.figure(figsize=((8,3)))
+plt.xlim(icC.x_axis[0], icC.x_axis[-1])
+plt.ylim(0, 5e-3)
+plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+plt.legend(ncol=2,
+    fontsize=11.5,
+    columnspacing=1.5,
+    handletextpad=0.6,
+    frameon=True)
+plt.tight_layout()
+plt.show()
+
+
+icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=0.01, multiplying=False)
+eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
+
+plt.figure(figsize=((8,3)))
+plt.xlim(icC.x_axis[0], icC.x_axis[-1])
+plt.ylim(0, 5e-3)
+plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+plt.legend(ncol=2,
+    fontsize=11.5,
+    columnspacing=1.5,
+    handletextpad=0.6,
+    frameon=True)
+plt.tight_layout()
+plt.show()
+
+
+icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=0.001, multiplying=False)
+eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
+
+plt.figure(figsize=((8,3)))
+plt.xlim(icC.x_axis[0], icC.x_axis[-1])
+plt.ylim(0, 5e-3)
+plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+plt.legend(ncol=2,
+    fontsize=11.5,
+    columnspacing=1.5,
+    handletextpad=0.6,
+    frameon=True)
+plt.tight_layout()
+plt.show()
