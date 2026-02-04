@@ -283,8 +283,9 @@ class IterationConstants:
         if not multiplying:
             self.slab_macro_f_nu = 0
             self.macro_f_nu_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, self.slab_macro_f_nu)) # matrix to perform the fnu multiplication 
+            self.slab_macro_t -= self.slab_macro_f
         if use_scatter_ratio:
-            self.slab_macro_t -= self.slab_macro_s # ??????????????
+            self.slab_macro_t += (self.slab_macro_tr * scatter_ratio - self.slab_macro_s) 
             self.slab_macro_s = self.slab_macro_tr * scatter_ratio
 
         # print values
@@ -298,6 +299,7 @@ class IterationConstants:
             print("Macroscopic neutron production = " + str(self.slab_macro_f_nu) + " cm-1")
             print("Analytic keff = " + str(self.kAnal))
             print("Analytic phi = A cos x/" + str(self.L))
+            print("Scatter ratio = " + str(self.slab_macro_s/self.slab_macro_tr))
 
     def compare(self, keffIn, phiIn, doPlot = False, reference = False, refKeff = -9999.9, refPhi = np.array([-9999.9])):
         if not reference:
@@ -1175,7 +1177,7 @@ plt.tight_layout()
 plt.show()
 
 
-icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=0.001, multiplying=False)
+icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=1.08, multiplying=False)
 eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
 
 plt.figure(figsize=((8,3)))
