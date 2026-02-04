@@ -12,6 +12,5 @@ print(product_interp_operator(11, 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
 order = 2
 print(np.linspace(-1, 1, order, endpoint=False) + 1 / order) 
 order = 4
-print(np.linspace(-1, 1, order, endpoint=False) + 1 / order) 
 
 

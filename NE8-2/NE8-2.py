@@ -271,8 +271,9 @@ class IterationConstants:
             * (np.pi/(50 + 0.7104/self.slab_macro_tr))**2 + self.slab_macro_a)
 
         # Analytic value of phi, for derivation see: report assignment 1
+        self.anal_x_axis = np.linspace(-100/2, 100/2, self.mesh_points)
         self.L = np.sqrt(self.diffusion_coefficient / ((self.slab_macro_f_nu/self.kAnal) - self.slab_macro_a))
-        self.fluxAnal = np.cos(self.x_axis /self.L)
+        self.fluxAnal = np.cos(self.anal_x_axis /self.L)
         self.fluxAnal *= 1e3 / integrate(self.slab_macro_f_pow * self.fluxAnal, self.delta_x) # normalize to 1000 W/cm2
 
         # print values
@@ -287,22 +288,53 @@ class IterationConstants:
             print("Analytic keff = " + str(self.kAnal))
             print("Analytic phi = A cos x/" + str(self.L))
 
-    def compare(self, keffIn, phiIn):
-        print("Abs err keff = " + str(keffIn - self.kAnal) + " relative err = " + str((keffIn - self.kAnal)/self.kAnal))
+    def compare(self, keffIn, phiIn, doPlot = False, reference = False, refKeff = -9999, refPhi = np.array([-9999])):
+        if not reference:
+            refKeff = self.kAnal
+            refPhi = self.fluxAnal
+        print("Abs err keff = " + str(keffIn - refKeff) + " relative err = " + str((keffIn - refKeff)/refKeff))
         maxAbs = 0
         maxRel = 0
         maxAbsX = -1
         maxRelX = -1
-        for j in range(len(self.x_axis)):
-            diff = np.abs(phiIn[j] - self.fluxAnal[j])
+        for j in range(self.mesh_points):
+            diff = np.abs(phiIn[j] - refPhi[j])
             if diff > maxAbs:
                 maxAbs = diff
                 maxAbsX = self.x_axis[j]
-            if diff / (self.fluxAnal[j]) > maxRel:
-                maxRel = diff / (self.fluxAnal[j])
+            if diff / (refPhi[j]) > maxRel:
+                maxRel = diff / (refPhi[j])
                 maxRelX = self.x_axis[j]
         print("Max absolute flux err = " + str(maxAbs) + " @ " + str(maxAbsX) + ", max relative flux err = " + str(maxRel) + " @ " + str(maxRelX))
-        return (keffIn - self.kAnal, maxRel)
+
+        if doPlot:
+            # VRAAG VERKEERD GELEZEN
+            _, ax1 = plt.subplots(figsize=((8,3)))
+            ax1.set_xlim(self.x_axis[0], self.x_axis[-1])
+            ax1.plot(self.x_axis, phiIn, linestyle = '-', color = 'k', label=f'{np.round((2*self.x_axis[-1]), 2)} cm slab')
+            ax1.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+            ax1.set_xlabel(r"Position, $x$ [cm]", fontsize=12)
+            ax1.set_ylabel(r"Normalized Scalar Flux", fontsize=12)
+            ax1.legend(ncol=2,
+                fontsize=11.5,
+                columnspacing=1.5,
+                handletextpad=0.6,
+                frameon=True, loc = "lower left")
+            ax2 = ax1.twiny()
+            ax2.set_xlim(self.anal_x_axis[0], self.anal_x_axis[-1])
+            ax2.plot(self.anal_x_axis, refPhi, linestyle = '--', color = 'k', label='100.00 cm slab')
+            ax2.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+            ax2.set_xlabel(r"Position (reference), $x$ [cm]", fontsize=12)
+            ax2.set_ylabel(r"Normalized Scalar Flux", fontsize=12)
+            ax2.legend(ncol=2,
+                fontsize=11.5,
+                columnspacing=1.5,
+                handletextpad=0.6,
+                frameon=True, loc = "upper left")
+            plt.tight_layout()
+            plt.show()
+
+        return (keffIn - refKeff, maxRel)
 
 
 
@@ -465,7 +497,9 @@ def solveDiscreteOrdinates(
                         doNormalize = True,
                         powerTarget = 1e3, # W/cm2
                         ic = IterationConstants(resolution=10, is_isotropic=False, doPrint=False),
-                        useRectangle = False
+                        useRectangle = False,
+                        doSavePolar = False,
+                        polarIt = 1300,
                         ) -> tuple[float, int, np_type.NDArray[np.float64]]:
     
     # initialize variables
@@ -537,7 +571,13 @@ def solveDiscreteOrdinates(
         QNext = interpolate((1/2) * (ic.slab_macro_s + ic.slab_macro_f_nu/eigen) * flux)
         fluxNext = np.zeros(ic.mesh_points)[:, np.newaxis]
         for i in range(order):
-            fluxNext += weights[i] * getPsi(abscissae[i])[:, np.newaxis]
+            angFlux = getPsi(abscissae[i])[:, np.newaxis]
+            fluxNext += weights[i] * angFlux
+
+            if doSavePolar and convIt > polarIt:
+                np.save(f"polar_start_{i}_" + saveFile, angFlux[0,0])
+                np.save(f"polar_mid_{i}_" + saveFile, angFlux[int(np.floor(ic.mesh_points/2)),0])
+                np.save(f"polar_end_{i}_" + saveFile, angFlux[-1,0])
             
         SNext = ic.macro_f_nu_matrix @ fluxNext # S_n+1 = F * phi_n+1
         eigenNext = eigen * np.sum(SNext) / np.sum(S) # calculate keff_n+1
@@ -787,31 +827,76 @@ def q2():
 # "Using S12 and your diffusion solver, vary the length of the problem from 5 cm to 5 m. Compare
 # differences in k, the maximum relative difference in the flux, and show the number of iterations required.
 # Comment on the results.
+def q3():
+    lengths = np.linspace(5, 500, 8)
+    kErrHist = np.array([])
+    phiErrHist = np.array([])
+    itHist = np.array([])
 
-lengths = np.linspace(5, 500, 8)
-kErrHist = np.array([])
-phiErrHist = np.array([])
-itHist = np.array([])
+    for l in lengths:
+        icRes = IterationConstants(resolution=100/l, slab_thickness = l, is_isotropic=False, doPrint=True)
+        (keffRes, itRes, phiRes) = solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icRes)
+        print("Slab Length = " + str(l) + " cm --> keff = " + str(keffRes) + " after " + str(itRes) + " iterations")
 
-for l in lengths:
-    icRes = IterationConstants(resolution=100/l, slab_thickness = l, is_isotropic=False, doPrint=True)
-    print(len(icRes.x_axis))
-    (keffRes, itRes, phiRes) = solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icRes)
-    print("Slab Length = " + str(l) + " cm")
-    print("Discrete Ordinates, " + str(12) + " order --> keff = " + str(keffRes))
+        kErr, phiErr = icRes.compare(keffRes, phiRes, doPlot=True)
+        kErrHist = np.append(kErrHist, kErr)
+        phiErrHist = np.append(phiErrHist, phiErr)
+        itHist = np.append(itHist, itRes)
 
-    #kErrHist = np.append(kErrHist, kErr)
-    
-    print()
+        print()
 
-plt.scatter(lengths, kErrHist)
+
+    plt.figure(figsize=((8,3)))
+    plt.plot(lengths, kErrHist, color = 'k', marker = 'o')
+    plt.show()
+
+
+    plt.figure(figsize=((8,3)))
+    plt.plot(lengths, phiErrHist)
+    plt.show()
+
+
+    plt.figure(figsize=((8,3)))
+    plt.plot(lengths, itHist)
+    plt.show()
+
+
+
+
+
+# ----------------------Exercise 4----------------------
+# "Fix the problem length at 100 cm and the quadrature at S12. On the final iteration of your simulation,
+# store and report the angular fluxes in all direction in the centre of your problem and close to one of
+# the edges. Plot these in polar co-ordinates and comment on the results. "
+
+
+solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icBase, doSavePolar=True, polarIt=1370)
+
+angFluxStart = np.array([])
+angFluxMid = np.array([])
+angFluxEnd = np.array([])
+angles = np.array([])
+
+for i in range(12):
+    angFluxStart = np.append(angFluxStart, np.load(f"polar_start_{i}_discrOrd.npy"))
+    angFluxMid = np.append(angFluxMid, np.load(f"polar_mid_{i}_discrOrd.npy"))
+    angFluxEnd = np.append(angFluxEnd, np.load(f"polar_end_{i}_discrOrd.npy"))
+    angles = np.append(angles, (i/12) * (2 * np.pi))
+
+angFluxStart = np.append(angFluxStart, angFluxStart[0])
+angFluxMid = np.append(angFluxMid, angFluxMid[0])
+angFluxEnd = np.append(angFluxEnd, angFluxEnd[0])
+angles = np.append(angles, angles[0])
+
+plt.figure(figsize=((3,3)))
+plt.polar(angles, angFluxStart, color = 'k')
 plt.show()
 
-plt.scatter(lengths, phiErrHist)
+plt.figure(figsize=((3,3)))
+plt.polar(angles, angFluxMid, color = 'k')
 plt.show()
 
-
-
-
-
+plt.figure(figsize=((3,3)))
+plt.polar(angles, angFluxEnd, color = 'k')
+plt.show()
 
