@@ -272,9 +272,10 @@ class IterationConstants:
 
         # Analytic value of phi, for derivation see: report assignment 1
         self.anal_x_axis = np.linspace(-100/2, 100/2, self.mesh_points)
+        self.anal_delta_x = 10/self.mesh_intervals
         self.L = np.sqrt(self.diffusion_coefficient / ((self.slab_macro_f_nu/self.kAnal) - self.slab_macro_a))
         self.fluxAnal = np.cos(self.anal_x_axis /self.L)
-        self.fluxAnal *= 1e3 / integrate(self.slab_macro_f_pow * self.fluxAnal, self.delta_x) # normalize to 1000 W/cm2
+        self.fluxAnal *= 1e3 / integrate(self.slab_macro_f_pow * self.fluxAnal, self.anal_delta_x) # normalize to 1000 W/cm2
 
         # print values
         if doPrint:
@@ -288,7 +289,7 @@ class IterationConstants:
             print("Analytic keff = " + str(self.kAnal))
             print("Analytic phi = A cos x/" + str(self.L))
 
-    def compare(self, keffIn, phiIn, doPlot = False, reference = False, refKeff = -9999, refPhi = np.array([-9999])):
+    def compare(self, keffIn, phiIn, doPlot = False, reference = False, refKeff = -9999.9, refPhi = np.array([-9999.9])):
         if not reference:
             refKeff = self.kAnal
             refPhi = self.fluxAnal
@@ -298,42 +299,33 @@ class IterationConstants:
         maxAbsX = -1
         maxRelX = -1
         for j in range(self.mesh_points):
-            diff = np.abs(phiIn[j] - refPhi[j])
-            if diff > maxAbs:
+            diff = phiIn[j] - refPhi[j]
+            if np.abs(diff) > np.abs(maxAbs):
                 maxAbs = diff
                 maxAbsX = self.x_axis[j]
-            if diff / (refPhi[j]) > maxRel:
+            if np.abs(diff / (refPhi[j])) > np.abs(maxRel):
                 maxRel = diff / (refPhi[j])
                 maxRelX = self.x_axis[j]
-        print("Max absolute flux err = " + str(maxAbs) + " @ " + str(maxAbsX) + ", max relative flux err = " + str(maxRel) + " @ " + str(maxRelX))
 
+        print("Max absolute flux err = " + str(maxAbs) + " @ " + str(maxAbsX) + ", max relative flux err = " + str(maxRel) + " @ " + str(maxRelX))
+        
         if doPlot:
-            # VRAAG VERKEERD GELEZEN
-            _, ax1 = plt.subplots(figsize=((8,3)))
-            ax1.set_xlim(self.x_axis[0], self.x_axis[-1])
-            ax1.plot(self.x_axis, phiIn, linestyle = '-', color = 'k', label=f'{np.round((2*self.x_axis[-1]), 2)} cm slab')
-            ax1.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-            ax1.set_xlabel(r"Position, $x$ [cm]", fontsize=12)
-            ax1.set_ylabel(r"Normalized Scalar Flux", fontsize=12)
-            ax1.legend(ncol=2,
+            plt.subplots(figsize=((8,3)))
+            plt.xlim(self.x_axis[0], self.x_axis[-1])
+            plt.plot(self.x_axis, phiIn, linestyle = '-', color = 'k', label=f'Discete ordinates')
+            plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+            plt.plot(self.x_axis, refPhi, linestyle = '--', color = 'dimgrey', label='Diffusion')
+            plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+            plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+            plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+            plt.legend(ncol=2,
                 fontsize=11.5,
                 columnspacing=1.5,
                 handletextpad=0.6,
-                frameon=True, loc = "lower left")
-            ax2 = ax1.twiny()
-            ax2.set_xlim(self.anal_x_axis[0], self.anal_x_axis[-1])
-            ax2.plot(self.anal_x_axis, refPhi, linestyle = '--', color = 'k', label='100.00 cm slab')
-            ax2.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-            ax2.set_xlabel(r"Position (reference), $x$ [cm]", fontsize=12)
-            ax2.set_ylabel(r"Normalized Scalar Flux", fontsize=12)
-            ax2.legend(ncol=2,
-                fontsize=11.5,
-                columnspacing=1.5,
-                handletextpad=0.6,
-                frameon=True, loc = "upper left")
+                frameon=True)
             plt.tight_layout()
             plt.show()
-
+        
         return (keffIn - refKeff, maxRel)
 
 
@@ -500,6 +492,7 @@ def solveDiscreteOrdinates(
                         useRectangle = False,
                         doSavePolar = False,
                         polarIt = 1300,
+                        closure = 0 # 0 is Diamond-differencing, 1 is step method
                         ) -> tuple[float, int, np_type.NDArray[np.float64]]:
     
     # initialize variables
@@ -528,6 +521,7 @@ def solveDiscreteOrdinates(
 
     def getPsi(abscissa):
         psi = np.zeros(ic.mesh_points) # This will become our output angular nuetron flux. Note that the vacuum boundary condition is already set since the edges of the array are 0   
+        coeff = 2 if closure == 0 else 1
 
         psiPrev = 0
         for it in range(0, ic.mesh_intervals):
@@ -538,10 +532,10 @@ def solveDiscreteOrdinates(
                 iNow = -(it + 1)
                 iNext = -(it + 2)
             
-            psi_int = (ic.delta_x * QNext[iNow] + 2 * np.abs(abscissa) * psiPrev) / (
-                                ic.delta_x * ic.slab_macro_t + 2 * np.abs(abscissa)
+            psi_int = (ic.delta_x * QNext[iNow] + coeff * np.abs(abscissa) * psiPrev) / (
+                                ic.delta_x * ic.slab_macro_t + coeff * np.abs(abscissa)
                             )
-            psi[iNext] = 2 * psi_int - psiPrev
+            psi[iNext] = 2 * psi_int - psiPrev if closure == 0 else psi_int
             psiPrev = psi[iNext]
         return psi
 
@@ -828,40 +822,45 @@ def q2():
 # differences in k, the maximum relative difference in the flux, and show the number of iterations required.
 # Comment on the results.
 def q3():
-    lengths = np.linspace(5, 500, 8)
+    lengths = np.linspace(5, 500, 5)
     kErrHist = np.array([])
     phiErrHist = np.array([])
-    itHist = np.array([])
+    itHistDO = np.array([])
+    itHistDiff = np.array([])
 
     for l in lengths:
         icRes = IterationConstants(resolution=100/l, slab_thickness = l, is_isotropic=False, doPrint=True)
-        (keffRes, itRes, phiRes) = solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icRes)
-        print("Slab Length = " + str(l) + " cm --> keff = " + str(keffRes) + " after " + str(itRes) + " iterations")
+        (keffDO, itDO, phiDO) = solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icRes)
+        print("Discrete Ordinates, Slab Length = " + str(l) + " cm --> keff = " + str(keffDO) + " after " + str(itDO) + " iterations")
+        (keffDiff, itDiff, phiDiff) = solvePowerIteration(convergenceCriteria = 1, doPlot=False, ic=icRes)
+        print("Diffusion, Slab Length = " + str(l) + " cm --> keff = " + str(keffDiff) + " after " + str(itDiff) + " iterations")
 
-        kErr, phiErr = icRes.compare(keffRes, phiRes, doPlot=True)
+        kErr, phiErr = icRes.compare(keffDO, phiDO, reference=True, refKeff=keffDiff, refPhi=phiDiff, doPlot=True)
         kErrHist = np.append(kErrHist, kErr)
         phiErrHist = np.append(phiErrHist, phiErr)
-        itHist = np.append(itHist, itRes)
-
+        itHistDO = np.append(itHistDO, itDO)
+        itHistDiff = np.append(itHistDiff, itDiff)
         print()
 
 
     plt.figure(figsize=((8,3)))
-    plt.plot(lengths, kErrHist, color = 'k', marker = 'o')
+    plt.plot(lengths, kErrHist, color='k', linestyle = '-', linewidth = '1.5', marker = 'o')
     plt.show()
 
 
     plt.figure(figsize=((8,3)))
-    plt.plot(lengths, phiErrHist)
+    plt.plot(lengths, phiErrHist, color='k', linestyle = '-', linewidth = '1.5', marker = 'o')
     plt.show()
 
 
     plt.figure(figsize=((8,3)))
-    plt.plot(lengths, itHist)
+    plt.plot(lengths, itHistDO, color='k', linestyle = '-', linewidth = '1.5', marker = 'o')
+    plt.plot(lengths, itHistDiff)
     plt.show()
 
+q3()
 
-
+exit()
 
 
 # ----------------------Exercise 4----------------------
@@ -869,34 +868,50 @@ def q3():
 # store and report the angular fluxes in all direction in the centre of your problem and close to one of
 # the edges. Plot these in polar co-ordinates and comment on the results. "
 
+def q4():
+    solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icBase, doSavePolar=True, polarIt=1370)
 
-solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icBase, doSavePolar=True, polarIt=1370)
+    angFluxStart = np.array([])
+    angFluxMid = np.array([])
+    angFluxEnd = np.array([])
+    abscissae, _ = leggauss(12)
+    angles = np.arccos(abscissae)
 
-angFluxStart = np.array([])
-angFluxMid = np.array([])
-angFluxEnd = np.array([])
-angles = np.array([])
+    for i in range(12):
+        angFluxStart = np.append(angFluxStart, np.load(f"polar_start_{i}_discrOrd.npy"))
+        angFluxMid = np.append(angFluxMid, np.load(f"polar_mid_{i}_discrOrd.npy"))
+        angFluxEnd = np.append(angFluxEnd, np.load(f"polar_end_{i}_discrOrd.npy"))
 
-for i in range(12):
-    angFluxStart = np.append(angFluxStart, np.load(f"polar_start_{i}_discrOrd.npy"))
-    angFluxMid = np.append(angFluxMid, np.load(f"polar_mid_{i}_discrOrd.npy"))
-    angFluxEnd = np.append(angFluxEnd, np.load(f"polar_end_{i}_discrOrd.npy"))
-    angles = np.append(angles, (i/12) * (2 * np.pi))
+    angFluxStart = np.append(angFluxStart, np.flip(angFluxStart))
+    angFluxMid = np.append(angFluxMid, np.flip(angFluxMid))
+    angFluxEnd = np.append(angFluxEnd, np.flip(angFluxEnd))
+    angles = np.append(angles, -np.flip(angles))
 
-angFluxStart = np.append(angFluxStart, angFluxStart[0])
-angFluxMid = np.append(angFluxMid, angFluxMid[0])
-angFluxEnd = np.append(angFluxEnd, angFluxEnd[0])
-angles = np.append(angles, angles[0])
+    angFluxStart = np.append(angFluxStart, angFluxStart[0])
+    angFluxMid = np.append(angFluxMid, angFluxMid[0])
+    angFluxEnd = np.append(angFluxEnd, angFluxEnd[0])
+    angles = np.append(angles, angles[0])
 
-plt.figure(figsize=((3,3)))
-plt.polar(angles, angFluxStart, color = 'k')
-plt.show()
+    plt.figure(figsize=((4,4)))
+    plt.polar(angles, angFluxStart, color = 'k', linewidth = 1)
+    plt.fill(angles, angFluxStart, alpha=0.3, color = 'gray') 
+    plt.yticks([0.02, 0.04, 0.06, 0.08])
+    plt.show()
 
-plt.figure(figsize=((3,3)))
-plt.polar(angles, angFluxMid, color = 'k')
-plt.show()
+    plt.figure(figsize=((4,4)))
+    plt.polar(angles, angFluxMid, color = 'k')
+    plt.fill(angles, angFluxMid, alpha=0.3, color = 'gray', linewidth = 1)
+    plt.yticks([0.3, 0.6, 0.9, 1.2])
+    plt.show()
 
-plt.figure(figsize=((3,3)))
-plt.polar(angles, angFluxEnd, color = 'k')
-plt.show()
+    plt.figure(figsize=((4,4)))
+    plt.polar(angles, angFluxEnd, color = 'k', linewidth = 1)
+    plt.fill(angles, angFluxEnd, alpha=0.3, color = 'gray')
+    plt.yticks([0.02, 0.04, 0.06, 0.08])
+    plt.show()
+
+#q4()
+
+
+
 
