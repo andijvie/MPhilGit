@@ -126,6 +126,7 @@ def integrate(signal, delta):
 
 
 
+
 # ----------------------Element class----------------------
 # - This class stores the properties of the elements present in the assignment
 class Element:
@@ -463,7 +464,8 @@ def solveDiscreteOrdinates(
                         saveFile = 'discrOrd.npy',
                         doNormalize = True,
                         powerTarget = 1e3, # W/cm2
-                        ic = IterationConstants(resolution=10, is_isotropic=False, doPrint=False)
+                        ic = IterationConstants(resolution=10, is_isotropic=False, doPrint=False),
+                        useRectangle = False
                         ) -> tuple[float, int, np_type.NDArray[np.float64]]:
     
     # initialize variables
@@ -475,6 +477,9 @@ def solveDiscreteOrdinates(
     eigenNext = eigenGuess # keff_n+1
     eigen = None # keff_n
     abscissae, weights = leggauss(order)
+    if useRectangle:
+        weights = np.full(order, 2/order)
+        abscissae = np.linspace(-1, 1, order, endpoint=False) + 1 / order
     QNext = np.array([])
     eigenHist = np.array([eigenNext]) # stores the histary of keff iterations
     fluxHist = np.empty((ic.mesh_points, 0)) # stores the history of phi iterations
@@ -489,7 +494,7 @@ def solveDiscreteOrdinates(
 
     def getPsi(abscissa):
         psi = np.zeros(ic.mesh_points) # This will become our output angular nuetron flux. Note that the vacuum boundary condition is already set since the edges of the array are 0   
-        
+
         psiPrev = 0
         for it in range(0, ic.mesh_intervals):
             if abscissa > 0:
@@ -585,7 +590,7 @@ def solveDiscreteOrdinates(
     for i in range(len(fluxHist_norm[0])):
         fluxHist_norm[:, i] /= integrate(fluxHist_norm[:,i], ic.delta_x)
     plt.figure(figsize=((8,3)))
-    plt.xlim(-50, 50)
+    plt.xlim(ic.x_axis[0], ic.x_axis[-1])
     plt.plot(ic.x_axis, fluxHist_norm[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha=1, label='Iteration 1 (guess)')
     #plt.plot(ic.x_axis, fluxHist_norm[:, int(np.floor(len(eigenHist)/100))], linestyle = "dashdot", color = 'gold', label='Iteration 10')
     #plt.plot(ic.x_axis, fluxHist_norm[:, int(np.floor(len(eigenHist)/10))], linestyle = "dashed", color = 'cyan', label='Iteration 100')
@@ -647,46 +652,45 @@ def lpf(order = 12, doOutput = False):
 #lp.run('solvePowerIteration(convergenceCriteria = 1, doPlot=False, ic=icBase)')
 #lp.print_stats()
 
+def q1():
+    lpf(order = 2, doOutput = True)
+    lpf(order = 6, doOutput = True)
+    lpf(order = 12, doOutput = True)
 
-#lpf(order = 2, doOutput = True)
-#lpf(order = 6, doOutput = True)
-#lpf(order = 12, doOutput = True)
+    eigenHist_powIt = np.load("eigen_powIt.npy")
+    eigenHist_DiscOrd = np.load("eigen_discrOrd.npy")
 
-
-eigenHist_powIt = np.load("eigen_powIt.npy")
-eigenHist_DiscOrd = np.load("eigen_discrOrd.npy")
-
-plt.figure(figsize=((8,3)))
-plt.plot(np.arange(len(eigenHist_DiscOrd)) + 1, eigenHist_DiscOrd, color = 'k', linewidth = 1.5, label="Discrete ordinates $k_{eff}$ iterations", zorder=0)
-plt.plot(np.arange(len(eigenHist_powIt)) + 1, eigenHist_powIt, color = 'k', linewidth = 1.5, label="Diffusion $k_{eff}$ iterations", linestyle = '--', zorder=0)
-plt.scatter([len(eigenHist_DiscOrd)], [eigenHist_DiscOrd[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, label=r"$k_{eff}$ final values", zorder=10)
-plt.scatter([len(eigenHist_powIt)], [eigenHist_powIt[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, zorder=10)
-plt.axvline(x=len(eigenHist_DiscOrd), linestyle = ':', color = 'grey', linewidth='1')
-plt.axvline(x=len(eigenHist_powIt), linestyle = ':', color = 'grey', linewidth='1')
-plt.legend(fontsize=11.5)
-plt.text(
-    0.12, 0.9, 
-    f"{len(eigenHist_powIt)} iterations\n",
-    transform=plt.gca().transAxes,
-    ha="left",
-    va="top",
-    fontsize=14,
-    linespacing=1.5
-)  
-plt.text(
-    0.965, 0.9, 
-    f"{len(eigenHist_DiscOrd)} iterations\n",
-    transform=plt.gca().transAxes,
-    ha="right",
-    va="top",
-    fontsize=14,
-    linespacing=1.5
-)  
-plt.xlim((0, 1400))
-plt.xlabel("Iteration", fontsize=12)
-plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
-plt.tight_layout()
-plt.show()
+    plt.figure(figsize=((8,3)))
+    plt.plot(np.arange(len(eigenHist_DiscOrd)) + 1, eigenHist_DiscOrd, color = 'k', linewidth = 1.5, label="Discrete ordinates $k_{eff}$ iterations", zorder=0)
+    plt.plot(np.arange(len(eigenHist_powIt)) + 1, eigenHist_powIt, color = 'k', linewidth = 1.5, label="Diffusion $k_{eff}$ iterations", linestyle = '--', zorder=0)
+    plt.scatter([len(eigenHist_DiscOrd)], [eigenHist_DiscOrd[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, label=r"$k_{eff}$ final values", zorder=10)
+    plt.scatter([len(eigenHist_powIt)], [eigenHist_powIt[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, zorder=10)
+    plt.axvline(x=len(eigenHist_DiscOrd), linestyle = ':', color = 'grey', linewidth='1')
+    plt.axvline(x=len(eigenHist_powIt), linestyle = ':', color = 'grey', linewidth='1')
+    plt.legend(fontsize=11.5)
+    plt.text(
+        0.12, 0.9, 
+        f"{len(eigenHist_powIt)} iterations\n",
+        transform=plt.gca().transAxes,
+        ha="left",
+        va="top",
+        fontsize=14,
+        linespacing=1.5
+    )  
+    plt.text(
+        0.965, 0.9, 
+        f"{len(eigenHist_DiscOrd)} iterations\n",
+        transform=plt.gca().transAxes,
+        ha="right",
+        va="top",
+        fontsize=14,
+        linespacing=1.5
+    )  
+    plt.xlim((0, 1400))
+    plt.xlabel("Iteration", fontsize=12)
+    plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
+    plt.tight_layout()
+    plt.show()
 
 
 
@@ -699,8 +703,82 @@ plt.show()
 # Discrete Ordinates note: study the differences in the estimation of k between various orders of the
 # Gauss-Legendre quadrature and a quadrature with equal spacing. Comment on the results."
 
-ic30 = IterationConstants(resolution=10, slab_thickness = 30, is_isotropic=False, doPrint=True)
+def q2():
+    ic30 = IterationConstants(resolution=10, slab_thickness = 30, is_isotropic=False, doPrint=False)
+    ordersRect = np.array([2, 4, 6, 8, 10, 12])
+    ordersLeg = np.array([2, 4, 6, 8, 10, 12])
 
+    for order in ordersLeg:
+        (keffLeg, _,  _) = solveDiscreteOrdinates(convergenceCriteria=1, order=order, doPlot=False, ic=ic30, doSave=True, saveFile=f'leg_S_{order}.npy', useRectangle=False)
+        print("Legendre, " + str(order) + " order --> keff = " + str(keffLeg))
+        keffHist = np.load(f"eigen_leg_S_{order}.npy")
+        print()
+
+    for order in ordersRect:
+        (keffRect, _,  _) = solveDiscreteOrdinates(convergenceCriteria=1, order=order, doPlot=False, ic=ic30, doSave=True, saveFile=f'rect_S_{order}.npy', useRectangle=True)
+        print("Rectangle, " + str(order) + " order --> keff = " + str(keffRect))
+        print()
+
+
+
+    plt.figure(figsize=((8,3)))
+
+    eigenHistPlot = np.load(f"eigen_rect_S_2.npy")
+    plt.plot(np.arange(len(eigenHistPlot)) + 1, eigenHistPlot, color = 'grey', linewidth = 1, label="Uniform order 2", zorder=0, linestyle = '--')
+    plt.scatter([len(eigenHistPlot)], [eigenHistPlot[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, zorder=10)
+    plt.axvline(x=len(eigenHistPlot), linestyle = ':', color = 'grey', linewidth='1')
+
+    eigenHistPlot = np.load(f"eigen_rect_S_12.npy")
+    plt.plot(np.arange(len(eigenHistPlot)) + 1, eigenHistPlot, color = 'grey', linewidth = 1, label="Uniform order 12", zorder=0)
+    plt.scatter([len(eigenHistPlot)], [eigenHistPlot[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, zorder=10)
+    plt.axvline(x=len(eigenHistPlot), linestyle = ':', color = 'grey', linewidth='1')
+
+    eigenHistPlot = np.load(f"eigen_leg_S_2.npy")
+    plt.plot(np.arange(len(eigenHistPlot)) + 1, eigenHistPlot, color = 'k', linewidth = 1, zorder=0, linestyle = '--', label="Gauss-Legendre order 2")
+    plt.scatter([len(eigenHistPlot)], [eigenHistPlot[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, zorder=10)
+    plt.axvline(x=len(eigenHistPlot), linestyle = ':', color = 'grey', linewidth='1')
+
+    eigenHistPlot = np.load(f"eigen_leg_S_12.npy")
+    plt.plot(np.arange(len(eigenHistPlot)) + 1, eigenHistPlot, color = 'k', linewidth = 1, label="Gauss-Legendre order 12 (reference)", zorder=0)
+    plt.scatter([len(eigenHistPlot)], [eigenHistPlot[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, zorder=10, label=r"$k_{eff}$ final values")
+    plt.axvline(x=len(eigenHistPlot), linestyle = ':', color = 'grey', linewidth='1')
+
+    plt.legend(fontsize=11.5)
+    plt.xlim((0, 240))
+    plt.xlabel("Iteration", fontsize=12)
+    plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
+    plt.tight_layout()
+    plt.show()
+
+    plt.figure(figsize=((8,3)))
+
+    labeled = False
+    for i in ordersLeg[:-1]:
+        eigenPlot = np.load(f"eigen_leg_S_{i}.npy")[-1]
+        if not labeled:
+            plt.scatter([i], [eigenPlot], marker='x', color = 'k', label = r"Gauss-Legendre", zorder=10)
+            labeled = True
+        else:
+            plt.scatter([i], [eigenPlot], marker='x', color = 'k', zorder=10)
+    labeled = False
+    for i in ordersRect:
+        eigenPlot = np.load(f"eigen_rect_S_{i}.npy")[-1]
+        if not labeled:
+            plt.scatter([i], [eigenPlot], marker='o', color = 'k', label = r"Uniform", zorder=10)
+            labeled = True
+        else:
+            plt.scatter([i], [eigenPlot], marker='o', color = 'k', zorder=10)
+
+    eigenRef = np.load(f"eigen_leg_S_12.npy")[-1]
+    plt.scatter([i], [eigenRef], marker='x', color = 'dimgrey', linewidth = 2, label = r"Reference solution", zorder=10)
+    plt.axhline(y=eigenRef, linestyle = ':', color = 'grey', linewidth='1', zorder=5)
+
+    plt.legend(fontsize=11.5)
+    plt.xlabel("Order", fontsize=12)
+    plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
+    plt.tight_layout()
+
+    plt.show()
 
 
 
@@ -713,14 +791,17 @@ ic30 = IterationConstants(resolution=10, slab_thickness = 30, is_isotropic=False
 lengths = np.linspace(5, 500, 8)
 kErrHist = np.array([])
 phiErrHist = np.array([])
+itHist = np.array([])
 
 for l in lengths:
-    icRes = IterationConstants(resolution=l/100, slab_thickness = l, is_isotropic=False, doPrint=True)
-    (SEigenResultDO, SConvNormalDO, SFluxResultDO) = solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icRes)
+    icRes = IterationConstants(resolution=100/l, slab_thickness = l, is_isotropic=False, doPrint=True)
+    print(len(icRes.x_axis))
+    (keffRes, itRes, phiRes) = solveDiscreteOrdinates(convergenceCriteria = 1, order=12, doPlot=False, ic=icRes)
     print("Slab Length = " + str(l) + " cm")
-    print("Discrete Ordinates, " + str(12) + " order --> keff = " + str(SEigenResultDO))
+    print("Discrete Ordinates, " + str(12) + " order --> keff = " + str(keffRes))
 
-    kErrHist = np.append(kErrHist, kErr)
+    #kErrHist = np.append(kErrHist, kErr)
+    
     print()
 
 plt.scatter(lengths, kErrHist)
@@ -728,6 +809,8 @@ plt.show()
 
 plt.scatter(lengths, phiErrHist)
 plt.show()
+
+
 
 
 
