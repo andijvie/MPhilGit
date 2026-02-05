@@ -1,1 +1,2 @@
-0.01,
+er_ratios[idx]
+    itHist = itHist[idx]

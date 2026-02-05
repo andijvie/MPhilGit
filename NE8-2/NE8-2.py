@@ -552,9 +552,8 @@ def solveDiscreteOrdinates(
                                 ic.delta_x * ic.slab_macro_t + coeff * np.abs(abscissa)
                             )
             
-            if psi_int < 0:
-                print("AAAAAAAAAAA")
-                exit()
+            #if psi_int < 0:
+            #    print("AAAAAAAAAAA")
 
             psi[iNext] = 2 * psi_int - psiPrev if closure == 0 else psi_int
             psiPrev = psi[iNext]
@@ -1077,120 +1076,73 @@ def q5():
 # behaviour observed. "
 
 
+def q6():
+    #scatter_ratios = [0.1, 0.3, 0.5, 1, 3, 5]
+    scatter_ratios = []
+    color = ['k', 'dimgrey', 'darkgrey', 'k', 'dimgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey']
+    linestyle = ['-', '-', '-', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--']
+    itHist = np.array([])
+    plt.figure(figsize=((8,3)))
 
-icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=.1, multiplying=False)
-eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
+    for i in range(len(scatter_ratios)):
+        c = scatter_ratios[i]
+        icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=c, multiplying=False)
+        eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=False, ic=icC, leftSource=.5, doNormalize=False)
+        itHist = np.append(itHist, it)
+        #plt.xlim(-49.5, -40)
+        plt.xlim(icC.x_axis[0], icC.x_axis[-1])
+        plt.ylim(-0.1, 2)
+        plt.plot(icC.x_axis, flux, linestyle = linestyle[i], color = color[i], linewidth = 1, label=f'c={c}')
 
-plt.figure(figsize=((8,3)))
-plt.xlim(icC.x_axis[0], icC.x_axis[-1])
-plt.ylim(0, 5e-3)
-plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
-plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
-plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
-plt.legend(ncol=2,
-    fontsize=11.5,
-    columnspacing=1.5,
-    handletextpad=0.6,
-    frameon=True)
-plt.tight_layout()
-plt.show()
+    plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+    plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+    plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+    plt.legend(ncol=1,
+        fontsize=11.5,
+        columnspacing=1.5,
+        handletextpad=0.6,
+        frameon=True)
+    plt.tight_layout()
+    plt.show()
 
+    #np.save("scatter_1.npy", scatter_ratios)
+    #np.save("iterations_1.npy", itHist)
+    #np.save("scatter_2.npy", scatter_ratios)
+    #np.save("iterations_2.npy", itHist)
+    #np.save("scatter_3.npy", scatter_ratios)
+    #np.save("iterations_3.npy", itHist)
+    #np.save("scatter_4.npy", scatter_ratios)
+    #np.save("iterations_4.npy", itHist)
+    #np.save("scatter_5.npy", scatter_ratios)
+    #np.save("iterations_5.npy", itHist)
+    
+    scatter_ratios = np.array([])
+    itHist = np.array([])
+    
+    scatter_ratios = np.append(scatter_ratios,np.load("scatter_1.npy"))
+    itHist = np.append(itHist, np.load("iterations_1.npy"))
+    scatter_ratios = np.append(scatter_ratios,np.load("scatter_2.npy"))
+    itHist = np.append(itHist, np.load("iterations_2.npy"))
+    scatter_ratios = np.append(scatter_ratios,np.load("scatter_3.npy"))
+    itHist = np.append(itHist, np.load("iterations_3.npy"))
+    scatter_ratios = np.append(scatter_ratios,np.load("scatter_4.npy"))
+    itHist = np.append(itHist, np.load("iterations_4.npy"))
+    scatter_ratios = np.append(scatter_ratios,np.load("scatter_5.npy"))
+    itHist = np.append(itHist, np.load("iterations_5.npy"))
+    
+    order = np.argsort(scatter_ratios)
+    scatter_ratios = scatter_ratios[order]
+    itHist = itHist[order]
 
+    plt.figure(figsize=((8,3)))
+    plt.plot(scatter_ratios, itHist, color='k', linestyle = '-', linewidth = '1.5', marker = 'o', label="Diffusion")
+    plt.legend(fontsize=11.5)
+    plt.ylabel("Iterations", fontsize=12)
+    plt.xlabel(r"Scattering Ratio, $c$", fontsize=12)
+    plt.xscale('log')
+    plt.yscale('log')
+    plt.tight_layout()
+    plt.show()
 
-icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=0.07, multiplying=False)
-eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
+#q6()
 
-plt.figure(figsize=((8,3)))
-plt.xlim(icC.x_axis[0], icC.x_axis[-1])
-plt.ylim(0, 5e-3)
-plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
-plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
-plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
-plt.legend(ncol=2,
-    fontsize=11.5,
-    columnspacing=1.5,
-    handletextpad=0.6,
-    frameon=True)
-plt.tight_layout()
-plt.show()
-
-
-
-icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=0.05, multiplying=False)
-eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
-
-plt.figure(figsize=((8,3)))
-plt.xlim(icC.x_axis[0], icC.x_axis[-1])
-plt.ylim(0, 5e-3)
-plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
-plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
-plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
-plt.legend(ncol=2,
-    fontsize=11.5,
-    columnspacing=1.5,
-    handletextpad=0.6,
-    frameon=True)
-plt.tight_layout()
-plt.show()
-
-
-
-
-icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=0.03, multiplying=False)
-eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
-
-plt.figure(figsize=((8,3)))
-plt.xlim(icC.x_axis[0], icC.x_axis[-1])
-plt.ylim(0, 5e-3)
-plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
-plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
-plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
-plt.legend(ncol=2,
-    fontsize=11.5,
-    columnspacing=1.5,
-    handletextpad=0.6,
-    frameon=True)
-plt.tight_layout()
-plt.show()
-
-
-icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=0.01, multiplying=False)
-eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
-
-plt.figure(figsize=((8,3)))
-plt.xlim(icC.x_axis[0], icC.x_axis[-1])
-plt.ylim(0, 5e-3)
-plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
-plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
-plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
-plt.legend(ncol=2,
-    fontsize=11.5,
-    columnspacing=1.5,
-    handletextpad=0.6,
-    frameon=True)
-plt.tight_layout()
-plt.show()
-
-
-icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=1.08, multiplying=False)
-eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
-
-plt.figure(figsize=((8,3)))
-plt.xlim(icC.x_axis[0], icC.x_axis[-1])
-plt.ylim(0, 5e-3)
-plt.plot(icC.x_axis, flux, linestyle = "solid", color = 'k', label='c=???')
-plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
-plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
-plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
-plt.legend(ncol=2,
-    fontsize=11.5,
-    columnspacing=1.5,
-    handletextpad=0.6,
-    frameon=True)
-plt.tight_layout()
-plt.show()
