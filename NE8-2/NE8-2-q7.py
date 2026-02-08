@@ -127,9 +127,8 @@ def solveDiscreteOrdinates_2group(
                         saveFile = 'discrOrd.npy',
                         doNormalize = True,
                         powerTarget = 1e3, # W/cm2
-                        ic = IterationConstants(resolution=10, is_isotropic=False, doPrint=False),
                         closure = 0, # 0 is Diamond-differencing, 1 is step method
-                        ) -> tuple[float, int, np_type.NDArray[np.float64]]:
+                        ) -> tuple[float, int, np_type.NDArray[np.float64], np_type.NDArray[np.float64]]:
     
     # initialize variables
     if fluxGuess1 is None or fluxGuess2 is None:
@@ -139,11 +138,12 @@ def solveDiscreteOrdinates_2group(
         fluxNext1 = fluxGuess1[:,np.newaxis] # phi_n+1 group 1
         fluxNext2 = fluxGuess2[:,np.newaxis] # phi_n+1 group 2
         
-    flux1 = np.array([]) # phi_n
+    flux1 = np.array([]) # phi_n group 1
+    flux2 = np.array([]) # phi_n group 2
     eigenNext = eigenGuess # keff_n+1
     eigen = None # keff_n
     abscissae, weights = leggauss(order)
-    QNext = np.array([])
+    QNext1 = np.array([])
     eigenHist = np.array([eigenNext]) # stores the histary of keff iterations
     fluxHist1 = np.empty((mesh_points, 0)) # stores the history of phi iterations
     fluxHist1 = np.append(fluxHist1, fluxNext1, axis=1) # add first guess
@@ -153,11 +153,13 @@ def solveDiscreteOrdinates_2group(
     convIt = 1 # counts number of iterations
 
     # initialize the S vector
-    S = np.array([]) # S_n
-    SNext = macro_f_nu_matrix_1 @ fluxNext1 # S_n+1
+    S1 = np.array([]) # S_n
+    S2 = np.array([]) # S_n
+    SNext1 = macro_f_nu_matrix_1 @ fluxNext1 # S_n+1
+    SNext2 = macro_f_nu_matrix_1 @ fluxNext1 # S_n+1
 
 
-    def getPsi(abscissa):
+    def getPsi(abscissa, QNext, slab_macro_t):
         psi = np.zeros(mesh_points) # This will become our output angular nuetron flux. Note that the vacuum boundary condition is already set since the edges of the array are 0   
         coeff = 2 if closure == 0 else 1
         psi[0] = .0
@@ -172,11 +174,11 @@ def solveDiscreteOrdinates_2group(
                 iNext = -(it + 2)
             
             psi_int = (delta_x * QNext[iNow] + coeff * np.abs(abscissa) * psiPrev) / (
-                                delta_x * slab_macro_t_1 + coeff * np.abs(abscissa)
+                                delta_x * slab_macro_t + coeff * np.abs(abscissa)
                             )
             
-            #if psi_int < 0:
-            #    print("AAAAAAAAAAA")
+            if psi_int < 0:
+                print("WARNING in psi sweep: less than 0!")
 
             psi[iNext] = 2 * psi_int - psiPrev if closure == 0 else psi_int
             psiPrev = psi[iNext]
@@ -191,9 +193,12 @@ def solveDiscreteOrdinates_2group(
         nonlocal loss
         if convergenceCriteria == 0:
             loss = abs((eigenNext - eigen)/eigen) # |k(n+1) - k(n) / k(n)| < 0.00001
-        else:
-            loss = np.max(np.abs(flux1[0] - fluxNext1[0])/flux1[0]) # max|phi(n+1) - phi(n) / phi(n)| < 0.00001
-        print(loss)
+
+        else: # max|phi(n+1) - phi(n) / phi(n)| < 0.00001
+            loss1 = np.max(np.abs(flux1[0] - fluxNext1[0])/flux1[0]) # group 1
+            loss2 = np.max(np.abs(flux2[0] - fluxNext2[0])/flux2[0]) # group 2
+            loss = max(loss1, loss2)
+        print("loss group 1 = " + str(loss1) + ", group 2 = " + str(loss2))
         return loss < 0.00001 # return if converged
 
 
@@ -202,58 +207,94 @@ def solveDiscreteOrdinates_2group(
         # update keff, phi and S
         eigen = eigenNext 
         flux1 = fluxNext1
-        S = SNext
+        flux2 = fluxNext2
+        S1 = SNext1
+        S2 = SNext2
 
         # calculate n+1 values of keff, phi and S   
-        QNext = interpolate((1/2) * (ic.slab_macro_s + slab_macro_f_nu_1/(eigen + 1e-99)) * flux1)
+        QNext1 = interpolate((1/2) * (
+                flux1 * (
+                    slab_macro_s_1to1 + slab_macro_f_nu_1/(eigen + 1e-99) * frac_1
+                ) + flux2 * (
+                    slab_macro_s_2to1 + slab_macro_f_nu_2/(eigen + 1e-99) * frac_1
+                )
+            ))
+        QNext2 = interpolate((1/2) * (
+                flux1 * (
+                    slab_macro_s_1to2 + slab_macro_f_nu_1/(eigen + 1e-99) * frac_2
+                ) + flux2 * (
+                    slab_macro_s_2to2 + slab_macro_f_nu_2/(eigen + 1e-99) * frac_2
+                )
+            ))
         fluxNext1 = np.zeros(mesh_points)[:, np.newaxis]
+        fluxNext2 = np.zeros(mesh_points)[:, np.newaxis]
         for i in range(order):
-            angFlux = getPsi(abscissae[i])[:, np.newaxis]
-            fluxNext1 += weights[i] * angFlux
+            angFlux1 = getPsi(abscissae[i], QNext1, slab_macro_t_1)[:, np.newaxis]
+            angFlux2 = getPsi(abscissae[i], QNext2, slab_macro_t_2)[:, np.newaxis]
+            fluxNext1 += weights[i] * angFlux1
+            fluxNext2 += weights[i] * angFlux2
             
-        SNext = macro_f_nu_matrix_1 @ fluxNext1 # S_n+1 = F * phi_n+1
-        eigenNext = eigen * np.sum(SNext) / (np.sum(S) + 1e-99) # calculate keff_n+1
+        SNext1 = macro_f_nu_matrix_1 @ fluxNext1 # S_n+1 = F * phi_n+1
+        SNext2 = macro_f_nu_matrix_2 @ fluxNext2 # S_n+1 = F * phi_n+1
+        eigenNext = eigen * np.sum(SNext1 + SNext2) / (np.sum(S1 + S2) + 1e-99) # calculate keff_n+1
 
         # store values
         if doPlot or doSave: 
             eigenHist = np.append(eigenHist, eigenNext) 
-            if doNormalize:
+
+            if doNormalize: # normalize phi if necessary
+
+                # calculate the fraction by which the power is different from the target
                 powerScaling = powerTarget / (integrate(slab_macro_f_pow_1 * fluxNext1, delta_x) + integrate(slab_macro_f_pow_2 * fluxNext2, delta_x))
+
+                # normalize and store
                 fluxHist1 = np.append(fluxHist1, fluxNext1 * powerScaling, axis=1)
-            else:
+                fluxHist2 = np.append(fluxHist2, fluxNext2 * powerScaling, axis=1) 
+            
+            else: # store
                 fluxHist1 = np.append(fluxHist1, fluxNext1, axis=1)
+                fluxHist2 = np.append(fluxHist2, fluxNext2, axis=1)
+
 
         convIt += 1 # count iteration
         
 
     if doNormalize: # normalize phi if necessary
+
+        # calculate the fraction by which the power is different from the target
         powerScaling = powerTarget / (integrate(slab_macro_f_pow_1 * fluxNext1, delta_x) + integrate(slab_macro_f_pow_2 * fluxNext2, delta_x))
-        fluxNext1 *= powerScaling # normalize by the fraction such that the power equals the target
+        
+        # normalize by the fraction such that the power equals the target
+        fluxNext1 *= powerScaling 
+        fluxNext2 *= powerScaling
+
+        # if necessary, also normalize the power int he first iteration
         if doPlot:
             powerScaling = powerTarget / (integrate(slab_macro_f_pow_1 * fluxHist1[:,0], delta_x) + integrate(slab_macro_f_pow_2 * fluxHist2[:,0], delta_x))
             fluxHist1[:,0] *= powerScaling
+            fluxHist2[:,0] *= powerScaling
 
     # save to file if necessary
     if doSave:
         np.save("eigen_" + saveFile, eigenHist)
-        np.save("flux_" + saveFile, fluxHist1)
+        np.save("flux1_" + saveFile, fluxHist1)
+        np.save("flux2_" + saveFile, fluxHist2)
 
     # return values found
     if not doPlot:
-        return (float(eigenNext), convIt, fluxNext1[:,0]) 
+        return (float(eigenNext), convIt, fluxNext1[:,0], fluxNext2[:,0]) 
     
     
-    
-    
+
     # plot the iterations of k
     plt.figure(figsize=((8,3)))
-    plt.plot(np.arange(len(eigenHist)) + 1, eigenHist, color = 'k', linewidth = 1.5, label="Interpolated values")
-    plt.scatter(np.arange(len(eigenHist)) + 1, eigenHist, color='darkgray', marker='x', linewidths = 0.8, s = 15, label=r"$k_{eff}$ iteration values")
-    plt.scatter([len(eigenHist)], [eigenHist[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, label=r"$k_{eff}$ final value")
-    plt.legend(fontsize=11.5)
+    plt.plot(np.arange(len(eigenHist[:300])) + 1, eigenHist[:300], color = 'k', linewidth = 1.5, label="Interpolated values")
+    #plt.scatter(np.arange(len(eigenHist)) + 1, eigenHist, color='darkgray', marker='x', linewidths = 0.8, s = 15, label=r"$k_{eff}$ iteration values")
+    #plt.scatter([len(eigenHist)], [eigenHist[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, label=r"$k_{eff}$ final value")
+    #plt.legend(fontsize=11.5)
     plt.text(
         0.6, 0.83, 
-        r"Final $k_{eff}$ = " + f"{eigenHist[-1]:.7f}\nError in " + r"$k_{eff}$" + f" = {abs((eigenNext - eigen)/(eigen + 1e-99)):.7f}\nIterations = {len(eigenHist)}",
+        r"Final $k_{eff}$ = " + f"{eigenHist[-1]:.7f}\nIterations = {len(eigenHist)}",
         transform=plt.gca().transAxes,
         ha="left",
         va="top",
@@ -272,9 +313,30 @@ def solveDiscreteOrdinates_2group(
     if len(fluxHist1[0, :]) > 600:
         plt.plot(x_axis, fluxHist1[:, 10], linestyle = "dashdot", color = 'gold', label='Iteration 10')
         plt.plot(x_axis, fluxHist1[:, 100], linestyle = "dashed", color = 'cyan', label='Iteration 100')
-        plt.plot(x_axis, fluxHist1[:, 300], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 300')
-        plt.plot(x_axis, fluxHist1[:, 600], linestyle = "dotted", color = 'hotpink', label='Iteration 600')
+        plt.plot(x_axis, fluxHist1[:, 800], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 800')
+        plt.plot(x_axis, fluxHist1[:, 1500], linestyle = "dotted", color = 'hotpink', label='Iteration 1500')
     plt.plot(x_axis, fluxHist1[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
+    plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+    plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+    plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+    plt.legend(ncol=2,
+        fontsize=11.5,
+        columnspacing=1.5,
+        handletextpad=0.6,
+        frameon=True)
+    plt.tight_layout()
+    plt.show()
+
+    # plot the normalized phi of different iterations
+    plt.figure(figsize=((8,3)))
+    plt.xlim(x_axis[0], x_axis[-1])
+    plt.plot(x_axis, fluxHist2[:, 0], linestyle = (0, (1, 1)), color = 'red', alpha=1, label='Iteration 1 (guess)')
+    if len(fluxHist2[0, :]) > 600:
+        plt.plot(x_axis, fluxHist2[:, 10], linestyle = "dashdot", color = 'gold', label='Iteration 10')
+        plt.plot(x_axis, fluxHist2[:, 100], linestyle = "dashed", color = 'cyan', label='Iteration 100')
+        plt.plot(x_axis, fluxHist2[:, 800], linestyle = (0, (3, 1, 1, 1, 1, 1)), color = 'blue', label='Iteration 800')
+        plt.plot(x_axis, fluxHist2[:, 1500], linestyle = "dotted", color = 'hotpink', label='Iteration 1500')
+    plt.plot(x_axis, fluxHist2[:, -1], linestyle = "solid", color = 'k', label='Iteration ' + f'{len(eigenHist)}' + ' (final)')
     plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
     plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
     plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
@@ -293,7 +355,26 @@ def solveDiscreteOrdinates_2group(
     print("attempts = " + str(convIt))
     
 
-    return (float(eigenNext), convIt, fluxNext1[:,0]) # return values found
+    return (float(eigenNext), convIt, fluxNext1[:,0], fluxNext2[:,0]) # return values found
 
 
+
+_, _, fluxResult1, fluxResult2 = solveDiscreteOrdinates_2group()
+
+
+
+plt.figure(figsize=((8,3)))
+plt.xlim(x_axis[0], x_axis[-1])
+plt.plot(x_axis, fluxResult1, linestyle = "solid", color = 'k', label='Iteration group 1')
+plt.plot(x_axis, fluxResult2, linestyle = "--", color = 'k', label='Iteration group 2')
+plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
+plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
+plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+plt.legend(ncol=2,
+    fontsize=11.5,
+    columnspacing=1.5,
+    handletextpad=0.6,
+    frameon=True)
+plt.tight_layout()
+plt.show()
 
