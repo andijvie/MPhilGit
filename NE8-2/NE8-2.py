@@ -15,9 +15,7 @@
 import numpy as np
 import numpy.typing as np_type
 from numpy.polynomial.legendre import leggauss
-import copy
 import matplotlib.pyplot as plt
-from scipy.optimize import curve_fit
 from line_profiler import LineProfiler
 
 # Universal Constants
@@ -99,15 +97,12 @@ def product_operator(points, delta, multiplier):
     return out # return output matrix
 
 
-#def product_interp_operator(points, delta, multiplier):
-#    delta = 1
-#    out = np.zeros((points - 1, points))
-#    for i in np.arange(points - 1):
-#        out[i, i] = delta * multiplier[i]/2
-#        out[i, i + 1] = delta * multiplier[i]/2
-#
-#    return out
-
+# Interpolates a signal
+# - It finds the interpolated values between every 2 points 
+# Inputs:
+# - signal: signal to be interpolated [FLOAT ARRAY]
+# Output:
+# - a [points - 1] array of the interpolated values 
 def interpolate(input):
     return np.array([(input[i, 0] + input[i+1, 0])/2 for i in range(len(input) - 1)])
 
@@ -1136,7 +1131,7 @@ def q6():
 
     plt.figure(figsize=((8,3)))
     plt.plot(scatter_ratios, itHist, color='k', linestyle = '-', linewidth = '1.5', marker = 'o', label="Diffusion")
-    plt.legend(fontsize=11.5)
+    #plt.legend(fontsize=11.5)
     plt.ylabel("Iterations", fontsize=12)
     plt.xlabel(r"Scattering Ratio, $c$", fontsize=12)
     plt.xscale('log')
@@ -1145,4 +1140,15 @@ def q6():
     plt.show()
 
 #q6()
+
+
+# ----------------------Exercise 7----------------------
+# see: FILENAME
+
+
+
+
+
+
+
 
