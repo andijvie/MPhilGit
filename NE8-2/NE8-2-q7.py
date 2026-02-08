@@ -359,14 +359,13 @@ def solveDiscreteOrdinates_2group(
 
 
 
-_, _, fluxResult1, fluxResult2 = solveDiscreteOrdinates_2group()
-
+keff, _, fluxResult1, fluxResult2 = solveDiscreteOrdinates_2group(doPlot=True)
 
 
 plt.figure(figsize=((8,3)))
 plt.xlim(x_axis[0], x_axis[-1])
-plt.plot(x_axis, fluxResult1, linestyle = "solid", color = 'k', label='Iteration group 1')
-plt.plot(x_axis, fluxResult2, linestyle = "--", color = 'k', label='Iteration group 2')
+plt.plot(x_axis, fluxResult1, linestyle = "solid", color = 'k', label='Energy group 1 (fast)')
+plt.plot(x_axis, fluxResult2, linestyle = "--", color = 'k', label='Energy group 2 (slow)')
 plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
 plt.xlabel(r"Position, $x$ [cm]", fontsize=12)
 plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)

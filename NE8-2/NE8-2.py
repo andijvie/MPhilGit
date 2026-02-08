@@ -245,6 +245,7 @@ class IterationConstants:
         if is_isotropic:
             self.mu_bar = 0
         self.slab_macro_tr = self.slab_macro_t - self.slab_macro_s * self.mu_bar # [cm-1]
+        self.slab_macro_s_tr = self.slab_macro_s - self.slab_macro_s * self.mu_bar # [cm-1]
         self.diffusion_coefficient = 1 / (3 * self.slab_macro_tr) # [cm]
         
         # define mesh
@@ -278,10 +279,8 @@ class IterationConstants:
         if not multiplying:
             self.slab_macro_f_nu = 0
             self.macro_f_nu_matrix = product_operator(self.mesh_points, self.delta_x, np.full(self.mesh_intervals, self.slab_macro_f_nu)) # matrix to perform the fnu multiplication 
-            self.slab_macro_t -= self.slab_macro_f
         if use_scatter_ratio:
-            self.slab_macro_t += (self.slab_macro_tr * scatter_ratio - self.slab_macro_s) 
-            self.slab_macro_s = self.slab_macro_tr * scatter_ratio
+            self.slab_macro_s_tr = self.slab_macro_tr * scatter_ratio
 
         # print values
         if doPrint:
@@ -294,7 +293,8 @@ class IterationConstants:
             print("Macroscopic neutron production = " + str(self.slab_macro_f_nu) + " cm-1")
             print("Analytic keff = " + str(self.kAnal))
             print("Analytic phi = A cos x/" + str(self.L))
-            print("Scatter ratio = " + str(self.slab_macro_s/self.slab_macro_tr))
+            print("where A = " + str(np.max(self.fluxAnal)))
+            print("Scatter ratio = " + str(self.slab_macro_s_tr/self.slab_macro_tr))
 
     def compare(self, keffIn, phiIn, doPlot = False, reference = False, refKeff = -9999.9, refPhi = np.array([-9999.9])):
         if not reference:
@@ -544,11 +544,11 @@ def solveDiscreteOrdinates(
                 iNext = -(it + 2)
             
             psi_int = (ic.delta_x * QNext[iNow] + coeff * np.abs(abscissa) * psiPrev) / (
-                                ic.delta_x * ic.slab_macro_t + coeff * np.abs(abscissa)
+                                ic.delta_x * ic.slab_macro_tr + coeff * np.abs(abscissa)
                             )
             
-            #if psi_int < 0:
-            #    print("AAAAAAAAAAA")
+            if psi_int < 0:
+                print("WARNING in psi sweep: less than 0!")
 
             psi[iNext] = 2 * psi_int - psiPrev if closure == 0 else psi_int
             psiPrev = psi[iNext]
@@ -565,19 +565,19 @@ def solveDiscreteOrdinates(
             loss = abs((eigenNext - eigen)/eigen) # |k(n+1) - k(n) / k(n)| < 0.00001
         else:
             loss = np.max(np.abs(flux[0] - fluxNext[0])/flux[0]) # max|phi(n+1) - phi(n) / phi(n)| < 0.00001
-        print(loss)
+        #print(loss)
         return loss < 0.00001 # return if converged
 
 
     # main loop
-    while not hasConverged():
+    while not hasConverged() or convIt < 10:
         # update keff, phi and S
         eigen = eigenNext 
         flux = fluxNext
         S = SNext
 
         # calculate n+1 values of keff, phi and S   
-        QNext = interpolate((1/2) * (ic.slab_macro_s + ic.slab_macro_f_nu/(eigen + 1e-99)) * flux)
+        QNext = interpolate((1/2) * (ic.slab_macro_s_tr + ic.slab_macro_f_nu/(eigen + 1e-99)) * flux)
         fluxNext = np.zeros(ic.mesh_points)[:, np.newaxis]
         for i in range(order):
             angFlux = getPsi(abscissae[i])[:, np.newaxis]
@@ -712,7 +712,7 @@ def q1():
     eigenHist_powIt = np.load("eigen_powIt.npy")
     eigenHist_DiscOrd = np.load("eigen_discrOrd.npy")
 
-    plt.figure(figsize=((8,3)))
+    plt.figure(figsize=((7.3,3)))
     plt.plot(np.arange(len(eigenHist_DiscOrd)) + 1, eigenHist_DiscOrd, color = 'k', linewidth = 1.5, label="Discrete ordinates $k_{eff}$ iterations", zorder=0)
     plt.plot(np.arange(len(eigenHist_powIt)) + 1, eigenHist_powIt, color = 'k', linewidth = 1.5, label="Diffusion $k_{eff}$ iterations", linestyle = '--', zorder=0)
     plt.scatter([len(eigenHist_DiscOrd)], [eigenHist_DiscOrd[-1]], color='dimgrey', marker='x', linewidths = 1.2, s = 25, label=r"$k_{eff}$ final values", zorder=10)
@@ -721,7 +721,7 @@ def q1():
     plt.axvline(x=len(eigenHist_powIt), linestyle = ':', color = 'grey', linewidth='1')
     plt.legend(fontsize=11.5)
     plt.text(
-        0.12, 0.9, 
+        0.17, 0.9, 
         f"{len(eigenHist_powIt)} iterations\n",
         transform=plt.gca().transAxes,
         ha="left",
@@ -738,7 +738,7 @@ def q1():
         fontsize=14,
         linespacing=1.5
     )  
-    plt.xlim((0, 1400))
+    plt.xlim((0, 1050))
     plt.xlabel("Iteration", fontsize=12)
     plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
     plt.tight_layout()
@@ -796,7 +796,7 @@ def q2():
     plt.axvline(x=len(eigenHistPlot), linestyle = ':', color = 'grey', linewidth='1')
 
     plt.legend(fontsize=11.5)
-    plt.xlim((0, 240))
+    plt.xlim((0, 180))
     plt.xlabel("Iteration", fontsize=12)
     plt.ylabel(r"Eigenvalue, $k_{eff}$", fontsize=12)
     plt.tight_layout()
@@ -832,6 +832,7 @@ def q2():
 
     plt.show()
 
+#q2()
 
 
 # ----------------------Exercise 3----------------------
@@ -915,27 +916,27 @@ def q4():
     angFluxEnd = np.append(angFluxEnd, np.flip(angFluxEnd))
     angles = np.append(angles, -np.flip(angles))
 
-    angFluxStart = np.append(angFluxStart, angFluxStart[0])/2
-    angFluxMid = np.append(angFluxMid, angFluxMid[0])/2
-    angFluxEnd = np.append(angFluxEnd, angFluxEnd[0])/2
+    angFluxStart = np.append(angFluxStart, angFluxStart[0])/(2 * np.pi)
+    angFluxMid = np.append(angFluxMid, angFluxMid[0])/(2 * np.pi)
+    angFluxEnd = np.append(angFluxEnd, angFluxEnd[0])/(2 * np.pi)
     angles = np.append(angles, angles[0])
 
     plt.figure(figsize=((4,4)))
     plt.polar(angles, angFluxStart, color = 'k', linewidth = 1)
     plt.fill(angles, angFluxStart, alpha=0.3, color = 'gray') 
-    plt.yticks([0.01, 0.02, 0.03, 0.04])
+    plt.yticks([0.005, 0.01, 0.015])
     plt.show()
 
     plt.figure(figsize=((4,4)))
     plt.polar(angles, angFluxMid, color = 'k')
     plt.fill(angles, angFluxMid, alpha=0.3, color = 'gray', linewidth = 1)
-    plt.yticks([0.2, 0.4, 0.6])
+    plt.yticks([0.05,0.1, 0.15, 0.2])
     plt.show()
 
     plt.figure(figsize=((4,4)))
     plt.polar(angles, angFluxEnd, color = 'k', linewidth = 1)
     plt.fill(angles, angFluxEnd, alpha=0.3, color = 'gray')
-    plt.yticks([0.01, 0.02, 0.03, 0.04])
+    plt.yticks([0.005, 0.01, 0.015])
     plt.show()
 
 #q4()
@@ -953,20 +954,22 @@ def q5():
     phiErrHistStep = np.array([]) # stores the maximum relative phi error found at different resolutions for step
 
     res = np.arange(0.02, 1.01, 0.01) # [points/cm] resolutions to be checked
-    res = np.arange(1, 5.1, 0.1) # [points/cm] resolutions to be checked
+    #res = np.arange(1, 5.1, 0.1) # [points/cm] resolutions to be checked
 
     # find the ultimate value
     print()
     print("Convergence at 100 points/cm:")
     print("diamond-->")
     ic = IterationConstants(resolution=100, is_isotropic=False, doPrint=False) # generate new iteration constants object with the resolution i
-    #(eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False) # solve the power iteration
-    #_, fluxErrFinD = ic.compare(eigenRes, flux, doPlot=False)
-    fluxErrFinD = 0.31298371534832575
+    (eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False) # solve the power iteration
+    _, fluxErrFinD = ic.compare(eigenRes, flux, doPlot=False)
+    #fluxErrFinD = 0.18641535374455748 # @ 50
+    print("ERROR = " + str(fluxErrFinD))
     print("step-->")
-    #(eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False, closure=1) # solve the power iteration
-    #_, fluxErrFinS = ic.compare(eigenRes, flux, doPlot=False)
-    fluxErrFinS = 0.3091416441667637
+    (eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False, closure=1) # solve the power iteration
+    _, fluxErrFinS = ic.compare(eigenRes, flux, doPlot=False)
+    #fluxErrFinS = 0.18261859862294094 # @ 50
+    print("ERROR = " + str(fluxErrFinS))
     print()
 
     # loop1: diamond-difference
@@ -1055,7 +1058,7 @@ def q5():
     plt.tight_layout()
     plt.show()
 
-# q5()
+#q5()
 
 
 
@@ -1072,7 +1075,10 @@ def q5():
 
 
 def q6():
-    #scatter_ratios = [0.1, 0.3, 0.5, 1, 3, 5]
+    #scatter_ratios = [1.0e-03, 3.0e-03, 5.0e-03, 1.0e-02, 3.0e-02, 5.0e-02]
+    #scatter_ratios = [0.1, 0.3, 0.5, 0.9, 0.93, 0.95]
+    #scatter_ratios = [0.99, 0.992, 0.994, 0.996, 0.997, 0.998]
+    #scatter_ratios = [0.999, 0.9993, 0.9995, 0.9999, 0.99999, 1]
     scatter_ratios = []
     color = ['k', 'dimgrey', 'darkgrey', 'k', 'dimgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey']
     linestyle = ['-', '-', '-', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--']
@@ -1084,9 +1090,13 @@ def q6():
         icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=c, multiplying=False)
         eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=False, ic=icC, leftSource=.5, doNormalize=False)
         itHist = np.append(itHist, it)
-        #plt.xlim(-49.5, -40)
-        plt.xlim(icC.x_axis[0], icC.x_axis[-1])
-        plt.ylim(-0.1, 2)
+        plt.xlim(-50, -46) # 2
+        #plt.xlim(icC.x_axis[0], icC.x_axis[-1])
+        #plt.ylim(-0.1, 2)
+        plt.ylim(-1e-3 * 0.1, 1e-3) # 1
+        #plt.ylim(-0.2e-1 * 0.1, 0.2e-1) # 3
+        #plt.ylim(-0.1 * 0.1, 0.1) # 4
+        #plt.ylim(-0.5 * 0.1, 0.5) # 5
         plt.plot(icC.x_axis, flux, linestyle = linestyle[i], color = color[i], linewidth = 1, label=f'c={c}')
 
     plt.ticklabel_format(axis='y', style='sci', scilimits=(0,0))
@@ -1108,8 +1118,6 @@ def q6():
     #np.save("iterations_3.npy", itHist)
     #np.save("scatter_4.npy", scatter_ratios)
     #np.save("iterations_4.npy", itHist)
-    #np.save("scatter_5.npy", scatter_ratios)
-    #np.save("iterations_5.npy", itHist)
     
     scatter_ratios = np.array([])
     itHist = np.array([])
@@ -1122,20 +1130,19 @@ def q6():
     itHist = np.append(itHist, np.load("iterations_3.npy"))
     scatter_ratios = np.append(scatter_ratios,np.load("scatter_4.npy"))
     itHist = np.append(itHist, np.load("iterations_4.npy"))
-    scatter_ratios = np.append(scatter_ratios,np.load("scatter_5.npy"))
-    itHist = np.append(itHist, np.load("iterations_5.npy"))
-    
+
     order = np.argsort(scatter_ratios)
     scatter_ratios = scatter_ratios[order]
     itHist = itHist[order]
+
 
     plt.figure(figsize=((8,3)))
     plt.plot(scatter_ratios, itHist, color='k', linestyle = '-', linewidth = '1.5', marker = 'o', label="Diffusion")
     #plt.legend(fontsize=11.5)
     plt.ylabel("Iterations", fontsize=12)
     plt.xlabel(r"Scattering Ratio, $c$", fontsize=12)
-    plt.xscale('log')
-    plt.yscale('log')
+    #plt.xscale('log')
+    #plt.yscale('log')
     plt.tight_layout()
     plt.show()
 
