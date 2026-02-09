@@ -195,8 +195,8 @@ def solveDiscreteOrdinates_2group(
             loss = abs((eigenNext - eigen)/eigen) # |k(n+1) - k(n) / k(n)| < 0.00001
 
         else: # max|phi(n+1) - phi(n) / phi(n)| < 0.00001
-            loss1 = np.max(np.abs(flux1[0] - fluxNext1[0])/flux1[0]) # group 1
-            loss2 = np.max(np.abs(flux2[0] - fluxNext2[0])/flux2[0]) # group 2
+            loss1 = np.max(np.abs(flux1[:,0] - fluxNext1[:,0])/flux1[:,0]) # group 1
+            loss2 = np.max(np.abs(flux2[:,0] - fluxNext2[:,0])/flux2[:,0]) # group 2
             loss = max(loss1, loss2)
         print("loss group 1 = " + str(loss1) + ", group 2 = " + str(loss2))
         return loss < 0.00001 # return if converged

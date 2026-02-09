@@ -394,7 +394,7 @@ def solvePowerIteration(
         if convergenceCriteria == 0:
             loss = abs((eigenNext - eigen)/eigen) # |k(n+1) - k(n) / k(n)| < 0.00001
         else:
-            loss = np.max(np.abs(S[0] - SNext[0])/S[0]) # max|S(n+1) - S(n) / S(n)| < 0.00001
+            loss = np.max(np.abs(S[:,0] - SNext[:,0])/S[:,0]) # max|S(n+1) - S(n) / S(n)| < 0.00001
         
         return loss < 0.00001 # return if converged 
     
@@ -564,13 +564,12 @@ def solveDiscreteOrdinates(
         if convergenceCriteria == 0:
             loss = abs((eigenNext - eigen)/eigen) # |k(n+1) - k(n) / k(n)| < 0.00001
         else:
-            loss = np.max(np.abs(flux[0] - fluxNext[0])/flux[0]) # max|phi(n+1) - phi(n) / phi(n)| < 0.00001
-        #print(loss)
+            loss = np.max(np.abs(flux[:,0] - fluxNext[:,0])/flux[:,0]) # max|phi(n+1) - phi(n) / phi(n)| < 0.00001
         return loss < 0.00001 # return if converged
 
 
     # main loop
-    while not hasConverged() or convIt < 10:
+    while not hasConverged():
         # update keff, phi and S
         eigen = eigenNext 
         flux = fluxNext
@@ -868,6 +867,7 @@ def q3():
     #plt.legend(fontsize=11.5)
     plt.ylabel(r"$k_\text{eff}^\text{DO} - k_\text{eff}^\text{Diff}$", fontsize=12)
     plt.xlabel(r"Slab length [cm]", fontsize=12)
+    plt.yscale('log')
     plt.tight_layout()
     plt.show()
 
@@ -954,21 +954,21 @@ def q5():
     phiErrHistStep = np.array([]) # stores the maximum relative phi error found at different resolutions for step
 
     res = np.arange(0.02, 1.01, 0.01) # [points/cm] resolutions to be checked
-    #res = np.arange(1, 5.1, 0.1) # [points/cm] resolutions to be checked
+    res = np.arange(1, 5.1, 0.1) # [points/cm] resolutions to be checked
 
     # find the ultimate value
     print()
     print("Convergence at 100 points/cm:")
     print("diamond-->")
     ic = IterationConstants(resolution=100, is_isotropic=False, doPrint=False) # generate new iteration constants object with the resolution i
-    (eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False) # solve the power iteration
-    _, fluxErrFinD = ic.compare(eigenRes, flux, doPlot=False)
-    #fluxErrFinD = 0.18641535374455748 # @ 50
+    #(eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False) # solve the power iteration
+    #_, fluxErrFinD = ic.compare(eigenRes, flux, doPlot=False)
+    fluxErrFinD = 0.18641535374455748 # @ 50
     print("ERROR = " + str(fluxErrFinD))
     print("step-->")
-    (eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False, closure=1) # solve the power iteration
-    _, fluxErrFinS = ic.compare(eigenRes, flux, doPlot=False)
-    #fluxErrFinS = 0.18261859862294094 # @ 50
+    #(eigenRes, iter, flux) = solveDiscreteOrdinates(ic=ic, doPlot=False, closure=1) # solve the power iteration
+    #_, fluxErrFinS = ic.compare(eigenRes, flux, doPlot=False)
+    fluxErrFinS = 0.18261859862294094 # @ 50
     print("ERROR = " + str(fluxErrFinS))
     print()
 
@@ -1053,7 +1053,7 @@ def q5():
     plt.plot(res, -phiErrHistDiamond, color='k', linestyle = '-', linewidth = '1', marker = 'o', markersize=3, label = "Diamond-difference")
     plt.plot(res, np.abs(phiErrHistStep), color='k', linestyle = '--', linewidth = '1', marker = 'x', markersize=3, label = 'Step method')
     plt.legend(fontsize=11.5)
-    plt.ylabel(r"Max $|\phi^\text{DO} - \phi^\text{Diff}|/\phi^\text{Diff}$", fontsize=12)
+    plt.ylabel(r"Max $|\phi^\text{DO} - \phi^\text{An.}|/\phi^\text{An.}$", fontsize=12)
     plt.xlabel(r"Resolution [points/cm]", fontsize=12)
     plt.tight_layout()
     plt.show()
@@ -1079,7 +1079,7 @@ def q6():
     #scatter_ratios = [0.1, 0.3, 0.5, 0.9, 0.93, 0.95]
     #scatter_ratios = [0.99, 0.992, 0.994, 0.996, 0.997, 0.998]
     #scatter_ratios = [0.999, 0.9993, 0.9995, 0.9999, 0.99999, 1]
-    scatter_ratios = []
+    scatter_ratios = [1]
     color = ['k', 'dimgrey', 'darkgrey', 'k', 'dimgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey', 'darkgrey']
     linestyle = ['-', '-', '-', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--', '--']
     itHist = np.array([])
@@ -1088,12 +1088,13 @@ def q6():
     for i in range(len(scatter_ratios)):
         c = scatter_ratios[i]
         icC = IterationConstants(use_scatter_ratio=True, scatter_ratio=c, multiplying=False)
-        eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=False, ic=icC, leftSource=.5, doNormalize=False)
+        eigen, it, flux = solveDiscreteOrdinates(convergenceCriteria = 1, doPlot=True, ic=icC, leftSource=.5, doNormalize=False)
+        print("Iterations = " + str(it))
         itHist = np.append(itHist, it)
-        plt.xlim(-50, -46) # 2
+        #plt.xlim(-50, -46) # 2
         #plt.xlim(icC.x_axis[0], icC.x_axis[-1])
         #plt.ylim(-0.1, 2)
-        plt.ylim(-1e-3 * 0.1, 1e-3) # 1
+        #plt.ylim(-1e-3 * 0.1, 1e-3) # 1
         #plt.ylim(-0.2e-1 * 0.1, 0.2e-1) # 3
         #plt.ylim(-0.1 * 0.1, 0.1) # 4
         #plt.ylim(-0.5 * 0.1, 0.5) # 5
@@ -1146,7 +1147,7 @@ def q6():
     plt.tight_layout()
     plt.show()
 
-#q6()
+q6()
 
 
 # ----------------------Exercise 7----------------------

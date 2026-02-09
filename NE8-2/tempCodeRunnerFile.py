@@ -1,2 +1,1 @@
-er_ratios[idx]
-    itHist = itHist[idx]
+1
