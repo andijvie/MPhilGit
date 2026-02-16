@@ -1,20 +1,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-#electricityPrice = [70, 168, 250]
+#electricityPrice = [100, 250, 500]
 #electricityPrice = [5, 60, 250]
-electricityPrice = [15, 15, 250]
+#electricityPrice = [15, 15, 250]
+#electricityPrice = [10, 30, 150]
+electricityPrice = [30, 50, 100]
 hours = np.array([5000, 3600, 160] ) * 0.95 
 
 
 class Plant:
-    def __init__(self, name, availability, capacity, om, eff, fuelPerUnit=.0, costPerUnit=.0, loan = .0, loanTime = 0, constPermTime = 0, down =.0):
+    def __init__(self, name, availability, capacity, om, eff, mjPerUnit=.0, costPerUnit=.0, loan = .0, loanTime = 0, constPermTime = 0, down =.0):
         self.name = name
         self.availability = availability
         self.capacity = capacity
         self.om = om
         self.eff = eff 
-        self.fuelPerUnit = fuelPerUnit
+        self.mjPerUnit = mjPerUnit
         self.costPerUnit = costPerUnit
         self.loan = loan
         self.loanTime = loanTime
@@ -32,7 +34,7 @@ class Plant:
     def getMargin(self, hrs):
         if self.eff < 0:
             return .0
-        revPH = 3600 * self.costPerUnit * ((self.capacity/self.eff)/self.fuelPerUnit)
+        revPH = 3600 * self.costPerUnit * ((self.capacity/self.eff)/self.mjPerUnit)
         return revPH * hrs/1e6
     def getProfitLoan(self):
         out = - self.getLoan() - self.getOM()
@@ -65,128 +67,94 @@ biomass= Plant(
     name="Biomass", 
     availability=1, 
     capacity=500,
-    om=0.127,
-    eff=0.433,
-    fuelPerUnit=15500.0,
-    costPerUnit=40.75,
-    loan = 0.086,
+    om=0.120,
+    eff=0.498,
+    mjPerUnit=15500.0,
+    costPerUnit=15.68,
+    loan = 0.065,
     loanTime=20,
     constPermTime=5,
-    down=0.269)
+    down=0.203)
 
 gasCCGT= Plant(
-    name="gasCCGT", 
+    name="CCGT", 
     availability=1, 
     capacity=500,
-    om=0.062,
-    eff=.585,
-    fuelPerUnit=35.069,
-    costPerUnit=0.16,
-    loan = 0.058,
+    om=0.058,
+    eff=.791,
+    mjPerUnit=35.069,
+    costPerUnit=0.29,
+    loan = 0.040,
     loanTime=15,
     constPermTime=4,
-    down=0.150)
+    down=0.103)
 
-gasCCGT1= Plant(
-    name="c6gasCCGT", 
-    availability=1, 
-    capacity=350 * (92/95),
-    om=23.6/350,
-    eff=.5229,
-    fuelPerUnit=35.069,
-    costPerUnit=0.17,
-    loan = 23.4/350,
-    loanTime=1,
-    constPermTime=0,
-    down=.0)
-
-gasOCGT1= Plant(
-    name="c7gasOCGT", 
-    availability=1, 
-    capacity=50 * (92/95),
-    om=1.3/50,
-    eff=.3630,
-    fuelPerUnit=35.069,
-    costPerUnit=0.17,
-    loan = 23.4/350,
-    loanTime=0,
-    constPermTime=0,
-    down=.0)
 
 nuclear= Plant(
     name="Nuclear", 
     availability=1, 
     capacity=500,
-    om=0.110,
-    eff=.342,
-    fuelPerUnit=3888000.0,
-    costPerUnit=1364.49,
+    om=0.103,
+    eff=.354,
+    mjPerUnit=3888000.0,
+    costPerUnit=1459.55,
     loan = 0.385,
     loanTime=20,
     constPermTime=7,
     down=1.200)
+
 solar= Plant(
     name="Solar", 
     availability=.15, 
     capacity=500,
-    om=0.019,
+    om=0.018,
     eff=-1,
-    loan = 0.035,
+    loan = 0.023,
     loanTime=15,
     constPermTime=2,
-    down=0.091)
+    down=0.061)
+
 gasOCGT= Plant(
-    name="gasOCGT", 
+    name="OCGT", 
     availability=1, 
     capacity=500,
-    om=0.025,
-    eff = .392,
-    fuelPerUnit=35.069,
-    costPerUnit=0.16,
-    loan = 0.059,
+    om=0.023,
+    eff = .492,
+    mjPerUnit=35.069,
+    costPerUnit=0.29,
+    loan = 0.041,
     loanTime=10,
     constPermTime=2,
-    down=0.115)
+    down=0.078)
+
 coal= Plant(
     name="Coal", 
     availability=1, 
     capacity=500,
-    om=0.121,
-    eff=.412,
-    fuelPerUnit=25000.0,
-    costPerUnit=38.44,
-    loan = 0.089,
+    om=0.112,
+    eff=.498,
+    mjPerUnit=25000.0,
+    costPerUnit=57.73,
+    loan = 0.061,
     loanTime=20,
     constPermTime=5,
-    down=0.277)
+    down=0.189)
 
-coal1= Plant(
-    name="Coal1", 
-    availability=1, 
-    capacity=600,
-    om=82/600,
-    eff=.3711,
-    fuelPerUnit=25000.0,
-    costPerUnit=75.09,
-    loan = 999.1,
-    loanTime=0,
-    constPermTime=0,
-    down=999999.1)
 wind= Plant(
     name="Wind", 
     availability=.45, 
-    capacity=900,
-    om=0.045,
+    capacity=500,
+    om=0.043,
     eff = -1,
-    loan = 0.067,
+    loan = 0.055,
     loanTime=15,
     constPermTime=2,
-    down=0.173	)
+    down=0.142)
 
 
-all = [biomass, gasCCGT, nuclear, solar, gasOCGT, coal, wind, gasCCGT1, gasOCGT1, coal1]
+all = [biomass, gasCCGT, nuclear, solar, gasOCGT, coal, wind]
 
-ren = [wind, solar]
+ren = [biomass, gasCCGT, nuclear, solar, gasOCGT, coal, wind]
 
 
 for i in all:
@@ -196,10 +164,21 @@ for i in all:
 
 years = range(50)
 
-plt.figure()
+plt.figure(figsize=(10,7))
 for i in ren:
     for y in years:
         i.getBank()
     plt.plot(np.append(years, len(years)), i.bankHist)    
+    plt.text(
+        50 + 0.5,
+        i.bankHist[-1],
+        i.name,
+        va='center'
+    )
+
+plt.xlim(0, 54)
+plt.ylabel("Cumilative Profit [M€/500 MW]")
+plt.xlabel("Time after purchase [Round]")
+plt.tight_layout()
 plt.show()
     
