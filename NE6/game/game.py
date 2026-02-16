@@ -176,6 +176,15 @@ for i in ren:
         va='center'
     )
 
+plt.text(
+    0.1, 0.9,
+    r"$\mathbf{Prices:}$" + "\nOffpeak = 30 €/MWh\nShoulder = 50 €/MWh\nPeak=100 €/MWh",
+    transform=plt.gca().transAxes,
+    fontsize=15,
+    ha='left',                         
+    va='top'
+)
+
 plt.xlim(0, 54)
 plt.ylabel("Cumilative Profit [M€/500 MW]")
 plt.xlabel("Time after purchase [Round]")
