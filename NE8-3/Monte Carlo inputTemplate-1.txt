@@ -1,0 +1,58 @@
+set title "UO2 PIN MODEL"
+
+% --- Define materials --- %
+mat fuel	xxx
+92235.09c	xxx
+92238.09c 	xxx
+8016.09c 	xxx
+
+mat clad 	xxx
+40000.06c	xxx
+
+mat coolant	xxx moder lwtr 1001 
+xxxxxx
+
+% thermal scattering library for H20 
+therm lwtr lwj3.11t 
+
+% --- Define geometry --- %
+surf 1000 sqc 0.0 0.0 xxx 
+
+pin 1
+fuel xxx
+clad xxx
+coolant
+
+cell insideCell  0 fill 1 -1000
+cell outsideCell 0 outside 1000
+
+% --- Neutron population and criticality cycles:
+ 
+set pop xxxxxxx
+
+% --- Boundary conditions: 
+set bc x
+
+% --- Normalisation:
+xxxxxx
+
+% --- Geometry and mesh plots: 
+ 
+plot 3 500 500 
+mesh 3 500 500 
+ 
+% --- Cross section library file path: 
+set acelib "/usr/software/mcnplib/SERPENT/XSdata_endfb7/sss_endfb7u.xsdata"
+
+% --- Detectors --- %
+
+% *Example* detector for U235 fission rate
+
+% Define a fake material so that we only score on U235
+mat just235 1.0 92235.09c 1.0
+
+% Define detector for U235 fission rate
+det exampleDet dm fuel dr 18 just235
+
+
+
