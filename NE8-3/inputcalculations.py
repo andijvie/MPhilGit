@@ -1,6 +1,12 @@
 import numpy as np
 
 FUEL_ENRICHMENT = 0.035 # weight fraction
+# FUEL_ENRICHMENT = 0.1 # <--- uncomment for exercise 3 and 5
+# FUEL_ENRICHMENT = 0.007 # <--- uncomment for exercise 5
+# FUEL_ENRICHMENT = 0.9 # <--- uncomment for exercise 5
+
+BORON_CONCENTRATION = 500 # [ppm mass]
+# BORON_CONCENTRATION = 550 # <--- uncomment for exercise 4
 
 UO2_DENSITY = 10.4 # [g/cm3] NOT GIVEN??? (from assignment 1)
 
@@ -15,7 +21,13 @@ U235mass = 235.0439281 # [u]
 U238mass = 238.0507869 # [u]
 H1mass = 1.00782503190 # [u]
 O16mass = 15.9949146193 # [u]
+B10mass = 10.012936862 # [u]
+B11mass = 11.009305167 # [u]
 
+B10frac = .198
+B11frac = .802
+B10massfrac = B10frac * B10mass / (B10frac * B10mass + B11frac * B11mass)
+B11massfrac = B11frac * B11mass / (B10frac * B10mass + B11frac * B11mass)
 
 
 # Density calculations
@@ -27,7 +39,12 @@ O16fuelDensity = UO2_DENSITY * (2 * O16mass) / (U_mass + 2 * O16mass)
 
 H2OMass = 2 * H1mass + O16mass # [u]
 H1density = H2O_DENSITY * (2 * H1mass) / H2OMass # [u]
-O16coolantDensity = H2O_DENSITY * O16mass / H2OMass
+O16coolantDensity = H2O_DENSITY * O16mass / H2OMass # [g/cm3]
+H20density = H1density + O16coolantDensity # [g/cm3]
+
+boronDensity = H20density * BORON_CONCENTRATION/1e6 # [g/cm3]
+B10Density = boronDensity * B10massfrac # [g/cm3]
+B11Density = boronDensity * B11massfrac # [g/cm3]
 
 
 print("Fuel:")
@@ -39,6 +56,8 @@ print("Coolant:")
 print(f"Coolant density = {H2O_DENSITY} g/cm3")
 print(f"H1 density = {H1density} g/cm3")
 print(f"O16 density = {O16coolantDensity} g/cm3")
+print(f"B10 density = {B10Density} g/cm3")
+print(f"B11 density = {B11Density} g/cm3")
 print("")
 
 fuel_pellet_outer_diameter = 0.950 # [cm]
@@ -65,3 +84,4 @@ for i in range(len(radii)):
     if i > 0:
         print(f"{radii[i - 1]:.6f} to {radii[i]:.6f} has volume {np.pi * (radii[i]**2 - radii[i - 1]**2):.6f}")
 print("ASSIGNMENT 1 Radii: " + radiiString)
+

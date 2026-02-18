@@ -1,0 +1,285 @@
+set title "UO2 PIN MODEL"
+
+% --- Define materials --- %
+
+% - UO2 3.5%w
+mat fuel	sum        tmp 900  % [K] <-- Change between 900 and 950  << FOR EXERCISE 3 AND 4 >> 
+    92235.09c	-0.320862646119516  % [g/cm]
+    92238.09c   -8.846641528723795  % [g/cm]
+    8016.09c    -1.232495825156688  % [g/cm]
+
+% - zirconium cladding
+mat clad        sum tmp 600
+    40000.06c	-6.56  % [g/cm] (from NE MPhil databook)
+
+% - lightwater coolant w/ 500 ppm boron
+mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  << FOR EXERCISE 4 AND 7 >> 
+    1001.06c -0.07457895238987516  % [g/cm]
+    8016.06c -0.59181104761012480  % [g/cm]
+    0510.06c -0.00006109675336724  % [g/cm]
+    0511.06c -0.00027209824663276  % [g/cm]
+    
+
+
+
+% ---- UNCOMMENT FOR EXERCISE 3 AND 5 (but comment the 3.5% version) ----
+% - UO2 10.0%w 
+%mat fuel	sum        tmp 900  % [K] <-- Change between 900 and 950 for  << EXERCISE 3 >>
+%92235.09c	 -0.916661114369502  % [g/cm]
+%92238.09c   -8.249950029325518  % [g/cm]
+%8016.09c    -1.233388856304981  % [g/cm]
+
+
+
+% ---- UNCOMMENT FOR EXERCISE 4 AND 7 (but comment the 500 ppm version) ----
+% - lightwater coolant w/ 550 ppm boron
+%mat coolant  sum moder lwtr 1001 tmp 600  % [K]
+%    1001.06c -0.07457895238987516  % [g/cm]
+%    8016.06c -0.59181104761012480  % [g/cm]
+%    0510.06c -0.00006720642870396  % [g/cm]
+%    0511.06c -0.00029930807129604  % [g/cm]
+
+
+
+% ---- UNCOMMENT FOR EXERCISE 5 (but comment the 3.5% version) ----
+% - UO2 0.7%w 
+%mat fuel	sum        tmp 900  % [K]
+%92235.09c	 -0.0641752192675357  % [g/cm]
+%92238.09c   -9.1037132475232800  % [g/cm]
+%8016.09c    -1.2321115332091850  % [g/cm]
+
+
+
+% ---- UNCOMMENT FOR EXERCISE 5 AND 6 (but comment the 3.5% version) ----
+% - UO2 90.0%w 
+%mat fuel	sum        tmp 900  % [K] <-- Change between 900 and 950 for  << EXERCISE 7 >>
+%92235.09c	 -8.2399617510248950  % [g/cm]
+%92238.09c   -0.9155513056694324  % [g/cm]
+%8016.09c    -1.2444869433056749  % [g/cm]
+
+
+% thermal scattering library for H20 
+therm lwtr lwj3.11t 
+
+% --- Define geometry --- %
+surf 1000 sqc 0.0 0.0 1.260  % [cm] 
+surf 3000 cuboid 0.0 1.260 0.0 1.260 -5 5 % [cm] <--- 3D cuboid for exercise 8
+
+pin 1
+fuel 0.4750  % [cm]
+clad 0.5405  % [cm]
+coolant  % <-- Change to "void" for  << EXERCISE 6 >>
+
+cell insideCell  0 fill 1 -1000 % <--- change to 3000 for ex. 8
+cell outsideCell 0 outside 1000
+
+% --- Neutron population and criticality cycles:
+ set pop 10000 1000 100  % [#neutrons], [#active cycles], [#inactive cycles]
+
+% --- Boundary conditions: 
+set bc 2  % reflective
+% set bc 2 2 1 % reflective, reflective, black fir ex. 8
+
+% --- Normalisation:
+set powdens 0.038 fuel  % [kW/gHM]
+
+% --- Geometry and mesh plots: 
+plot 3 500 500 
+mesh 3 500 500 
+
+%plot 1 500 500 
+%mesh 1 500 500 
+
+% --- Cross section library file path: 
+set acelib "/usr/software/mcnplib/SERPENT/XSdata_endfb7/sss_endfb7u.xsdata"
+
+% --- Detectors --- %
+
+% *Example* detector for U235 fission rate
+
+% Define a fake materials to score on U235 and U238
+mat just235 1.0 92235.09c 1.0
+mat just238 1.0 92238.09c 1.0
+
+
+
+% ------------------------------ EXERCISE 1 ------------------------------ 
+% "Using appropriate detectors, calculate radial distribution of U238 capture reaction rate in the
+% fuel pellet. Plot the U238 capture rate versus radial distance from the fuel centre using 10
+% equal-volume radial regions."
+
+det EXERCISE1macro dm fuel  % Calculate reaction rates in material fuel
+                   dr -2 just238  % Total macroscopic capture rate at material "just238" ("dm just238").
+                   dn 4 10 1 1  % Detector is uneven-cylindrical (type 4), with 10 radial bins (only 1 angular and axial bin)
+                   0.000000 0.150208 0.212426 0.260168 0.300416 0.335876 0.367933 0.397414 0.424853 0.450625 0.475000 % [cm] radii 
+                   0.0 360.0   % [deg] 1 bin for all the angles
+                   -1E18 1E18  % 1 bin for all the heights
+
+det EXERCISE1micro dm fuel  % Calculate reaction rates in material fuel
+                   dr 102 just238  % Total microscopic capture rate at material "just238" ("dm just238").
+                   dn 4 10 1 1  % Detector is uneven-cylindrical (type 4), with 10 radial bins (only 1 angular and axial bin)
+                   0.000000 0.150208 0.212426 0.260168 0.300416 0.335876 0.367933 0.397414 0.424853 0.450625 0.475000 % [cm] radii 
+                   0.0 360.0   % [deg] 1 bin for all the angles
+                   -1E18 1E18  % 1 bin for all the heights
+
+
+
+
+% ------------------------------ EXERCISE 2 ------------------------------ 
+% "Plot the multi-group flux spectrum and macroscopic total reaction rate (MT = -1) in the fuel
+% and moderator region. Obtain the flux spectrum in 172 equal lethargy groups (normalize the
+% flux in each group to the group lethargy width Delta u_i = ln(Ei/Ei+1))." 
+
+ene EnergyAssignment2 3 172 1E-11 20.0  % energy bins
+
+det EXERCISE256fuel dm fuel  % detector for fuel region
+                    dr -1 fuel  % Total macroscopic reaction rate at material "fuel"
+                    de EnergyAssignment2  % energy binning
+                    dt -3  % division by lethargy width
+
+det EXERCISE256mod dm coolant  % detector for coolant == moderator region
+                   dr -1 coolant  % Total macroscopic reaction rate at material "coolant"
+                   de EnergyAssignment2  % energy binning
+                   dt -3  % division by lethargy width
+
+
+
+
+% ------------------------------ EXERCISE 3 ------------------------------ 
+% "For the standard PWR fuel unit cell, calculate the 238U capture (MT = 102) multi-group
+% microscopic cross section in the fuel using the WIMS69 group structure. Do this for two
+% separate fuel temperatures and relative contents of 238U in the fuel."
+
+% WIMS69 can be downloaded from: https://serpent.vtt.fi/docs/data/input_data.html
+ene wms69 1
+          1.00000E-11
+          5.00000E-09
+          1.00000E-08
+          1.50000E-08
+          2.00000E-08
+          2.50000E-08
+          3.00000E-08
+          3.50000E-08
+          4.20000E-08
+          5.00000E-08
+          5.80000E-08
+          6.70000E-08
+          8.00000E-08
+          1.00000E-07
+          1.40000E-07
+          1.80000E-07
+          2.20000E-07
+          2.50000E-07
+          2.80000E-07
+          3.00000E-07
+          3.20000E-07
+          3.50000E-07
+          4.00000E-07
+          5.00000E-07
+          6.25000E-07
+          7.80000E-07
+          8.50000E-07
+          9.10000E-07
+          9.50000E-07
+          9.72000E-07
+          9.96000E-07
+          1.02000E-06
+          1.04500E-06
+          1.07100E-06
+          1.09700E-06
+          1.12300E-06
+          1.15000E-06
+          1.30000E-06
+          1.50000E-06
+          2.10000E-06
+          2.60000E-06
+          3.30000E-06
+          4.00000E-06
+          9.87700E-06
+          1.59680E-05
+          2.77000E-05
+          4.80520E-05
+          7.55014E-05
+          1.48729E-04
+          3.67263E-04
+          9.06899E-04
+          1.42510E-03
+          2.23945E-03
+          3.51910E-03
+          5.53000E-03
+          9.11800E-03
+          1.50300E-02
+          2.47800E-02
+          4.08500E-02
+          6.73400E-02
+          1.11000E-01
+          1.83000E-01
+          3.02500E-01
+          5.00000E-01
+          8.21000E-01
+          1.35300E+00
+          2.23100E+00
+          3.67900E+00
+          6.06550E+00
+          1.00000E+01
+
+det EXERCISE3 dm just238  % detector for U238
+              de wms69  % WIMS69 group structure
+              dr 102 just238  % U238 microscopic capture 
+
+% Note: change the parameters for "fuel" to two separate fuel temperatures and relative contents of 238U in the fuel.
+% (See comments above)
+
+
+
+
+% ------------------------------ EXERCISE 4 ------------------------------ 
+% "Calculate the DC, MTC and BW and explain the results."
+% To do this it is necessary to vary the following quantities:
+% 1) Fuel temperature (by 50K), Moderator temperature (by 5K), Boron concentration (by 50 ppm)
+% how to do this is explained in the comments above
+
+% kinf initial = 
+% kinf fuel = 
+% kinf moderator = 
+% kinf boron = 
+
+
+
+
+% ------------------------------ EXERCISE 5 ------------------------------ 
+% "Repeat the calculation of the multi-group flux spectrum in the fuel (like Q2) but for a variety
+% of fuel enrichments: 0.7%, 3.5%, 10%, and 90%. Explain the results. Comment qualitatively on
+% how simulation time changes and explain why, referring to the physics."
+
+% obviously we can just use the same detectors as exercise 2,
+% the fuel enrichment needs to be changed, this is explained in the comments above
+
+% simulation time needs to be saved
+
+
+
+
+% ------------------------------ EXERCISE 6 ------------------------------ 
+% "Also calculate the flux spectrum in the case of 90% enrichment, but with vacuum instead of
+% water. Comment on the differences between this spectrum and that of the moderated, 90%
+% enriched design. "
+
+% so the pin needs to be reconfigures such that the coolant is removed
+% this is explained in the comments above
+% the same detectors as exercise 2 are used
+
+
+
+
+% ------------------------------ EXERCISE 7 ------------------------------ 
+% "Recalculate the coefficients for the moderated 90% enrichment case. Do they differ compared
+% to those from question 4?"
+
+% Mutatus mutandis from exercise 4
+
+
+% kinf initial = 
+% kinf fuel = 
+% kinf moderator = 
+% kinf boron = 
