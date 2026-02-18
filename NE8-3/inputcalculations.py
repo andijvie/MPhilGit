@@ -53,4 +53,15 @@ print()
 power_density = 38 # [kW/kgHM]
 print("Power:")
 print(f"Power density = {power_density/1000} kW/gHM")
+print()
 
+ass1_rad_bins = 10
+radii = [fuel_pellet_outer_diameter/2 * np.sqrt(i / ass1_rad_bins) for i in range(ass1_rad_bins + 1)]
+radiiString = ""
+
+print("ASSIGNMENT 1:")
+for i in range(len(radii)):
+    radiiString += f"{radii[i]:.6f} "
+    if i > 0:
+        print(f"{radii[i - 1]:.6f} to {radii[i]:.6f} has volume {np.pi * (radii[i]**2 - radii[i - 1]**2):.6f}")
+print("ASSIGNMENT 1 Radii: " + radiiString)
