@@ -3,7 +3,7 @@ set title "UO2 PIN MODEL"
 % --- Define materials --- %
 
 % - UO2 3.5%w
-mat fuel	sum        tmp 900  % [K] <-- Change between 900 and 950  << FOR EXERCISE 3 AND 4 >> 
+mat fuel	sum        tmp 1200  % [K] <-- Change between 900, 950 and 1200  << FOR EXERCISE 3 AND 4 >> 
     92235.09c	-0.320862646119516  % [g/cm]
     92238.09c   -8.846641528723795  % [g/cm]
     8016.09c    -1.232495825156688  % [g/cm]
@@ -16,18 +16,18 @@ mat clad        sum tmp 600
 mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  << FOR EXERCISE 4 AND 7 >> 
     1001.06c -0.07457895238987516  % [g/cm]
     8016.06c -0.59181104761012480  % [g/cm]
-    0510.06c -0.00006109675336724  % [g/cm]
-    0511.06c -0.00027209824663276  % [g/cm]
+    5010.06c -0.00006109675336724  % [g/cm]
+    5011.06c -0.00027209824663276  % [g/cm]
     
 
 
 
 % ---- UNCOMMENT FOR EXERCISE 3 AND 5 (but comment the 3.5% version) ----
 % - UO2 10.0%w 
-%mat fuel	sum        tmp 900  % [K] <-- Change between 900 and 950 for  << EXERCISE 3 >>
-%92235.09c	 -0.916661114369502  % [g/cm]
-%92238.09c   -8.249950029325518  % [g/cm]
-%8016.09c    -1.233388856304981  % [g/cm]
+%mat fuel	sum        tmp 1200  % [K] <-- Change between 900 and 1200 for  << EXERCISE 3 >>
+%           92235.09c	 -0.916661114369502  % [g/cm]
+%           92238.09c   -8.249950029325518  % [g/cm]
+%           8016.09c    -1.233388856304981  % [g/cm]
 
 
 
@@ -36,8 +36,8 @@ mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  
 %mat coolant  sum moder lwtr 1001 tmp 600  % [K]
 %    1001.06c -0.07457895238987516  % [g/cm]
 %    8016.06c -0.59181104761012480  % [g/cm]
-%    0510.06c -0.00006720642870396  % [g/cm]
-%    0511.06c -0.00029930807129604  % [g/cm]
+%    5010.06c -0.00006720642870396  % [g/cm]
+%    5011.06c -0.00029930807129604  % [g/cm]
 
 
 
@@ -74,8 +74,8 @@ cell insideCell  0 fill 1 -1000 % <--- change to 3000 for ex. 8
 cell outsideCell 0 outside 1000
 
 % --- Neutron population and criticality cycles:
- set pop 10000 1000 100  % [#neutrons], [#active cycles], [#inactive cycles]
-
+ set pop 10000 1000 100  %                 [#neutrons], [#active cycles], [#inactive cycles]
+                         % typical values:    5000           500                20
 % --- Boundary conditions: 
 set bc 2  % reflective
 % set bc 2 2 1 % reflective, reflective, black fir ex. 8
@@ -108,19 +108,12 @@ mat just238 1.0 92238.09c 1.0
 % fuel pellet. Plot the U238 capture rate versus radial distance from the fuel centre using 10
 % equal-volume radial regions."
 
-det EXERCISE1macro dm fuel  % Calculate reaction rates in material fuel
-                   dr -2 just238  % Total macroscopic capture rate at material "just238" ("dm just238").
-                   dn 4 10 1 1  % Detector is uneven-cylindrical (type 4), with 10 radial bins (only 1 angular and axial bin)
-                   0.000000 0.150208 0.212426 0.260168 0.300416 0.335876 0.367933 0.397414 0.424853 0.450625 0.475000 % [cm] radii 
-                   0.0 360.0   % [deg] 1 bin for all the angles
-                   -1E18 1E18  % 1 bin for all the heights
-
-det EXERCISE1micro dm fuel  % Calculate reaction rates in material fuel
-                   dr 102 just238  % Total microscopic capture rate at material "just238" ("dm just238").
-                   dn 4 10 1 1  % Detector is uneven-cylindrical (type 4), with 10 radial bins (only 1 angular and axial bin)
-                   0.000000 0.150208 0.212426 0.260168 0.300416 0.335876 0.367933 0.397414 0.424853 0.450625 0.475000 % [cm] radii 
-                   0.0 360.0   % [deg] 1 bin for all the angles
-                   -1E18 1E18  % 1 bin for all the heights
+det EXERCISE1 dm fuel  % Calculate reaction rates in material fuel
+              dr -2 just238  % Total macroscopic capture rate at material "just238" ("dm just238"). --> output in reactions per unit time
+              dn 4 10 1 1  % Detector is uneven-cylindrical (type 4), with 10 radial bins (only 1 angular and axial bin)
+              0.000000 0.150208 0.212426 0.260168 0.300416 0.335876 0.367933 0.397414 0.424853 0.450625 0.475000 % [cm] radii 
+              0.0 360.0   % [deg] 1 bin for all the angles
+              -1E18 1E18  % 1 bin for all the heights
 
 
 
@@ -130,7 +123,7 @@ det EXERCISE1micro dm fuel  % Calculate reaction rates in material fuel
 % and moderator region. Obtain the flux spectrum in 172 equal lethargy groups (normalize the
 % flux in each group to the group lethargy width Delta u_i = ln(Ei/Ei+1))." 
 
-ene EnergyAssignment2 3 172 1E-11 20.0  % energy bins
+ene EnergyAssignment2 3 172 1E-12 100.0  % energy bins
 
 det EXERCISE256fuel dm fuel  % detector for fuel region
                     dr -1 fuel  % Total macroscopic reaction rate at material "fuel"
@@ -223,9 +216,10 @@ ene wms69 1
           6.06550E+00
           1.00000E+01
 
-det EXERCISE3 dm just238  % detector for U238
+det EXERCISE3 dm fuel  % detector for U238
               de wms69  % WIMS69 group structure
               dr 102 just238  % U238 microscopic capture 
+              dt -3  % division by lethargy width
 
 % Note: change the parameters for "fuel" to two separate fuel temperatures and relative contents of 238U in the fuel.
 % (See comments above)
@@ -239,10 +233,11 @@ det EXERCISE3 dm just238  % detector for U238
 % 1) Fuel temperature (by 50K), Moderator temperature (by 5K), Boron concentration (by 50 ppm)
 % how to do this is explained in the comments above
 
-% kinf initial = 
-% kinf fuel = 
-% kinf moderator = 
-% kinf boron = 
+% The kinf are from ABS_KINF parameter in the res document
+% kinf initial = 1.16927 +- 0.00013 * 1.16927
+% kinf fuel = 1.16841 +- 0.00012 * 1.16841
+% kinf moderator = 1.16549 +- 0.00013 * 1.16549
+% kinf boron = 1.14826 +- 0.00013 * 1.14826
 
 
 
@@ -255,8 +250,11 @@ det EXERCISE3 dm just238  % detector for U238
 % obviously we can just use the same detectors as exercise 2,
 % the fuel enrichment needs to be changed, this is explained in the comments above
 
-% simulation time needs to be saved
-
+% The times are from RUNNING_TIME and TRANSPORT_CYCLE_TIME in the res document 
+% T(0.7%) = 
+% T(3.5%) = 2.65 min, 2.63 for transport
+% T(10%)  = 4.61 min, 4.59 for transport
+% T(90%)  = 
 
 
 
@@ -265,7 +263,7 @@ det EXERCISE3 dm just238  % detector for U238
 % water. Comment on the differences between this spectrum and that of the moderated, 90%
 % enriched design. "
 
-% so the pin needs to be reconfigures such that the coolant is removed
+% so the pin needs to be reconfigured such that the coolant is removed
 % this is explained in the comments above
 % the same detectors as exercise 2 are used
 

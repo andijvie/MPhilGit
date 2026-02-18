@@ -1,0 +1,4 @@
+dos2unix aqz22_Zhang_A_NE8_Assignment3_Serpent_Input.se
+
+sss2 –omp 16 aqz22_Zhang_A_NE8_Assignment3_Serpent_Input.se
+
