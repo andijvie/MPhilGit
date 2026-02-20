@@ -15,6 +15,7 @@ H2O_DENSITY_150 = 664.9 # [kg/m3]
 H2O_DENSITY_200 = 679.8 # [kg/m3]
 H2O_DENSITY = H2O_DENSITY_150 + (H2O_DENSITY_200 - H2O_DENSITY_150) * (5/50) # [kg/m3] 15.5MPa @ 600K == 155bar @ 326.85C 
 H2O_DENSITY *= 1e-3 # [g/m3]
+H2O_DENSITY_red = H2O_DENSITY - 10e-3 # [g/m3], reduced H2O density for exercise 8
 
 # Atomic mass from: https://www-nds.iaea.org/relnsd/vcharthtml/VChartHTML.html
 U235mass = 235.0439281 # [u]
@@ -40,11 +41,17 @@ O16fuelDensity = UO2_DENSITY * (2 * O16mass) / (U_mass + 2 * O16mass)
 H2OMass = 2 * H1mass + O16mass # [u]
 H1density = H2O_DENSITY * (2 * H1mass) / H2OMass # [u]
 O16coolantDensity = H2O_DENSITY * O16mass / H2OMass # [g/cm3]
-H20density = H1density + O16coolantDensity # [g/cm3]
+H1densityRed = H2O_DENSITY_red * (2 * H1mass) / H2OMass # [u]
+O16coolantDensityRed = H2O_DENSITY_red * O16mass / H2OMass # [g/cm3]
 
-boronDensity = H20density * BORON_CONCENTRATION/1e6 # [g/cm3]
+
+boronDensity = H2O_DENSITY * BORON_CONCENTRATION/1e6 # [g/cm3]
 B10Density = boronDensity * B10massfrac # [g/cm3]
 B11Density = boronDensity * B11massfrac # [g/cm3]
+
+boronDensityRed = H2O_DENSITY_red * BORON_CONCENTRATION/1e6 # [g/cm3]
+B10DensityRed = boronDensityRed * B10massfrac # [g/cm3]
+B11DensityRed = boronDensityRed * B11massfrac # [g/cm3]
 
 
 print("Fuel:")
@@ -58,6 +65,13 @@ print(f"H1 density = {H1density} g/cm3")
 print(f"O16 density = {O16coolantDensity} g/cm3")
 print(f"B10 density = {B10Density} g/cm3")
 print(f"B11 density = {B11Density} g/cm3")
+print("")
+print("Coolant reduced density for exercise 8:")
+print(f"Coolant density = {H2O_DENSITY_red} g/cm3")
+print(f"H1 density = {H1densityRed} g/cm3")
+print(f"O16 density = {O16coolantDensityRed} g/cm3")
+print(f"B10 density = {B10DensityRed} g/cm3")
+print(f"B11 density = {B11DensityRed} g/cm3")
 print("")
 
 fuel_pellet_outer_diameter = 0.950 # [cm]

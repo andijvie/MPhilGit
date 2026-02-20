@@ -3,16 +3,16 @@ set title "UO2 PIN MODEL"
 % --- Define materials --- %
 
 % - UO2 3.5%w
-mat fuel	sum        tmp 1200  % [K] <-- Change between 900, 950 and 1200  << FOR EXERCISE 3 AND 4 >> 
-    92235.09c	-0.320862646119516  % [g/cm]
-    92238.09c   -8.846641528723795  % [g/cm]
-    8016.09c    -1.232495825156688  % [g/cm]
+%mat fuel	sum        tmp 1200  % [K] <-- Change between 900, 950 and 1200  << FOR EXERCISE 3 AND 4 >> 
+%    92235.09c	-0.320862646119516  % [g/cm]
+%    92238.09c   -8.846641528723795  % [g/cm]
+%    8016.09c    -1.232495825156688  % [g/cm]
 
 % - zirconium cladding
 mat clad        sum tmp 600
     40000.06c	-6.56  % [g/cm] (from NE MPhil databook)
 
-% - lightwater coolant w/ 500 ppm boron
+% - 0.66639 g/cm3 lightwater coolant w/ 500 ppm boron
 mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  << FOR EXERCISE 4 AND 7 >> 
     1001.06c -0.07457895238987516  % [g/cm]
     8016.06c -0.59181104761012480  % [g/cm]
@@ -32,12 +32,22 @@ mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  
 
 
 % ---- UNCOMMENT FOR EXERCISE 4 AND 7 (but comment the 500 ppm version) ----
-% - lightwater coolant w/ 550 ppm boron
+% - 0.66639 g/cm3 lightwater coolant w/ 550 ppm boron
 %mat coolant  sum moder lwtr 1001 tmp 600  % [K]
 %    1001.06c -0.07457895238987516  % [g/cm]
 %    8016.06c -0.59181104761012480  % [g/cm]
 %    5010.06c -0.00006720642870396  % [g/cm]
 %    5011.06c -0.00029930807129604  % [g/cm]
+
+
+
+% ---- UNCOMMENT FOR EXERCISE 8 (but comment the 0.66639 g/cm3 version) ----
+% - 0.65639 g/cm3 g/cm3 lightwater coolant w/ 500 ppm boron
+%mat coolant  sum moder lwtr 1001 tmp 600  % [K]
+%    1001.06c -0.07345980365730302  % [g/cm]
+%    8016.06c -0.58293019634269690  % [g/cm]
+%    5010.06c -0.00006017992158154  % [g/cm]
+%    5011.06c -0.00026801507841846  % [g/cm]
 
 
 
@@ -52,10 +62,10 @@ mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  
 
 % ---- UNCOMMENT FOR EXERCISE 5, 6 AND 7 (but comment the 3.5% version) ----
 % - UO2 90.0%w 
-%mat fuel	sum        tmp 900  % [K] <-- Change between 900 and 950 for  << EXERCISE 7 >>
-%    92235.09c	 -8.2399617510248950  % [g/cm]
-%    92238.09c   -0.9155513056694324  % [g/cm]
-%    8016.09c    -1.2444869433056749  % [g/cm]
+mat fuel	sum        tmp 900  % [K] <-- Change between 900 and 950 for  << EXERCISE 7 >>
+    92235.09c	 -8.2399617510248950  % [g/cm]
+    92238.09c   -0.9155513056694324  % [g/cm]
+    8016.09c    -1.2444869433056749  % [g/cm]
 
 
 % thermal scattering library for H20 
@@ -63,15 +73,15 @@ therm lwtr lwj3.11t
 
 % --- Define geometry --- %
 surf 1000 sqc 0.0 0.0 1.260  % [cm] 
-surf 3000 cuboid 0.0 1.260 0.0 1.260 -50 50 % [cm] 3D cuboid used in << EXERCISE 8 >> (change the final 2 values for the axial length)
+surf 3000 cuboid 0.0 1.260 0.0 1.260 -200 200 % [cm] 3D cuboid used in << EXERCISE 8 >> (change the final 2 values for the axial length)
 
 pin 1
 fuel 0.4750  % [cm]
 clad 0.5405  % [cm]
-coolant  % <-- Change from "coolant" to "void" for  << EXERCISE 6 >>
+void  % <-- Change from "coolant" to "void" for  << EXERCISE 6 >>
 
-cell insideCell  0 fill 1   -3000 % <--- change from -1000 to -3000 for << EXERCISE 8 >>
-cell outsideCell 0 outside  3000 % <--- change from 1000 to 3000 for << EXERCISE 8 >>
+cell insideCell  0 fill 1   -1000 % <--- change from -1000 to -3000 for << EXERCISE 8 >>
+cell outsideCell 0 outside  1000 % <--- change from 1000 to 3000 for << EXERCISE 8 >>
 
 % --- Neutron population and criticality cycles:
  set pop 10000 1000 100  %                 [#neutrons], [#active cycles], [#inactive cycles]
@@ -80,7 +90,7 @@ cell outsideCell 0 outside  3000 % <--- change from 1000 to 3000 for << EXERCISE
 
 % --- Boundary conditions: 
 set bc 2  % reflective
-set bc 2 2 1 % UNCOMMENT for << EXERCISE 8 >>: reflective, reflective, black
+%set bc 2 2 1 % UNCOMMENT for << EXERCISE 8 >>: reflective, reflective, black
 
 % --- Normalisation:
 set powdens 0.038 fuel  % [kW/gHM]
@@ -142,6 +152,14 @@ det EXERCISE256mod dm coolant  % detector for coolant == moderator region
                    dr -1 coolant  % Total macroscopic reaction rate at material "coolant"
                    de EnergyAssignment2  % energy binning
                    dt -3  % division by lethargy width
+
+det fluxfuel dm fuel  % detector for fuel region
+             de EnergyAssignment2  % energy binning
+             dt -3  % division by lethargy width
+
+det fluxCoolant dm coolant  % detector for fuel region
+                de EnergyAssignment2  % energy binning
+                dt -3  % division by lethargy width
 
 
 
@@ -309,16 +327,13 @@ set entr 1 1 25 % 1 radial bin w/ 25 axial bins
 
 % The keff are from ANA_KEFF parameter in the res document (first 2 entries)
 % keff 10cm = 0.193915 +- 0.00110 * 0.193915
-% keff 20cm = 
-% keff 30cm = 
-% keff 50cm = 
-% keff 100cm = 
-% keff 200cm = 
-% keff 300cm = 
+% keff 50cm = 0.973904 +- 0.00040 * 0.973904
+% keff 100cm = 1.10554 +- 0.00036 * 1.10554
 % keff 400cm = 1.16205 +- 0.00034 * 1.16205
-
 
 % "Now decrease the water density by 10 in the 4m case. How does the convergence rate
 % compare to the 4m full density case?"
+
+% keff 400cm = 1.16588 +- 0.00033 * 1.16588
 
 
