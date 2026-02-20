@@ -44,18 +44,18 @@ mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  
 % ---- UNCOMMENT FOR EXERCISE 5 (but comment the 3.5% version) ----
 % - UO2 0.7%w 
 %mat fuel	sum        tmp 900  % [K]
-%92235.09c	 -0.0641752192675357  % [g/cm]
-%92238.09c   -9.1037132475232800  % [g/cm]
-%8016.09c    -1.2321115332091850  % [g/cm]
+%    92235.09c	 -0.0641752192675357  % [g/cm]
+%    92238.09c   -9.1037132475232800  % [g/cm]
+%    8016.09c    -1.2321115332091850  % [g/cm]
 
 
 
-% ---- UNCOMMENT FOR EXERCISE 5 AND 6 (but comment the 3.5% version) ----
+% ---- UNCOMMENT FOR EXERCISE 5, 6 AND 7 (but comment the 3.5% version) ----
 % - UO2 90.0%w 
 %mat fuel	sum        tmp 900  % [K] <-- Change between 900 and 950 for  << EXERCISE 7 >>
-%92235.09c	 -8.2399617510248950  % [g/cm]
-%92238.09c   -0.9155513056694324  % [g/cm]
-%8016.09c    -1.2444869433056749  % [g/cm]
+%    92235.09c	 -8.2399617510248950  % [g/cm]
+%    92238.09c   -0.9155513056694324  % [g/cm]
+%    8016.09c    -1.2444869433056749  % [g/cm]
 
 
 % thermal scattering library for H20 
@@ -63,32 +63,40 @@ therm lwtr lwj3.11t
 
 % --- Define geometry --- %
 surf 1000 sqc 0.0 0.0 1.260  % [cm] 
-surf 3000 cuboid 0.0 1.260 0.0 1.260 -5 5 % [cm] <--- 3D cuboid for exercise 8
+surf 3000 cuboid 0.0 1.260 0.0 1.260 -50 50 % [cm] 3D cuboid used in << EXERCISE 8 >> (change the final 2 values for the axial length)
 
 pin 1
 fuel 0.4750  % [cm]
 clad 0.5405  % [cm]
-coolant  % <-- Change to "void" for  << EXERCISE 6 >>
+coolant  % <-- Change from "coolant" to "void" for  << EXERCISE 6 >>
 
-cell insideCell  0 fill 1 -1000 % <--- change to 3000 for ex. 8
-cell outsideCell 0 outside 1000
+cell insideCell  0 fill 1   -3000 % <--- change from -1000 to -3000 for << EXERCISE 8 >>
+cell outsideCell 0 outside  3000 % <--- change from 1000 to 3000 for << EXERCISE 8 >>
 
 % --- Neutron population and criticality cycles:
  set pop 10000 1000 100  %                 [#neutrons], [#active cycles], [#inactive cycles]
                          % typical values:    5000           500                20
+
+
 % --- Boundary conditions: 
 set bc 2  % reflective
-% set bc 2 2 1 % reflective, reflective, black fir ex. 8
+set bc 2 2 1 % UNCOMMENT for << EXERCISE 8 >>: reflective, reflective, black
 
 % --- Normalisation:
 set powdens 0.038 fuel  % [kW/gHM]
 
 % --- Geometry and mesh plots: 
-plot 3 500 500 
-mesh 3 500 500 
+plot 3 500 500 0 -2.520 2.520 -2.520 2.520
+mesh 3 500 500 4 -2.520 2.520 -2.520 2.520
 
-%plot 1 500 500 
-%mesh 1 500 500 
+plot 1 1000 1000 0 -5.040 5.040 -5.040 5.040
+mesh 1 1000 1000 4 -5.040 5.040 -5.040 5.040
+
+plot 2 500 500 0 -2.520 2.520 -2.520 2.520
+mesh 2 500 500 4 -2.520 2.520 -2.520 2.520
+
+plot 1 2000 2000 0 -10.080 10.080 -10.080 10.080
+mesh 1 2000 2000 4 -10.080 10.080 -10.080 10.080
 
 % --- Cross section library file path: 
 set acelib "/usr/software/mcnplib/SERPENT/XSdata_endfb7/sss_endfb7u.xsdata"
@@ -251,10 +259,10 @@ det EXERCISE3 dm fuel  % detector for U238
 % the fuel enrichment needs to be changed, this is explained in the comments above
 
 % The times are from RUNNING_TIME and TRANSPORT_CYCLE_TIME in the res document 
-% T(0.7%) = 
+% T(0.7%) = 3.85 min, 3.82 for transport
 % T(3.5%) = 2.65 min, 2.63 for transport
-% T(10%)  = 4.61 min, 4.59 for transport
-% T(90%)  = 
+% T(10%)  = 1.99 min, 1.96 for transport
+% T(90%)  = 1.45 min, 1.43 for transport
 
 
 
@@ -277,7 +285,40 @@ det EXERCISE3 dm fuel  % detector for U238
 % Mutatus mutandis from exercise 4
 
 
-% kinf initial = 
-% kinf fuel = 
-% kinf moderator = 
-% kinf boron = 
+% kinf initial = 1.76681 +- 6.5E-05 * 1.76681
+% kinf fuel = 1.76602 +- 6.4E-05 * 1.76602
+% kinf moderator = 1.76656 +- 6.4E-05 * 1.76656
+% kinf boron = 1.76121 +- 6.3E-05 * 1.76121
+
+
+
+
+% ------------------------------ EXERCISE 8 ------------------------------ 
+% "Convert the 2D pin to a 3D pin with reflective radial boundary conditions and vacuum axial
+% boundary conditions. Use the ‘set his’ and ‘set entr’ options in Serpent to measure k_eff and
+% Shannon entropy over cycles (HINT: use more neutrons per generation for prettier plots).
+% Describe how the convergence rate varies with different axial dimensions between 10cm and
+% 4m, and comment on the two metrics. HINT: for the Shannon entropy mesh, you can use 1
+% radial bin and 25 axial bins."
+
+% for this exercise it is necessary to change the pin to a 3D pin
+% how this is done is explained in the geometry section
+
+set his 1 % enable entropy recording 
+set entr 1 1 25 % 1 radial bin w/ 25 axial bins
+
+% The keff are from ANA_KEFF parameter in the res document (first 2 entries)
+% keff 10cm = 0.193915 +- 0.00110 * 0.193915
+% keff 20cm = 
+% keff 30cm = 
+% keff 50cm = 
+% keff 100cm = 
+% keff 200cm = 
+% keff 300cm = 
+% keff 400cm = 1.16205 +- 0.00034 * 1.16205
+
+
+% "Now decrease the water density by 10 in the 4m case. How does the convergence rate
+% compare to the 4m full density case?"
+
+
