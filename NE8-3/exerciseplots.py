@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from outputs import DETEXERCISE1R, DETEXERCISE256E, DETEXERCISE3E, DETEXERCISE1, DETEXERCISE256fuel, DETEXERCISE256mod, DETEXERCISE3, DETEXERCISE3T, DETEXERCISE310, DETEXERCISE310T, DETEXERCISE6mod, DETEXERCISE6fuel
+from outputs import DETfluxCoolant10, DETfluxCoolant35, DETfluxCoolant6, DETfluxCoolant7, DETfluxCoolant90, DETfluxfuel10, DETfluxfuel35, DETfluxfuel6, DETfluxfuel7, DETfluxfuel90
 from outputs import DETEXERCISE5fuel7, DETEXERCISE5fuel10, DETEXERCISE5fuel90, DETEXERCISE5mod7, DETEXERCISE5mod10, DETEXERCISE5mod90
 
 from outputs8 import HIS_ANA_KEFF10, HIS_ANA_KEFF50, HIS_ANA_KEFF100, HIS_ANA_KEFF400, HIS_IMP_KEFF10, HIS_IMP_KEFF50, HIS_IMP_KEFF100, HIS_IMP_KEFF400, HIS_ENTR_SPT10, HIS_ENTR_SPT100, HIS_ENTR_SPT400, HIS_ENTR_SPT50, HIS_ENTR_SPTtest, HIS_ANA_KEFF400red, HIS_ENTR_SPT400red, HIS_IMP_KEFF400red
@@ -46,16 +47,18 @@ def q1():
         plt.show()
 #q1()
 
+lw = 1.1
+
 def q25():
         plt.figure(figsize=(8,4))
-        plt.plot(ex256_x, DETEXERCISE5mod7[:,0], label = "Moderator 0.7", linestyle = '--', color='k', linewidth = lw)
-        plt.plot(ex256_x, DETEXERCISE256mod[:,0], label = "Moderator 3.5", color='k')
-        plt.plot(ex256_x, DETEXERCISE5mod10[:,0], label = "Moderator 10", linestyle = 'dashdot', color='k', linewidth = lw)
-        plt.plot(ex256_x, DETEXERCISE5mod90[:,0], label = "Moderator 90", linestyle = ':', color='k', linewidth = lw)
-        plt.plot(ex256_x, DETEXERCISE5fuel7[:,0], label = "Fuel 0.7", linestyle = '--', color='grey', linewidth = lw)
-        plt.plot(ex256_x, DETEXERCISE256fuel[:,0], label = "Fuel 3.5", color='grey')
-        plt.plot(ex256_x, DETEXERCISE5fuel10[:,0], label = "Fuel 10", linestyle = 'dashdot', color='grey', linewidth = lw)
-        plt.plot(ex256_x, DETEXERCISE5fuel90[:,0], label = "Fuel 90", linestyle = ':', color='grey', linewidth = lw)
+        plt.plot(ex256_x, DETEXERCISE5mod7[:,0], label = "Moderator, 0.7%", linestyle = '--', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETEXERCISE256mod[:,0], label = "Moderator, 3.5%", color='k')
+        plt.plot(ex256_x, DETEXERCISE5mod10[:,0], label = "Moderator, 10%", linestyle = 'dashdot', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETEXERCISE5mod90[:,0], label = "Moderator, 90%", linestyle = ':', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETEXERCISE5fuel7[:,0], label = "Fuel, 0.7%", linestyle = '--', color='grey', linewidth = lw)
+        plt.plot(ex256_x, DETEXERCISE256fuel[:,0], label = "Fuel, 3.5%", color='grey')
+        plt.plot(ex256_x, DETEXERCISE5fuel10[:,0], label = "Fuel, 10%", linestyle = 'dashdot', color='grey', linewidth = lw)
+        plt.plot(ex256_x, DETEXERCISE5fuel90[:,0], label = "Fuel, 90%", linestyle = ':', color='grey', linewidth = lw)
         plt.yscale('log')
         plt.xscale('log')
         plt.xlim((ex256_x[0], ex256_x[-1]))
@@ -66,6 +69,29 @@ def q25():
                 frameon=True)
         plt.xlabel(r"Neutron energy [MeV]", fontsize=12)
         plt.ylabel(r"Reaction rate, [s$^{-1}$]", fontsize=12)
+        plt.tight_layout()
+        plt.show()
+        
+        
+        plt.figure(figsize=(8,4))
+        plt.plot(ex256_x, DETfluxCoolant35[:,0], label = "Moderator, 3.5%", color='k')
+        plt.plot(ex256_x, DETfluxCoolant10[:,0], label = "Moderator, 10%", linestyle = 'dashdot', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETfluxCoolant7[:,0], label = "Moderator, 0.7%", linestyle = '--', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETfluxCoolant90[:,0], label = "Moderator, 90%", linestyle = ':', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETfluxfuel35[:,0], label = "Fuel, 3.5%", color='grey')
+        plt.plot(ex256_x, DETfluxfuel10[:,0], label = "Fuel, 10%", linestyle = 'dashdot', color='grey', linewidth = lw)
+        plt.plot(ex256_x, DETfluxfuel7[:,0], label = "Fuel, 0.7%", linestyle = '--', color='grey', linewidth = lw)
+        plt.plot(ex256_x, DETfluxfuel90[:,0], label = "Fuel, 90%", linestyle = ':', color='grey', linewidth = lw)
+        plt.yscale('log')
+        plt.xscale('log')
+        plt.xlim((ex256_x[0], ex256_x[-1]))
+        plt.legend(ncol=2,
+                fontsize=11.5,
+                columnspacing=1.5,
+                handletextpad=0.6,
+                frameon=True)
+        plt.xlabel(r"Neutron energy [MeV]", fontsize=12)
+        plt.ylabel(r"Neutron Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
         plt.tight_layout()
         plt.show()
 #q25()
@@ -86,7 +112,7 @@ def q3():
         plt.show()
 #q3()
 
-lw = 1.1
+
 
 
 
@@ -109,14 +135,28 @@ q4()
 
 def q6():
         plt.figure(figsize=(8,4))
-        plt.plot(ex256_x, DETEXERCISE5fuel90[:,0], label = "With coolant", linestyle = '-', color='k', linewidth = lw)
-        plt.plot(ex256_x, DETEXERCISE6fuel[:,0], label = "In vacuum", linestyle = '--', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETEXERCISE5fuel90[:,0], label =r"Fuel, in H$_2$O", linestyle = ':', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETEXERCISE6fuel[:,0], label = "Fuel, in vacuum", linestyle = '-', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETEXERCISE5mod90[:,0], label =r"Moderator, in H$_2$O", linestyle = ':', color='grey', linewidth = lw)
         plt.yscale('log')
         plt.xscale('log')
         plt.xlim((ex256_x[0], ex256_x[-1]))
-        plt.legend(fontsize=11.5)
+        plt.legend(fontsize=11.5, loc=2)
         plt.xlabel(r"Neutron energy [MeV]", fontsize=12)
         plt.ylabel(r"Reaction rate, [s$^{-1}$]", fontsize=12)
+        plt.tight_layout()
+        plt.show()
+        
+        plt.figure(figsize=(8,4))
+        plt.plot(ex256_x, DETfluxfuel90[:,0], label = r"Fuel, in H$_2$O", linestyle = ':', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETfluxfuel6[:,0], label = "Fuel, in vacuum", linestyle = '-', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETfluxCoolant90[:,0], label = r"Moderator, in H$_2$O", linestyle = ':', color='grey', linewidth = lw)
+        plt.yscale('log')
+        plt.xscale('log')
+        plt.xlim((ex256_x[0], ex256_x[-1]))
+        plt.legend(fontsize=11.5, loc=2)
+        plt.xlabel(r"Neutron energy [MeV]", fontsize=12)
+        plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
         plt.tight_layout()
         plt.show()
 #q6()
@@ -132,14 +172,14 @@ q7()
 
 def q8():
         plt.figure(figsize=(8,3))
-        plt.plot(HIS_ANA_KEFF400[:50,0], color = 'k', linestyle = ':', linewidth = lw, label = "400 cm, analytic")
-        plt.plot(HIS_ANA_KEFF100[:50,0], color = 'k', linestyle = '--', linewidth = lw, label = "100 cm, analytic")
-        plt.plot(HIS_ANA_KEFF50[:50,0], color = 'k', linestyle = '-.', linewidth = lw, label="50 cm, analytic")
-        plt.plot(HIS_ANA_KEFF10[:50,0], color = 'k', linewidth = lw, label="10 cm, analytic")
-        plt.plot(HIS_IMP_KEFF400[:50,0], color = 'grey', linestyle = ':', linewidth = lw, label = "400 cm, implicit")
-        plt.plot(HIS_IMP_KEFF100[:50,0], color = 'grey', linestyle = '--', linewidth = lw, label = "100 cm, implicit")
-        plt.plot(HIS_IMP_KEFF50[:50,0], color = 'grey', linestyle = '-.', linewidth = lw, label = "50 cm, implicit")
-        plt.plot(HIS_IMP_KEFF10[:50,0], color = 'grey', linewidth = lw, label = "10 cm, implicit")
+        plt.plot(HIS_ANA_KEFF400[:50,0], color = 'k', linestyle = ':', linewidth = lw, label = "Analytic, 400 cm")
+        plt.plot(HIS_ANA_KEFF100[:50,0], color = 'k', linestyle = '--', linewidth = lw, label = "Analytic, 100 cm")
+        plt.plot(HIS_ANA_KEFF50[:50,0], color = 'k', linestyle = '-.', linewidth = lw, label="Analytic, 50 cm")
+        plt.plot(HIS_ANA_KEFF10[:50,0], color = 'k', linewidth = lw, label="Analytic, 10 cm")
+        plt.plot(HIS_IMP_KEFF400[:50,0], color = 'grey', linestyle = ':', linewidth = lw, label = "Implicit, 400 cm")
+        plt.plot(HIS_IMP_KEFF100[:50,0], color = 'grey', linestyle = '--', linewidth = lw, label = "Implicit, 100 cm")
+        plt.plot(HIS_IMP_KEFF50[:50,0], color = 'grey', linestyle = '-.', linewidth = lw, label = "Implicit, 50 cm")
+        plt.plot(HIS_IMP_KEFF10[:50,0], color = 'grey', linewidth = lw, label = "Implicit, 10 cm")
         plt.legend(ncol=2,
                 fontsize=11.5,
                 columnspacing=1.5,
@@ -151,10 +191,12 @@ def q8():
         plt.show()
 
         plt.figure(figsize=(8,3))
-        plt.plot(HIS_ANA_KEFF400[:50,0], color = 'k', linestyle = ':', linewidth = lw, label = "400 cm, analytic")
-        plt.plot(HIS_ANA_KEFF400red[:50,0], color = 'k', linewidth = lw, label="r, analytic")
-        plt.plot(HIS_IMP_KEFF400[:50,0], color = 'grey', linestyle = ':', linewidth = lw, label = "400 cm, implicit")
-        plt.plot(HIS_IMP_KEFF400red[:50,0], color = 'grey', linewidth = lw, label = "r, implicit")
+        plt.plot(HIS_ANA_KEFF400red[:50,0], color = 'k', linewidth = lw, label=r"Analytic, 656.39 kg/m$^3$")
+        plt.plot(HIS_ANA_KEFF400[:50,0], color = 'k', linestyle = ':', linewidth = lw, label = r"Analytic, 666.39 kg/m$^3$")
+        plt.plot(HIS_IMP_KEFF400red[:50,0], color = 'grey', linewidth = lw, label = r"Implicit, 656.39 kg/m$^3$")
+        plt.plot(HIS_IMP_KEFF400[:50,0], color = 'grey', linestyle = ':', linewidth = lw, label = r"Implicit, 666.39 kg/m$^3$")
+        plt.ylabel(r"Multiplication factor, $k_\text{eff}$", fontsize=12)
+        plt.xlabel(r"Generation", fontsize=12)
         plt.legend(ncol=2,
                 fontsize=11.5,
                 columnspacing=1.5,
@@ -173,6 +215,7 @@ def q8():
         plt.plot(HIS_IMP_KEFF100[:150,1], color = 'grey', linestyle = '--', linewidth = lw, label = "100 cm, implicit")
         plt.plot(HIS_IMP_KEFF50[:150,1], color = 'grey', linestyle = '-.', linewidth = lw, label = "50 cm, implicit")
         plt.plot(HIS_IMP_KEFF10[:150,1], color = 'grey', linewidth = lw, label = "10 cm, implicit")
+        plt.axvline(100, linestyle = ':', linewidth = 0.8, color='dimgrey',alpha = 0.5)
         plt.legend(ncol=2,
                 fontsize=11.5,
                 columnspacing=1.5,
@@ -185,31 +228,51 @@ def q8():
 
 
         plt.figure(figsize=(8,3))
-        plt.plot(HIS_ENTR_SPT10[:,0])
-        plt.plot(HIS_ENTR_SPT50[:,0])
-        plt.plot(HIS_ENTR_SPT100[:,0])
-        plt.plot(HIS_ENTR_SPT400[:,0])
+        plt.plot(HIS_ENTR_SPT10[:,0], color = 'k', linestyle = '-', label=r"10 cm", linewidth = lw)
+        plt.plot(HIS_ENTR_SPT100[:,0], color = 'dimgrey', linestyle = '-', label=r"100 cm", linewidth = lw)
+        plt.plot(HIS_ENTR_SPT400[:,0], color = 'darkgrey', linestyle = '-', label=r"400 cm", linewidth = lw)
+        plt.legend(fontsize=11.5)
+        plt.ylabel(r"Shannon entropy, $S$", fontsize=12)
+        plt.xlabel(r"Generation", fontsize=12)
         plt.tight_layout()
         plt.show()
 
         plt.figure(figsize=(8,3))
-        plt.plot(HIS_ENTR_SPT400[:,0])
-        plt.plot(HIS_ENTR_SPT400red[:,0])
+        plt.plot(HIS_ENTR_SPT400[:,0], color = 'k', linestyle = '-', label=r"666.39 kg/m$^3$", linewidth = lw)
+        plt.plot(HIS_ENTR_SPT400red[:,0], color = 'grey', linestyle = '-', label=r"656.39 kg/m$^3$", linewidth = lw)
+        plt.legend(fontsize=11.5)
+        plt.ylabel(r"Shannon entropy, $S$", fontsize=12)
+        plt.xlabel(r"Generation", fontsize=12)
         plt.tight_layout()
         plt.show()
         
         plt.figure(figsize=(8,3))
-        plt.plot(HIS_ENTR_SPT10[:,1])
-        plt.plot(HIS_ENTR_SPT50[:,1])
-        plt.plot(HIS_ENTR_SPT100[:,1])
-        plt.plot(HIS_ENTR_SPT400[:,1])
+        plt.plot(HIS_ENTR_SPT400[:,1], color = 'k', linestyle = '-', label=r"666.39 kg/m$^3$")
+        plt.plot(HIS_ENTR_SPT400red[:,1], color = 'grey', linestyle = ':', label=r"656.39 kg/m$^3$")
+        plt.legend(fontsize=11.5)
+        plt.ylabel(r"Shannon entropy, $S$", fontsize=12)
+        plt.xlabel(r"Generation", fontsize=12)
+        plt.tight_layout()
+        plt.show()
+        
+        plt.figure(figsize=(8,3))
+        plt.plot(HIS_ENTR_SPT10[:,1], color = 'k', label = "10 cm")
+        plt.plot(HIS_ENTR_SPT50[:,1], color = 'dimgrey', linestyle = '-.', label = "50 cm")
+        plt.plot(HIS_ENTR_SPT100[:,1], color = 'grey', linestyle = '--', label = "100 cm")
+        plt.plot(HIS_ENTR_SPT400[:,1], color = 'dimgrey', linestyle = ':', label = "400 cm")
+        plt.axvline(100, linestyle = ':', linewidth = 0.8, color='dimgrey',alpha = 0.5)
+        plt.legend(fontsize=11.5)
+        plt.ylabel(r"Shannon entropy, $S$", fontsize=12)
+        plt.xlabel(r"Generation", fontsize=12)
         plt.tight_layout()
         plt.show()
 
         plt.figure(figsize=(8,3))
-        plt.plot(HIS_ENTR_SPTtest[:200,0])
-        plt.plot(HIS_ENTR_SPT400[:200,0])
+        plt.plot(HIS_ENTR_SPTtest[:200,0], color = 'k', linestyle = '-', label=r"100$\,$000 neutrons")
+        plt.plot(HIS_ENTR_SPT400[:200,0], color = 'grey', linestyle = '-', label=r"  10$\,$000 neutrons")
+        plt.legend(fontsize=11.5)
+        plt.ylabel(r"Shannon entropy, $S$", fontsize=12)
+        plt.xlabel(r"Generation", fontsize=12)
         plt.tight_layout()
         plt.show()
-
 q8()

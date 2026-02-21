@@ -1,1 +1,1 @@
-t
+l(r"Multiplication factor, $k_\text{eff}$", fontsize=12)
