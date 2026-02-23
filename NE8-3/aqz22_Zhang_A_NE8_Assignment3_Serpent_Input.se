@@ -3,10 +3,10 @@ set title "UO2 PIN MODEL"
 % --- Define materials --- %
 
 % - UO2 3.5%w
-mat fuel	sum        tmp 1200  % [K] <-- Change between 900, 950 and 1200  << FOR EXERCISE 3 AND 4 >> 
-    92235.09c	-0.320862646119516  % [g/cm]
-    92238.09c   -8.846641528723795  % [g/cm]
-    8016.09c    -1.232495825156688  % [g/cm]
+%mat fuel	sum        tmp 1200  % [K] <-- Change between 900, 950 and 1200  << FOR EXERCISE 3 AND 4 >> 
+%    92235.09c	-0.320862646119516  % [g/cm]
+%    92238.09c   -8.846641528723795  % [g/cm]
+%    8016.09c    -1.232495825156688  % [g/cm]
 
 % - zirconium cladding
 mat clad        sum tmp 600
@@ -53,10 +53,10 @@ mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  
 
 % ---- UNCOMMENT FOR EXERCISE 5 (but comment the 3.5% version) ----
 % - UO2 0.7%w 
-%mat fuel	sum        tmp 900  % [K]
-%    92235.09c	 -0.0641752192675357  % [g/cm]
-%    92238.09c   -9.1037132475232800  % [g/cm]
-%    8016.09c    -1.2321115332091850  % [g/cm]
+mat fuel	sum        tmp 900  % [K]
+    92235.09c	 -0.0641752192675357  % [g/cm]
+    92238.09c   -9.1037132475232800  % [g/cm]
+    8016.09c    -1.2321115332091850  % [g/cm]
 
 
 
@@ -78,7 +78,7 @@ surf 3000 cuboid 0.0 1.260 0.0 1.260 -200 200 % [cm] 3D cuboid used in << EXERCI
 pin 1
 fuel 0.4750  % [cm]
 clad 0.5405  % [cm]
-void  % <-- Change from "coolant" to "void" for  << EXERCISE 6 >>
+coolant  % <-- Change from "coolant" to "void" for  << EXERCISE 6 >>
 
 cell insideCell  0 fill 1   -1000 % <--- change from -1000 to -3000 for << EXERCISE 8 >>
 cell outsideCell 0 outside  1000 % <--- change from 1000 to 3000 for << EXERCISE 8 >>
@@ -242,7 +242,7 @@ ene wms69 1
           6.06550E+00
           1.00000E+01
 
-det EXERCISE3 dm fuel  % detector for U238
+det EXERCISE3 dm fuel  % detector for fuel
               de wms69  % WIMS69 group structure
               dr 102 just238  % U238 microscopic capture 
               dt -3  % division by lethargy width
@@ -334,6 +334,6 @@ set entr 1 1 25 % 1 radial bin w/ 25 axial bins
 % "Now decrease the water density by 10 in the 4m case. How does the convergence rate
 % compare to the 4m full density case?"
 
-% keff 400cm = 1.16588 +- 0.00033 * 1.16588
+% keff 400cm = 1.78259 +- 0.00024 * 1.78259
 
 

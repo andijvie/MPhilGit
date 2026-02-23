@@ -857,12 +857,12 @@ Isotopic composition (non-zero densities):
 
 Material "coolant":
 
- - Material is not included in majorant
- - Material is not included in geometry
+ - Material is included in majorant
+ - Material is included in geometry
  - Atom density 6.68632E-02 1/barn*cm
  - Mass density 6.66723E-01 g/cm3
- - Volume 0.00000E+00 cm3
- - Mass 0.00000E+00 g
+ - Volume 1.00000E+37 cm3
+ - Mass 6.66723E+36 g
  - Photon emission rate 0.00000E+00 1/s
  - Neutron emission rate 0.00000E+00 1/s
  - 4 nuclides in composition
@@ -885,7 +885,7 @@ Material "fuel":
 
  - Material is included in majorant
  - Material is included in geometry
- - Atom density 7.02822E-02 1/barn*cm
+ - Atom density 6.95830E-02 1/barn*cm
  - Mass density 1.04000E+01 g/cm3
  - Volume 7.08822E-01 cm3
  - Mass 7.37175E+00 g
@@ -900,10 +900,10 @@ Isotopic composition (non-zero densities):
 -------------------------------------------------------------------
  Nuclide    a. weight   temp      a. dens      a. frac      m. frac
 -------------------------------------------------------------------
- 92235.09c  235.04395  900.0  2.11115E-02  3.00382E-01  7.92304E-01    
- 92238.09c  238.05078  900.0  2.31610E-03  3.29542E-02  8.80338E-02    
-  8016.09c   15.99492  900.0  4.68546E-02  6.66663E-01  1.19662E-01    
-       sum                    7.02822E-02  1.00000E+00  1.00000E+00
+ 92235.09c  235.04395  900.0  1.64423E-04  2.36297E-03  6.17069E-03    
+ 92238.09c  238.05078  900.0  2.30299E-02  3.30971E-01  8.75357E-01    
+  8016.09c   15.99492  900.0  4.63887E-02  6.66666E-01  1.18472E-01    
+       sum                    6.95830E-02  1.00000E+00  1.00000E+00
 -------------------------------------------------------------------
 
 Material "just238":

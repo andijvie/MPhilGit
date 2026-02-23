@@ -40,10 +40,19 @@ ex3_x = DETEXERCISE3E[:,2]
 lw = 1.1
 
 def q1():
-        plt.figure(figsize=(8,3))
-        plt.plot(ex1_x, DETEXERCISE1[:,0], color = 'k')
-        plt.xlabel(r"Radial distance $r$, [cm]", fontsize=12)
-        plt.ylabel(r"Reaction rate, [s$^{-1}$]", fontsize=12)
+        plt.figure(figsize=(8,4))
+        plt.stairs(DETEXERCISE1[:,0], ex1_bins, color = 'k', )
+        plt.xlabel(r"Radial intervals $r_i$, [cm]", fontsize=12)
+        plt.ylabel(r"Reaction rate per interval, [s$^{-1}$]", fontsize=12)
+        plt.vlines(
+                ex1_bins,
+                ymin=0,
+                ymax=DETEXERCISE1[:,0].max(),
+                colors="dimgrey",
+                alpha=0.5,
+                linestyles=":",
+                linewidth=1
+        )
         plt.tight_layout()
         plt.show()
 q1()
@@ -156,7 +165,7 @@ def q6():
         plt.xlim((ex256_x[0], ex256_x[-1]))
         plt.legend(fontsize=11.5, loc=2)
         plt.xlabel(r"Neutron energy [MeV]", fontsize=12)
-        plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
+        plt.ylabel(r"Neutron Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
         plt.tight_layout()
         plt.show()
 q6()
