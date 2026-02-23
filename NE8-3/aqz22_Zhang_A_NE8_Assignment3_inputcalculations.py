@@ -1,3 +1,6 @@
+# By Andy Zhang for NE8 assignment 3
+# Feb 2026
+
 import numpy as np
 
 FUEL_ENRICHMENT = 0.035 # weight fraction
@@ -15,7 +18,7 @@ H2O_DENSITY_150 = 664.9 # [kg/m3]
 H2O_DENSITY_200 = 679.8 # [kg/m3]
 H2O_DENSITY = H2O_DENSITY_150 + (H2O_DENSITY_200 - H2O_DENSITY_150) * (5/50) # [kg/m3] 15.5MPa @ 600K == 155bar @ 326.85C 
 H2O_DENSITY *= 1e-3 # [g/m3]
-H2O_DENSITY_red = H2O_DENSITY - 10e-3 # [g/m3], reduced H2O density for exercise 8
+H2O_DENSITY_red = H2O_DENSITY/10 # [g/m3], reduced H2O density for exercise 8
 
 # Atomic mass from: https://www-nds.iaea.org/relnsd/vcharthtml/VChartHTML.html
 U235mass = 235.0439281 # [u]

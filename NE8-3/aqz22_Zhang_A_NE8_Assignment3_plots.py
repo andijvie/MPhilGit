@@ -37,6 +37,7 @@ ex1_x = DETEXERCISE1R[:,2]
 ex256_x = DETEXERCISE256E[:,2]
 ex3_x = DETEXERCISE3E[:,2]
 
+lw = 1.1
 
 def q1():
         plt.figure(figsize=(8,3))
@@ -45,9 +46,8 @@ def q1():
         plt.ylabel(r"Reaction rate, [s$^{-1}$]", fontsize=12)
         plt.tight_layout()
         plt.show()
-#q1()
+q1()
 
-lw = 1.1
 
 def q25():
         plt.figure(figsize=(8,4))
@@ -94,7 +94,7 @@ def q25():
         plt.ylabel(r"Neutron Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
         plt.tight_layout()
         plt.show()
-#q25()
+q25()
 
 def q3():
         plt.figure(figsize=(16,8))
@@ -110,7 +110,7 @@ def q3():
         plt.legend()
         plt.tight_layout()
         plt.show()
-#q3()
+q3()
 
 
 
@@ -159,7 +159,7 @@ def q6():
         plt.ylabel(r"Scalar Flux, $\phi$ [cm$^{-2}$s$^{-1}$]", fontsize=12)
         plt.tight_layout()
         plt.show()
-#q6()
+q6()
 
 
 def q7():
@@ -191,9 +191,9 @@ def q8():
         plt.show()
 
         plt.figure(figsize=(8,3))
-        plt.plot(HIS_ANA_KEFF400red[:50,0], color = 'k', linewidth = lw, label=r"Analytic, 656.39 kg/m$^3$")
+        plt.plot(HIS_ANA_KEFF400red[:50,0], color = 'k', linewidth = lw, label=r"Analytic, 66.639 kg/m$^3$")
         plt.plot(HIS_ANA_KEFF400[:50,0], color = 'k', linestyle = ':', linewidth = lw, label = r"Analytic, 666.39 kg/m$^3$")
-        plt.plot(HIS_IMP_KEFF400red[:50,0], color = 'grey', linewidth = lw, label = r"Implicit, 656.39 kg/m$^3$")
+        plt.plot(HIS_IMP_KEFF400red[:50,0], color = 'grey', linewidth = lw, label = r"Implicit, 66.639 kg/m$^3$")
         plt.plot(HIS_IMP_KEFF400[:50,0], color = 'grey', linestyle = ':', linewidth = lw, label = r"Implicit, 666.39 kg/m$^3$")
         plt.ylabel(r"Multiplication factor, $k_\text{eff}$", fontsize=12)
         plt.xlabel(r"Generation", fontsize=12)
@@ -204,6 +204,22 @@ def q8():
                 frameon=True)
         plt.tight_layout()
         plt.show()
+
+        plt.figure(figsize=(8,3))
+        plt.plot(HIS_ANA_KEFF400red[:50,1], color = 'k', linewidth = lw, label=r"Analytic, 66.639 kg/m$^3$")
+        plt.plot(HIS_ANA_KEFF400[:50,1], color = 'k', linestyle = ':', linewidth = lw, label = r"Analytic, 666.39 kg/m$^3$")
+        plt.plot(HIS_IMP_KEFF400red[:50,1], color = 'grey', linewidth = lw, label = r"Implicit, 66.639 kg/m$^3$")
+        plt.plot(HIS_IMP_KEFF400[:50,1], color = 'grey', linestyle = ':', linewidth = lw, label = r"Implicit, 666.39 kg/m$^3$")
+        plt.ylabel(r"Multiplication factor, $k_\text{eff}$", fontsize=12)
+        plt.xlabel(r"Generation", fontsize=12)
+        plt.legend(ncol=2,
+                fontsize=11.5,
+                columnspacing=1.5,
+                handletextpad=0.6,
+                frameon=True)
+        plt.tight_layout()
+        plt.show()
+        
 
 
         plt.figure(figsize=(8,3))
@@ -239,16 +255,18 @@ def q8():
 
         plt.figure(figsize=(8,3))
         plt.plot(HIS_ENTR_SPT400[:,0], color = 'k', linestyle = '-', label=r"666.39 kg/m$^3$", linewidth = lw)
-        plt.plot(HIS_ENTR_SPT400red[:,0], color = 'grey', linestyle = '-', label=r"656.39 kg/m$^3$", linewidth = lw)
+        plt.plot(HIS_ENTR_SPT400red[:,0], color = 'grey', linestyle = '-', label=r"66.639 kg/m$^3$", linewidth = lw)
         plt.legend(fontsize=11.5)
         plt.ylabel(r"Shannon entropy, $S$", fontsize=12)
         plt.xlabel(r"Generation", fontsize=12)
         plt.tight_layout()
         plt.show()
-        
+
+
         plt.figure(figsize=(8,3))
         plt.plot(HIS_ENTR_SPT400[:,1], color = 'k', linestyle = '-', label=r"666.39 kg/m$^3$")
-        plt.plot(HIS_ENTR_SPT400red[:,1], color = 'grey', linestyle = ':', label=r"656.39 kg/m$^3$")
+        plt.plot(HIS_ENTR_SPT400red[:,1], color = 'grey', linestyle = ':', label=r"66.639 kg/m$^3$")
+        plt.axvline(100, linestyle = ':', linewidth = 0.8, color='dimgrey',alpha = 0.5)
         plt.legend(fontsize=11.5)
         plt.ylabel(r"Shannon entropy, $S$", fontsize=12)
         plt.xlabel(r"Generation", fontsize=12)

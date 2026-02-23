@@ -3,10 +3,10 @@ set title "UO2 PIN MODEL"
 % --- Define materials --- %
 
 % - UO2 3.5%w
-%mat fuel	sum        tmp 1200  % [K] <-- Change between 900, 950 and 1200  << FOR EXERCISE 3 AND 4 >> 
-%    92235.09c	-0.320862646119516  % [g/cm]
-%    92238.09c   -8.846641528723795  % [g/cm]
-%    8016.09c    -1.232495825156688  % [g/cm]
+mat fuel	sum        tmp 1200  % [K] <-- Change between 900, 950 and 1200  << FOR EXERCISE 3 AND 4 >> 
+    92235.09c	-0.320862646119516  % [g/cm]
+    92238.09c   -8.846641528723795  % [g/cm]
+    8016.09c    -1.232495825156688  % [g/cm]
 
 % - zirconium cladding
 mat clad        sum tmp 600
@@ -42,12 +42,12 @@ mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  
 
 
 % ---- UNCOMMENT FOR EXERCISE 8 (but comment the 0.66639 g/cm3 version) ----
-% - 0.65639 g/cm3 g/cm3 lightwater coolant w/ 500 ppm boron
+% - 0.066639 g/cm3 g/cm3 lightwater coolant w/ 500 ppm boron
 %mat coolant  sum moder lwtr 1001 tmp 600  % [K]
-%    1001.06c -0.07345980365730302  % [g/cm]
-%    8016.06c -0.58293019634269690  % [g/cm]
-%    5010.06c -0.00006017992158154  % [g/cm]
-%    5011.06c -0.00026801507841846  % [g/cm]
+%    1001.06c -0.007457895238987516  % [g/cm]
+%    8016.06c -0.05918110476101248  % [g/cm]
+%    5010.06c -0.000006109675336723878  % [g/cm]
+%    5011.06c -0.000027209824663276126  % [g/cm]
 
 
 
@@ -62,10 +62,10 @@ mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  
 
 % ---- UNCOMMENT FOR EXERCISE 5, 6 AND 7 (but comment the 3.5% version) ----
 % - UO2 90.0%w 
-mat fuel	sum        tmp 900  % [K] <-- Change between 900 and 950 for  << EXERCISE 7 >>
-    92235.09c	 -8.2399617510248950  % [g/cm]
-    92238.09c   -0.9155513056694324  % [g/cm]
-    8016.09c    -1.2444869433056749  % [g/cm]
+%mat fuel	sum        tmp 900  % [K] <-- Change between 900 and 950 for  << EXERCISE 7 >>
+%    92235.09c	 -8.2399617510248950  % [g/cm]
+%    92238.09c   -0.9155513056694324  % [g/cm]
+%    8016.09c    -1.2444869433056749  % [g/cm]
 
 
 % thermal scattering library for H20 
