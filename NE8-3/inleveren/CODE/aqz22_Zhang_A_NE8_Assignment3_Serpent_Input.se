@@ -1,12 +1,15 @@
+% By Andy Zhang for NE8 Assignment 3
+% Feb 2026
+
 set title "UO2 PIN MODEL"
 
 % --- Define materials --- %
 
 % - UO2 3.5%w
-%mat fuel	sum        tmp 1200  % [K] <-- Change between 900, 950 and 1200  << FOR EXERCISE 3 AND 4 >> 
-%    92235.09c	-0.320862646119516  % [g/cm]
-%    92238.09c   -8.846641528723795  % [g/cm]
-%    8016.09c    -1.232495825156688  % [g/cm]
+mat fuel	sum        tmp 900  % [K] <-- Change between 900, 950 and 1200  << FOR EXERCISE 3 AND 4 >> 
+    92235.09c	-0.320862646119516  % [g/cm]
+    92238.09c   -8.846641528723795  % [g/cm]
+    8016.09c    -1.232495825156688  % [g/cm]
 
 % - zirconium cladding
 mat clad        sum tmp 600
@@ -53,10 +56,10 @@ mat coolant  sum moder lwtr 1001 tmp 600  % [K] <-- Change between 600 and 605  
 
 % ---- UNCOMMENT FOR EXERCISE 5 (but comment the 3.5% version) ----
 % - UO2 0.7%w 
-mat fuel	sum        tmp 900  % [K]
-    92235.09c	 -0.0641752192675357  % [g/cm]
-    92238.09c   -9.1037132475232800  % [g/cm]
-    8016.09c    -1.2321115332091850  % [g/cm]
+%mat fuel	sum        tmp 900  % [K]
+%    92235.09c	 -0.0641752192675357  % [g/cm]
+%    92238.09c   -9.1037132475232800  % [g/cm]
+%    8016.09c    -1.2321115332091850  % [g/cm]
 
 
 

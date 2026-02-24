@@ -1,3 +1,6 @@
+# By Andy Zhang for NE8 assignment 3
+# Feb 2026
+
 import numpy as np
 import matplotlib.pyplot as plt
 
