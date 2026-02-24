@@ -83,13 +83,13 @@ def q25():
         
         
         plt.figure(figsize=(8,4))
+        plt.plot(ex256_x, DETfluxCoolant7[:,0], label = "Moderator, 0.7%", linestyle = '--', color='k', linewidth = lw)
         plt.plot(ex256_x, DETfluxCoolant35[:,0], label = "Moderator, 3.5%", color='k')
         plt.plot(ex256_x, DETfluxCoolant10[:,0], label = "Moderator, 10%", linestyle = 'dashdot', color='k', linewidth = lw)
-        plt.plot(ex256_x, DETfluxCoolant7[:,0], label = "Moderator, 0.7%", linestyle = '--', color='k', linewidth = lw)
         plt.plot(ex256_x, DETfluxCoolant90[:,0], label = "Moderator, 90%", linestyle = ':', color='k', linewidth = lw)
+        plt.plot(ex256_x, DETfluxfuel7[:,0], label = "Fuel, 0.7%", linestyle = '--', color='grey', linewidth = lw)
         plt.plot(ex256_x, DETfluxfuel35[:,0], label = "Fuel, 3.5%", color='grey')
         plt.plot(ex256_x, DETfluxfuel10[:,0], label = "Fuel, 10%", linestyle = 'dashdot', color='grey', linewidth = lw)
-        plt.plot(ex256_x, DETfluxfuel7[:,0], label = "Fuel, 0.7%", linestyle = '--', color='grey', linewidth = lw)
         plt.plot(ex256_x, DETfluxfuel90[:,0], label = "Fuel, 90%", linestyle = ':', color='grey', linewidth = lw)
         plt.yscale('log')
         plt.xscale('log')
