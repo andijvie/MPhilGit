@@ -9,22 +9,22 @@ Sigma_f = Sigma_a
 Sigma_c = Sigma_a
 
 def getMubar():
-    return 0.17785713513681772
+    return 0
 
 def getD():
     return 1/(3*(Sigma_t - getMubar() * Sigma_s))
 
-def getAlpha():
-    return np.sqrt(Sigma_c/getD())
+def getLD():
+    return np.sqrt(getD()/Sigma_c)
 
 
 # -----------------------------
 # Parameters (edit these)
 A = 1.0
-a = 40
-L = 50
-alpha = getAlpha()
-print(f"Alpha = {alpha}")
+aHalf = 30
+LHalf = 50
+alpha = 1/getLD()
+print(f"LD = {1/alpha}")
 
 
 
@@ -35,8 +35,8 @@ samples_per_branch = 800  # resolution per tan-branch for plotting + bracketing
 eps = 1e-6            # avoid tan singularities
 
 
-d = a - L
-rhs = -alpha * np.tanh(alpha * a)
+d = aHalf - LHalf
+rhs = -alpha * np.tanh(alpha * aHalf)
 
 def f(k):
     # f(k) = k*tan(k*(a-L)) + alpha*tanh(alpha*a)  (same equation rearranged to f=0)
@@ -141,38 +141,39 @@ plt.show()
 
 
 
-kappa = 0.1002947963
+kappa = 0.0614837729
 # -----------------------------
 
 # x grid on (-L, L)
-x = np.linspace(-L, L, 4000)
+x = np.linspace(-LHalf, LHalf, 4000)
 
 # Precompute constants used in the outer pieces
-C_left  = A * np.cosh(alpha * a) / np.cos(kappa * (a - L))   # for -L < x < -a
-C_right = A * np.cosh(alpha * a) / np.cos(kappa * (a - L))   # for  a < x <  L
+C_left  = A * np.cosh(alpha * aHalf) / np.cos(kappa * (aHalf - LHalf))   # for -L < x < -a
+C_right = A * np.cosh(alpha * aHalf) / np.cos(kappa * (aHalf - LHalf))   # for  a < x <  L
 
 phi = np.empty_like(x)
 
 # Regions (use <= for boundaries to avoid gaps; adjust if you want strict <)
-mask_left   = x <= -a
-mask_middle = (x > -a) & (x < a)
-mask_right  = x >= a
+mask_left   = x <= -aHalf
+mask_middle = (x > -aHalf) & (x < aHalf)
+mask_right  = x >= aHalf
 
-phi[mask_left]   = C_left  * np.cos(kappa * (x[mask_left]  + L))
+phi[mask_left]   = C_left  * np.cos(kappa * (x[mask_left]  + LHalf))
 phi[mask_middle] = A * np.cosh(alpha * x[mask_middle])
-phi[mask_right]  = C_right * np.cos(kappa * (x[mask_right] - L))
+phi[mask_right]  = C_right * np.cos(kappa * (x[mask_right] - LHalf))
 
 # Plot
 plt.figure(figsize=(16, 8))
-plt.axvline(-a, linestyle='--', color = 'lightgrey', lw = 1)
-plt.axvline( a, linestyle='--', color = 'lightgrey', lw = 1)
-plt.axvline(-L, linestyle=':', color = 'lightgrey', lw = 1)
-plt.axvline( L, linestyle=':', color = 'lightgrey', lw = 1)
+plt.axvline(-aHalf, linestyle='--', color = 'lightgrey', lw = 1)
+plt.axvline( aHalf, linestyle='--', color = 'lightgrey', lw = 1)
+plt.axvline(-LHalf, linestyle=':', color = 'lightgrey', lw = 1)
+plt.axvline( LHalf, linestyle=':', color = 'lightgrey', lw = 1)
 plt.plot(x, phi, label=r'$\phi(x)$', color = 'k', linestyle='--', lw=2)
 plt.xlabel('x')
 plt.ylabel(r'$\phi$')
 plt.title('Piecewise function plot')
-plt.legend()
 plt.tight_layout()
 plt.show()
 
+
+print(f"k/nuBar={1/(1+getD() * kappa**2/Sigma_f)}")
