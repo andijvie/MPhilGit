@@ -1,0 +1,37 @@
+
+DEFINE pwr_geom
+    xgrid 1 1.3
+    ygrid 1 1.3
+    map 1001 1 1 1 1
+    rodsub 1 1 0.42 1
+    rodsub 1 2 0.00 2
+END_DEFINE
+
+HEAD 1
+
+material  1 density 10.50 temperature 900 class 1    
+U235 0.3657
+U238 8.8899
+O    1.2444
+
+material  2 density 1.00 temperature 600 class 3
+H  1.1180E-1 
+O  8.8755E-1 
+
+#pwr_geom
+
+square
+
+begin
+
+
+PERSEUS 1
+#pwr_geom
+begin
+
+
+PIP 1
+begin
+
+
+STOP

@@ -1,0 +1,12 @@
+#! /bin/sh
+
+wimsexec=/home/nr438/wims/w1/exec/wims11.out
+wimslibrary=/usr/software/answers/data_libraries/w10j22v3.dat
+
+ANS=/usr/software/answers
+export LM_LICENSE_FILE=@ray
+
+/usr/software/answers/visualworkshop3c_ru0/exec/VisualWorkshop
+
+#$wimsexec LIBRARY=$wimslibrary INPUT=input_assembly OUTPUT=output_assembly SPACE=30000000
+

@@ -1,0 +1,2134 @@
+          **********************************************************
+          **********************************************************
+          **********************************************************
+          ***                                                    ***
+          ***   ANSWERS PROGRAM                                  ***
+          ***   WIMS Version 10A Release Update 0                ***
+          ***   LINUX VERSION                                    ***
+          ***                                                    ***
+          **********************************************************
+          **********************************************************
+          **********************************************************
+
+
+
+          **********************************************************
+          * This is the ANSWERS QA Set version of the program.     *
+          *                                                        *
+          * This program has successfully executed the designated  *
+          * set of test cases on the ANSWERS QA Set computer       *
+          * systems.                                               *
+          **********************************************************
+
+
+
+          **********************************************************
+          * This computer program is supplied under licence by     *
+          * Energy, Safety and Risk Consultants (UK) Limited.      *
+          **********************************************************
+
+
+
+          **********************************************************
+          * Copyright Energy, Safety and Risk Consultants (UK)     *
+          * Limited, part of AMEC plc.                             *
+          *                                                        *
+          * All rights reserved. This computer program is          *
+          * protected by copyright law and international           *
+          * treaties.  Save as permitted under the Copyright       *
+          * Designs and Patents Act 1988, or the terms of any      *
+          * licence granted by the copyright owner, no part of     *
+          * this program may be used, reproduced, distributed or   *
+          * modified in any way.                                   *
+          *                                                        *
+          * Warning: Any unauthorised act, including reproduction  *
+          * or distribution of this program or any portion of it,  *
+          * may result in both a civil claim for damages and       *
+          * criminal prosecution.                                  *
+          **********************************************************
+
+
+
+
+          Running on machine ray.eng.cam.ac.uk (System : Linux Processor type :)
+
+          Date and time of execution: 06/03/2026 - 22.19.34
+
+
+
+
+
+          **********************************************************
+          *                                                        *
+          *            WIMS Version 10A Release Update 0           *
+          *            ---------------------------------           *
+          *                                                        *
+          *  This release corrects the following known errors:     *
+          *                                                        *
+          *  ANSWERS/WIMS/ERROR/055                                *
+          *  ANSWERS/WIMS/ERROR/056                                *
+          *  ANSWERS/WIMS/ERROR/057                                *
+          *  ANSWERS/WIMS/ERROR/059                                *
+          *  ANSWERS/WIMS/ERROR/060                                *
+          *  ANSWERS/WIMS/ERROR/061                                *
+          *  ANSWERS/WIMS/ERROR/062                                *
+          *  ANSWERS/WIMS/ERROR/064                                *
+          *  ANSWERS/WIMS/ERROR/065                                *
+          *  ANSWERS/WIMS/ERROR/066                                *
+          *  ANSWERS/WIMS/ERROR/067                                *
+          *  ANSWERS/WIMS/ERROR/068                                *
+          *  ANSWERS/WIMS/ERROR/069                                *
+          *  ANSWERS/WIMS/ERROR/070                                *
+          *                                                        *
+          *  There are no known errors in this release of the      *
+          *  code.                                                 *
+          *                                                        *
+          *  August 2014                                           *
+          *                                                        *
+          **********************************************************
+
+
+
+
+
+
+          **********************************************************
+            ANSWERS Software (FlexNet Publisher based) Licensing
+            Procedure (RU5) for Feature WIMS10A_RU0
+          **********************************************************
+
+
+
+          *** The timelock password has been successfully verified.   
+          *** This password expires at midnight on 31-mar-2026                 
+
+
+          *** WARNING *** WARNING *** WARNING *** WARNING ***    
+          ****************************************************** 
+          * The PASSWORD you have supplied will expire in less * 
+          * than one month from now ...                        * 
+          *                                                    * 
+          * ... it may be renewed from now on by contacting    * 
+          * the ANSWERS Software Service.                      * 
+          ****************************************************** 
+
+
+          *** Successful authorisation (reported by FlexNet Publisher) for system with:
+          ***     HOSTNAME=ray.eng.cam.ac.uk                                                           
+          ***     "f01fafe5e3ef f01fafe694d1"                                                           
+          ***     Ethernet address "f01fafe5e3ef f01fafe694d1"                                      
+          ***     USER=                                                       
+          ***     The number of processors detected is  16
+          ***     The number of processors permitted is 76
+
+          **********************************************************
+          * This is a licensed ANSWERS software product.           *
+          *                                                        *
+          * The use of this program is restricted within the terms *
+          * of your licence agreement with Energy, Safety and Risk *
+          * Consultants (UK) Limited.                              *
+          *                                                        *
+          * This copy is registered with identifier - 8EF2BD127476 *
+          ********************************************************** 
+
+
+          **********************************************************
+            End of ANSWERS Software Licensing Procedure (RU5)
+            for Feature WIMS10A_RU0
+          **********************************************************
+
+
+
+INPUT=input
+OUTPUT=output
+SPACE= 500000000
+FLATFILE=.FF
+LIBRARY=/usr/software/answers/data_libraries/w10j312v1.dat
+
+LIBRARY NAME IS  /usr/software/answers/data_libraries/w10j312v1.dat                                              
+ LIBRARY HISTORY IS 
+     WIMS10 LIBRARY -    JEFF3.1.2 VERSION 1 - JULY 2013                             
+INPUT:DO_START LWIMS1
+INPUT:SETVAL I = 1
+INPUT:HEAD 2 1
+
+CALLING HEAD(OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.20 wall          0.21 Overall: cpu           0.23 wall          0.29
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           0.23 wall          0.29
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.450234
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu           0.30 wall          0.36
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP     50.000 DAYS
+
+TIMING: Module: cpu           0.23 wall          0.23 Overall: cpu           0.53 wall          0.59
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.450234  OVERALL MWd/t 500.0001E+00 BURNUP TIME  50.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     9.22713E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   80.330    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     9.22713E-04   1:172     466.13      81.132      2.74425E-02 385.02      938.54      1.24427E-08                         
+            1     MATERIAL 1.37926E+04   1:172     665.10      259.22      0.86285     406.74      1000.00     1.31598E-08             2.70031E-09 
+ 
+ 
+                  REACTOR                1:172     706.61      300.74      0.86285     406.74      1000.00     1.31598E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           0.53 wall          0.60
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 2
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.20 wall          0.20 Overall: cpu           0.73 wall          0.80
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           0.73 wall          0.80
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.408429
+
+TIMING: Module: cpu           0.07 wall          0.08 Overall: cpu           0.81 wall          0.87
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    100.000 DAYS
+
+TIMING: Module: cpu           0.22 wall          0.22 Overall: cpu           1.03 wall          1.09
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.408429  OVERALL MWd/t   1.0000E+03 BURNUP TIME 100.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     9.08653E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   82.218    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     9.08653E-04   1:172     458.74      80.211      2.78934E-02 378.55      922.79      1.22336E-08                         
+            1     MATERIAL 1.41161E+04   1:172     671.16      266.27      0.89068     405.78      1000.00     1.31358E-08             2.69679E-09 
+ 
+ 
+                  REACTOR                1:172     712.79      307.90      0.89068     405.78      1000.00     1.31358E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           1.03 wall          1.10
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 3
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.21 wall          0.21 Overall: cpu           1.24 wall          1.31
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           1.24 wall          1.31
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.401860
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu           1.32 wall          1.38
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    150.000 DAYS
+
+TIMING: Module: cpu           0.22 wall          0.22 Overall: cpu           1.54 wall          1.60
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.401860  OVERALL MWd/t   1.5000E+03 BURNUP TIME 150.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     8.94782E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   82.562    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     8.94782E-04   1:172     451.90      79.072      2.76908E-02 372.86      908.91      1.20496E-08                         
+            1     MATERIAL 1.41751E+04   1:172     674.14      270.10      0.89797     404.94      1000.00     1.31150E-08             2.69391E-09 
+ 
+ 
+                  REACTOR                1:172     715.78      311.74      0.89797     404.94      1000.00     1.31150E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           1.54 wall          1.60
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 4
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.24 wall          0.24 Overall: cpu           1.78 wall          1.84
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           1.78 wall          1.84
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.396262
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu           1.85 wall          1.92
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    200.000 DAYS
+
+TIMING: Module: cpu           0.21 wall          0.21 Overall: cpu           2.07 wall          2.13
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.396262  OVERALL MWd/t   2.0000E+03 BURNUP TIME 200.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     8.81094E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   82.867    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     8.81094E-04   1:172     445.39      77.972      2.74661E-02 367.44      895.70      1.18745E-08                         
+            1     MATERIAL 1.42274E+04   1:172     677.05      273.82      0.90456     404.14      1000.00     1.30951E-08             2.69123E-09 
+ 
+ 
+                  REACTOR                1:172     718.72      315.49      0.90456     404.14      1000.00     1.30951E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           2.07 wall          2.14
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 5
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.24 wall          0.24 Overall: cpu           2.31 wall          2.38
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.01 Overall: cpu           2.31 wall          2.38
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.390655
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu           2.39 wall          2.46
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    250.000 DAYS
+
+TIMING: Module: cpu           0.21 wall          0.21 Overall: cpu           2.60 wall          2.67
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.390655  OVERALL MWd/t   2.5000E+03 BURNUP TIME 250.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     8.67580E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   83.177    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     8.67580E-04   1:172     439.14      76.913      2.72371E-02 362.25      883.05      1.17068E-08                         
+            1     MATERIAL 1.42808E+04   1:172     680.01      277.56      0.91102     403.37      1000.00     1.30760E-08             2.68871E-09 
+ 
+ 
+                  REACTOR                1:172     721.73      319.27      0.91102     403.37      1000.00     1.30760E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           2.60 wall          2.67
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 6
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.24 wall          0.24 Overall: cpu           2.85 wall          2.92
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           2.85 wall          2.92
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.384943
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           2.92 wall          2.99
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    300.000 DAYS
+
+TIMING: Module: cpu           0.21 wall          0.21 Overall: cpu           3.13 wall          3.20
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.384943  OVERALL MWd/t   3.0000E+03 BURNUP TIME 300.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     8.54234E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   83.499    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     8.54234E-04   1:172     433.13      75.894      2.70073E-02 357.27      870.91      1.15457E-08                         
+            1     MATERIAL 1.43360E+04   1:172     683.03      281.32      0.91745     402.63      1000.00     1.30578E-08             2.68635E-09 
+ 
+ 
+                  REACTOR                1:172     724.81      323.10      0.91745     402.63      1000.00     1.30578E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           3.13 wall          3.21
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 7
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.25 wall          0.25 Overall: cpu           3.38 wall          3.46
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           3.38 wall          3.46
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.379144
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           3.46 wall          3.53
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    350.000 DAYS
+
+TIMING: Module: cpu           0.21 wall          0.21 Overall: cpu           3.67 wall          3.75
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.379144  OVERALL MWd/t   3.5000E+03 BURNUP TIME 350.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     8.41050E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   83.831    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     8.41050E-04   1:172     427.35      74.908      2.67769E-02 352.47      859.20      1.13905E-08                         
+            1     MATERIAL 1.43930E+04   1:172     686.10      285.11      0.92388     401.91      1000.00     1.30401E-08             2.68412E-09 
+ 
+ 
+                  REACTOR                1:172     727.95      326.96      0.92388     401.91      1000.00     1.30401E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           3.67 wall          3.75
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 8
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.25 wall          0.25 Overall: cpu           3.93 wall          4.00
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           3.93 wall          4.00
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.373258
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu           4.00 wall          4.08
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    400.000 DAYS
+
+TIMING: Module: cpu           0.21 wall          0.21 Overall: cpu           4.21 wall          4.29
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.373258  OVERALL MWd/t   4.0000E+03 BURNUP TIME 400.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     8.28023E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   84.172    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     8.28023E-04   1:172     421.76      73.954      2.65459E-02 347.83      847.90      1.12407E-08                         
+            1     MATERIAL 1.44517E+04   1:172     689.21      288.91      0.93031     401.23      1000.00     1.30231E-08             2.68201E-09 
+ 
+ 
+                  REACTOR                1:172     731.15      330.86      0.93031     401.23      1000.00     1.30231E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           4.22 wall          4.29
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 9
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.26 wall          0.26 Overall: cpu           4.48 wall          4.55
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           4.48 wall          4.55
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.367328
+
+TIMING: Module: cpu           0.07 wall          0.08 Overall: cpu           4.55 wall          4.63
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    450.000 DAYS
+
+TIMING: Module: cpu           0.21 wall          0.21 Overall: cpu           4.76 wall          4.84
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.367328  OVERALL MWd/t   4.5000E+03 BURNUP TIME 450.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     8.15148E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   84.522    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     8.15148E-04   1:172     416.35      73.028      2.63125E-02 343.34      836.97      1.10958E-08                         
+            1     MATERIAL 1.45118E+04   1:172     692.35      292.73      0.93668     400.56      1000.00     1.30066E-08             2.68001E-09 
+ 
+ 
+                  REACTOR                1:172     734.40      334.78      0.93668     400.56      1000.00     1.30066E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           4.76 wall          4.84
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 10
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.26 wall          0.26 Overall: cpu           5.02 wall          5.11
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           5.02 wall          5.11
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.361371
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           5.10 wall          5.18
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    500.000 DAYS
+
+TIMING: Module: cpu           0.25 wall          0.25 Overall: cpu           5.35 wall          5.43
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.361371  OVERALL MWd/t   5.0000E+03 BURNUP TIME 500.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     8.02421E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   84.879    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     8.02421E-04   1:172     411.10      72.127      2.60786E-02 339.00      826.37      1.09552E-08                         
+            1     MATERIAL 1.45732E+04   1:172     695.52      296.55      0.94305     399.91      1000.00     1.29905E-08             2.67810E-09 
+ 
+ 
+                  REACTOR                1:172     737.68      338.72      0.94305     399.91      1000.00     1.29905E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           5.35 wall          5.44
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 11
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.27 wall          0.27 Overall: cpu           5.62 wall          5.70
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           5.62 wall          5.71
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.355386
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           5.70 wall          5.78
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    550.000 DAYS
+
+TIMING: Module: cpu           0.28 wall          0.28 Overall: cpu           5.98 wall          6.06
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.355386  OVERALL MWd/t   5.5000E+03 BURNUP TIME 550.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     7.89837E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   85.243    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     7.89837E-04   1:172     406.00      71.249      2.58436E-02 334.77      816.08      1.08187E-08                         
+            1     MATERIAL 1.46357E+04   1:172     698.72      300.39      0.94941     399.28      1000.00     1.29750E-08             2.67629E-09 
+ 
+ 
+                  REACTOR                1:172     741.00      342.67      0.94941     399.28      1000.00     1.29750E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           5.98 wall          6.06
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 12
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.30 wall          0.30 Overall: cpu           6.28 wall          6.36
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           6.28 wall          6.36
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.349369
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu           6.35 wall          6.44
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    600.000 DAYS
+
+TIMING: Module: cpu           0.30 wall          0.30 Overall: cpu           6.66 wall          6.74
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.349369  OVERALL MWd/t   6.0000E+03 BURNUP TIME 600.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     7.77395E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   85.612    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     7.77395E-04   1:172     401.00      70.388      2.56081E-02 330.64      806.00      1.06851E-08                         
+            1     MATERIAL 1.46991E+04   1:172     701.95      304.24      0.95577     398.66      1000.00     1.29597E-08             2.67454E-09 
+ 
+ 
+                  REACTOR                1:172     744.36      346.66      0.95577     398.66      1000.00     1.29597E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           6.66 wall          6.74
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 13
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           6.97 wall          7.05
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           6.97 wall          7.05
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.343373
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu           7.04 wall          7.13
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    650.000 DAYS
+
+TIMING: Module: cpu           0.30 wall          0.30 Overall: cpu           7.34 wall          7.43
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.343373  OVERALL MWd/t   6.5000E+03 BURNUP TIME 650.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     7.65090E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   85.988    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     7.65090E-04   1:172     396.16      69.551      2.53710E-02 326.63      796.24      1.05557E-08                         
+            1     MATERIAL 1.47638E+04   1:172     705.18      308.08      0.96212     398.06      1000.00     1.29449E-08             2.67288E-09 
+ 
+ 
+                  REACTOR                1:172     747.74      350.63      0.96212     398.06      1000.00     1.29449E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           7.35 wall          7.43
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 14
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           7.66 wall          7.75
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           7.66 wall          7.75
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.337390
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu           7.74 wall          7.82
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    700.000 DAYS
+
+TIMING: Module: cpu           0.30 wall          0.30 Overall: cpu           8.04 wall          8.13
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.337390  OVERALL MWd/t   7.0000E+03 BURNUP TIME 700.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     7.52919E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   86.370    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     7.52919E-04   1:172     391.43      68.732      2.51327E-02 322.72      786.71      1.04294E-08                         
+            1     MATERIAL 1.48293E+04   1:172     708.42      311.91      0.96844     397.48      1000.00     1.29305E-08             2.67129E-09 
+ 
+ 
+                  REACTOR                1:172     751.13      354.62      0.96844     397.48      1000.00     1.29305E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           8.04 wall          8.13
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 15
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           8.36 wall          8.44
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           8.36 wall          8.44
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.331424
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu           8.43 wall          8.52
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    750.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           8.74 wall          8.82
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.331424  OVERALL MWd/t   7.5000E+03 BURNUP TIME 750.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     7.40879E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   86.756    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     7.40879E-04   1:172     386.81      67.929      2.48930E-02 318.90      777.40      1.03059E-08                         
+            1     MATERIAL 1.48957E+04   1:172     711.67      315.73      0.97474     396.91      1000.00     1.29164E-08             2.66977E-09 
+ 
+ 
+                  REACTOR                1:172     754.54      358.60      0.97474     396.91      1000.00     1.29164E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           8.74 wall          8.83
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 16
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           9.06 wall          9.14
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           9.06 wall          9.14
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   8 iterations
+k-infinity is 1.325489
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           9.13 wall          9.22
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    800.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           9.44 wall          9.52
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.325489  OVERALL MWd/t   8.0000E+03 BURNUP TIME 800.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     7.28967E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   87.147    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     7.28967E-04   1:172     382.28      67.142      2.46521E-02 315.17      768.29      1.01852E-08                         
+            1     MATERIAL 1.49629E+04   1:172     714.92      319.55      0.98103     396.35      1000.00     1.29025E-08             2.66830E-09 
+ 
+ 
+                  REACTOR                1:172     757.96      362.59      0.98103     396.35      1000.00     1.29025E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           9.44 wall          9.53
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 17
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.32 wall          0.32 Overall: cpu           9.76 wall          9.84
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           9.76 wall          9.84
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   8 iterations
+k-infinity is 1.319584
+
+TIMING: Module: cpu           0.07 wall          0.08 Overall: cpu           9.83 wall          9.92
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    850.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          10.14 wall         10.23
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.319584  OVERALL MWd/t   8.5000E+03 BURNUP TIME 850.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     7.17182E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   87.542    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     7.17182E-04   1:172     377.85      66.368      2.44096E-02 311.51      759.37      1.00669E-08                         
+            1     MATERIAL 1.50307E+04   1:172     718.17      323.36      0.98729     395.80      1000.00     1.28890E-08             2.66689E-09 
+ 
+ 
+                  REACTOR                1:172     761.38      366.57      0.98729     395.80      1000.00     1.28890E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          10.14 wall         10.23
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 18
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.31 wall          0.32 Overall: cpu          10.45 wall         10.55
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          10.45 wall         10.55
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   8 iterations
+k-infinity is 1.313706
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu          10.54 wall         10.63
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    900.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          10.85 wall         10.94
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.313706  OVERALL MWd/t   9.0000E+03 BURNUP TIME 900.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     7.05520E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   87.940    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     7.05520E-04   1:172     373.50      65.608      2.41665E-02 307.92      750.62      9.95096E-09                         
+            1     MATERIAL 1.50992E+04   1:172     721.42      327.16      0.99355     395.26      1000.00     1.28756E-08             2.66552E-09 
+ 
+ 
+                  REACTOR                1:172     764.82      370.56      0.99355     395.26      1000.00     1.28756E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          10.85 wall         10.94
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 19
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.36 wall          0.36 Overall: cpu          11.21 wall         11.31
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          11.21 wall         11.31
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   8 iterations
+k-infinity is 1.307811
+
+TIMING: Module: cpu           0.08 wall          0.09 Overall: cpu          11.30 wall         11.39
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    950.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          11.61 wall         11.70
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.307811  OVERALL MWd/t   9.5000E+03 BURNUP TIME 950.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     6.93981E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   88.346    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     6.93981E-04   1:172     369.23      64.858      2.39230E-02 304.40      742.04      9.83713E-09                         
+            1     MATERIAL 1.51688E+04   1:172     724.71      330.98      0.99983     394.73      1000.00     1.28626E-08             2.66421E-09 
+ 
+ 
+                  REACTOR                1:172     768.31      374.58      0.99983     394.73      1000.00     1.28626E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          11.61 wall         11.71
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 20
+INPUT:HEAD 2 1
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 1.00 temperature 600 class 3
+INPUT:H  1.1180E-1
+INPUT:O  8.8755E-1
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:burn 1
+INPUT:square
+INPUT:begin
+
+TIMING: Module: cpu           0.37 wall          0.37 Overall: cpu          11.98 wall         12.08
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260
+INPUT:ygrid 1 1.260
+INPUT:map 1001 1 1 1 1
+INPUT:rodsub 1 1 0.4095 1
+INPUT:rodsub 1 2 0.00 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          11.98 wall         12.08
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   8 iterations
+k-infinity is 1.301994
+
+TIMING: Module: cpu           0.09 wall          0.09 Overall: cpu          12.06 wall         12.16
+====================================================================================================
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 10
+INPUT:steps 10 5
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP   1000.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          12.37 wall         12.47
+====================================================================================================
+INPUT:EDIT 2
+
+CALLING EDIT(INTERFACE_NO=  2)
+
+INPUT:materials 1
+INPUT:comp
+INPUT:nuclides U235
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    2  EIGENVALUE  1.301994  OVERALL MWd/t  10.0000E+03 BURNUP TIME   1.0000E+03 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+COMPOSITION ATOMS
+-----------------
+ 
+MATERIAL U235        
+   1     6.82561E-04
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   88.753    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U235     6.82561E-04   1:172     365.04      64.121      2.36776E-02 300.94      733.60      9.72532E-09                         
+            1     MATERIAL 1.52388E+04   1:172     727.97      334.78      1.0061      394.21      1000.00     1.28497E-08             2.66294E-09 
+ 
+ 
+                  REACTOR                1:172     771.77      378.57      1.0061      394.21      1000.00     1.28497E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          12.37 wall         12.47
+====================================================================================================
+INPUT:DO_END LWIMS1
+INPUT:STOP
+
+Finished WIMS
