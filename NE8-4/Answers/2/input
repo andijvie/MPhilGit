@@ -1,0 +1,99 @@
+
+DEFINE pwr_geom
+    xgrid 1 1.260         * x pitch = 1.260 cm  
+    ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+    map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+    rodsub 1 1 0.091567  1   * 20 0.026341 cm2 volume regions
+    rodsub 1 2 0.129495  2
+    rodsub 1 3 0.158599  3
+    rodsub 1 4 0.183134  4
+    rodsub 1 5 0.204750  5
+    rodsub 1 6 0.224292  6
+    rodsub 1 7 0.242263  7
+    rodsub 1 8 0.258991  8
+    rodsub 1 9 0.274701  9
+    rodsub 1 10 0.289560  10
+    rodsub 1 11 0.303693  11
+    rodsub 1 12 0.317197  12
+    rodsub 1 13 0.330149  13
+    rodsub 1 14 0.342612  14
+    rodsub 1 15 0.354637  15
+    rodsub 1 16 0.366268  16
+    rodsub 1 17 0.377540  17
+    rodsub 1 18 0.388486  18
+    rodsub 1 19 0.399131  19
+    rodsub 1 20 0.409500  20
+    rodsub 1 21 0.00 21     * rod 1 is surrounded by material 21
+END_DEFINE
+
+HEAD 1                    * initialize
+
+material  1 density 10.50 temperature 900 class 1    
+U235 0.3657
+U238 8.8899
+O    1.2444
+
+material 2 = 1
+material 3 = 1
+material 4 = 1
+material 5 = 1
+material 6 = 1
+material 7 = 1
+material 8 = 1
+material 9 = 1
+material 10 = 1
+material 11 = 1
+material 12 = 1
+material 13 = 1
+material 14 = 1
+material 15 = 1
+material 16 = 1
+material 17 = 1
+material 18 = 1
+material 19 = 1
+material 20 = 1
+
+material  21 density 0.66639 temperature 600 class 3
+H  1.1191E-1 
+O  8.8809E-1 
+
+#pwr_geom                 * fill in geometry
+
+square                    * square pin
+
+begin
+
+
+PERSEUS 1
+#pwr_geom
+begin
+
+
+PIP 1
+begin
+
+EDIT 1
+groups energy 0.615
+begin
+
+STOP
+
+
+************************************ Exercise 2 ************************************
+* For standard unit cell dimensions, divide the fuel pin into a number of radial equal-volume
+* sub-regions (rings) obtain radial distribution of fast and thermal neutron flux. Use 0.615 eV
+* energy as a cut-off between the fast and thermal energy regions. Plot the radial variation of
+* fast and thermal fluxes and comment on the results. 
+
+* radii
+* 0.091567, 0.129495, 0.158599, 0.183134, 0.204750, 0.224292, 0.242263, 0.258991, 0.274701, 0.289560, 
+* 0.303693, 0.317197, 0.330149, 0.342612, 0.354637, 0.366268, 0.377540, 0.388486, 0.399131, 0.409500
+
+* Fast
+* 1.62740E+04, 1.62678E+04, 1.62609E+04, 1.62560E+04, 1.62472E+04, 1.62416E+04, 1.62345E+04, 1.62253E+04, 1.62188E+04, 1.62103E+04, 
+* 1.62013E+04, 1.61924E+04, 1.61826E+04, 1.61713E+04, 1.61626E+04, 1.61506E+04, 1.61350E+04, 1.61191E+04, 1.61054E+04, 1.60998E+04
+
+* Slow
+* 2.33721E+03, 2.34586E+03, 2.35471E+03, 2.36384E+03, 2.37320E+03, 2.38280E+03, 2.39266E+03, 2.40284E+03, 2.41332E+03, 2.42420E+03,
+* 2.43544E+03, 2.44717E+03, 2.45942E+03, 2.47228E+03, 2.48585E+03, 2.50030E+03, 2.51589E+03, 2.53297E+03, 2.55226E+03, 2.57577E+03
+

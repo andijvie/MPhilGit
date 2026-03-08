@@ -63,6 +63,51 @@ print(f"D fraction = {2 * D2mass / D2OMass}")
 print(f"O fraction = {O16mass / D2OMass}")
 print("")
 
+Vf = np.pi * 0.4095**2
+Vcell = 1.260 ** 2
+Vm = Vcell - Vf
+print(f"default Vf = {Vf}")
+print(f"default Vm = {Vm}")
+print(f"default Vm/Vf = {Vm/Vf}")
+print("")
+
+for r in np.geomspace(0.001, 0.2, 5, False):
+    r = np.round(r, 3)
+    if r == 0.63:
+        r -= 0.01
+    Vf = np.pi * r**2
+    Vcell = 1.260 ** 2
+    Vm = Vcell - Vf
+    print(f"r = {r} --> Vf = {Vf}")
+    print(f"r = {r} --> Vm = {Vm}")
+    print(f"r = {r} --> Vm/Vf = {Vm/Vf}")
+    print("")
+
+for r in np.geomspace(0.2, 1.260/2, 10):
+    r = np.round(r, 3)
+    if r == 0.63:
+        r -= 0.01
+    Vf = np.pi * r**2
+    Vcell = 1.260 ** 2
+    Vm = Vcell - Vf
+    print(f"r = {r} --> Vf = {Vf}")
+    print(f"r = {r} --> Vm = {Vm}")
+    print(f"r = {r} --> Vm/Vf = {Vm/Vf}")
+    print("")
+
+
+ass2_rad_bins = 20
+radii = [0.4095 * np.sqrt(i / ass2_rad_bins) for i in range(ass2_rad_bins + 1)]
+radiiString = ""
+
+print(f"EXERCISE 2, volume = {np.pi * (radii[1]**2 - radii[0]**2):.6f} cm2:")
+for i in range(len(radii)):
+    if i > 0:
+        print(f"rodsub 1 {i} {radii[i]:.6f}  {i}")
+        
+for i in np.linspace(2,20, 19):
+    print(f"material {int(i)} = 1")
+
 exit()
 
 print("Fuel:")
@@ -84,14 +129,5 @@ print("Power:")
 print(f"Power density = {power_density/1000} kW/gHM")
 print()
 
-ass1_rad_bins = 10
-radii = [fuel_pellet_outer_diameter/2 * np.sqrt(i / ass1_rad_bins) for i in range(ass1_rad_bins + 1)]
-radiiString = ""
 
-print("ASSIGNMENT 1:")
-for i in range(len(radii)):
-    radiiString += f"{radii[i]:.6f} "
-    if i > 0:
-        print(f"{radii[i - 1]:.6f} to {radii[i]:.6f} has volume {np.pi * (radii[i]**2 - radii[i - 1]**2):.6f}")
-print("ASSIGNMENT 1 Radii: " + radiiString)
 
