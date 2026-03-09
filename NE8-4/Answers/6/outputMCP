@@ -1,0 +1,223 @@
+          **********************************************************
+          **********************************************************
+          **********************************************************
+          ***                                                    ***
+          ***   ANSWERS PROGRAM                                  ***
+          ***   WIMS Version 10A Release Update 0                ***
+          ***   LINUX VERSION                                    ***
+          ***                                                    ***
+          **********************************************************
+          **********************************************************
+          **********************************************************
+
+
+
+          **********************************************************
+          * This is the ANSWERS QA Set version of the program.     *
+          *                                                        *
+          * This program has successfully executed the designated  *
+          * set of test cases on the ANSWERS QA Set computer       *
+          * systems.                                               *
+          **********************************************************
+
+
+
+          **********************************************************
+          * This computer program is supplied under licence by     *
+          * Energy, Safety and Risk Consultants (UK) Limited.      *
+          **********************************************************
+
+
+
+          **********************************************************
+          * Copyright Energy, Safety and Risk Consultants (UK)     *
+          * Limited, part of AMEC plc.                             *
+          *                                                        *
+          * All rights reserved. This computer program is          *
+          * protected by copyright law and international           *
+          * treaties.  Save as permitted under the Copyright       *
+          * Designs and Patents Act 1988, or the terms of any      *
+          * licence granted by the copyright owner, no part of     *
+          * this program may be used, reproduced, distributed or   *
+          * modified in any way.                                   *
+          *                                                        *
+          * Warning: Any unauthorised act, including reproduction  *
+          * or distribution of this program or any portion of it,  *
+          * may result in both a civil claim for damages and       *
+          * criminal prosecution.                                  *
+          **********************************************************
+
+
+
+
+          Running on machine ray.eng.cam.ac.uk (System : Linux Processor type :)
+
+          Date and time of execution: 09/03/2026 - 15.20.29
+
+
+
+
+
+          **********************************************************
+          *                                                        *
+          *            WIMS Version 10A Release Update 0           *
+          *            ---------------------------------           *
+          *                                                        *
+          *  This release corrects the following known errors:     *
+          *                                                        *
+          *  ANSWERS/WIMS/ERROR/055                                *
+          *  ANSWERS/WIMS/ERROR/056                                *
+          *  ANSWERS/WIMS/ERROR/057                                *
+          *  ANSWERS/WIMS/ERROR/059                                *
+          *  ANSWERS/WIMS/ERROR/060                                *
+          *  ANSWERS/WIMS/ERROR/061                                *
+          *  ANSWERS/WIMS/ERROR/062                                *
+          *  ANSWERS/WIMS/ERROR/064                                *
+          *  ANSWERS/WIMS/ERROR/065                                *
+          *  ANSWERS/WIMS/ERROR/066                                *
+          *  ANSWERS/WIMS/ERROR/067                                *
+          *  ANSWERS/WIMS/ERROR/068                                *
+          *  ANSWERS/WIMS/ERROR/069                                *
+          *  ANSWERS/WIMS/ERROR/070                                *
+          *                                                        *
+          *  There are no known errors in this release of the      *
+          *  code.                                                 *
+          *                                                        *
+          *  August 2014                                           *
+          *                                                        *
+          **********************************************************
+
+
+
+
+
+
+          **********************************************************
+            ANSWERS Software (FlexNet Publisher based) Licensing
+            Procedure (RU5) for Feature WIMS10A_RU0
+          **********************************************************
+
+
+
+          *** The timelock password has been successfully verified.   
+          *** This password expires at midnight on 31-mar-2026                 
+
+
+          *** WARNING *** WARNING *** WARNING *** WARNING ***    
+          ****************************************************** 
+          * The PASSWORD you have supplied will expire in less * 
+          * than one month from now ...                        * 
+          *                                                    * 
+          * ... it may be renewed from now on by contacting    * 
+          * the ANSWERS Software Service.                      * 
+          ****************************************************** 
+
+
+          *** Successful authorisation (reported by FlexNet Publisher) for system with:
+          ***     HOSTNAME=ray.eng.cam.ac.uk                                                           
+          ***     "f01fafe5e3ef f01fafe694d1"                                                           
+          ***     Ethernet address "f01fafe5e3ef f01fafe694d1"                                      
+          ***     USER=                                                       
+          ***     The number of processors detected is  16
+          ***     The number of processors permitted is 76
+
+          **********************************************************
+          * This is a licensed ANSWERS software product.           *
+          *                                                        *
+          * The use of this program is restricted within the terms *
+          * of your licence agreement with Energy, Safety and Risk *
+          * Consultants (UK) Limited.                              *
+          *                                                        *
+          * This copy is registered with identifier - 8EF2BD127476 *
+          ********************************************************** 
+
+
+          **********************************************************
+            End of ANSWERS Software Licensing Procedure (RU5)
+            for Feature WIMS10A_RU0
+          **********************************************************
+
+
+
+INPUT=input
+OUTPUT=output
+SPACE= 500000000
+FLATFILE=.FF
+LIBRARY=/usr/software/answers/data_libraries/w10j312v1.dat
+
+LIBRARY NAME IS  /usr/software/answers/data_libraries/w10j312v1.dat                                              
+ LIBRARY HISTORY IS 
+     WIMS10 LIBRARY -    JEFF3.1.2 VERSION 1 - JULY 2013                             
+INPUT:SETVAL temp = 293.0
+INPUT:HEAD 1
+
+CALLING HEAD(OUTPUT_INTERFACE_NO=  1)
+
+INPUT:uranium u235 2.0
+INPUT:material 1 density 10.4 temp 293.0 class   1
+INPUT:u 100.0
+INPUT:material 2 density 6.44 temp 293.0 class   2
+INPUT:zr 97.91 sn 1.59 fe 0.5
+INPUT:material 3 density 0.73 temp 293.0 class   3
+INPUT:h 11.19 o 88.81 b10 0.0148504 b11 0.0651496
+INPUT:uranium u235 0.225
+INPUT:plutonium pu238 1.83 pu239 57.93 pu240 22.50 pu241 11.06 pu242 5.60 am241 1.08
+INPUT:material 4 density 10.4 temp 293.0 class   1
+INPUT:u 91.3 pu 8.7
+INPUT:material 5 density 6.44 temp 293.0 class   2
+INPUT:zr 97.91 sn 1.59 fe 0.5
+INPUT:material 6 density 0.73 temp 293.0 class   3
+INPUT:h 11.19 o 88.81 b10 0.0148504 b11 0.0651496
+INPUT:xgrid 2 1.26
+INPUT:ygrid 2 1.26
+INPUT:map 1001 1 2 1 2
+INPUT:put 1002 2 2 2 2
+INPUT:rodsub  1 1  0.4095 1
+INPUT:rodsub  1 2  0.4750 2
+INPUT:rodsub  1 3  0.0000 3
+INPUT:rodsub  2 1  0.4095 4
+INPUT:rodsub  2 2  0.4750 5
+INPUT:rodsub  2 3  0.0000 6
+INPUT:begin
+
+TIMING: Module: cpu           1.13 wall          1.13 Overall: cpu           1.15 wall          1.20
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 2 1.26
+INPUT:ygrid 2 1.26
+INPUT:map 1001 1 2 1 2
+INPUT:put 1002 2 2 2 2
+INPUT:rodsub  1 1  0.4095 1
+INPUT:rodsub  1 2  0.4750 2
+INPUT:rodsub  1 3  0.0000 3
+INPUT:rodsub  2 1  0.4095 4
+INPUT:rodsub  2 2  0.4750 5
+INPUT:rodsub  2 3  0.0000 6
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           1.15 wall          1.20
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.174293
+
+TIMING: Module: cpu           0.02 wall          0.02 Overall: cpu           1.17 wall          1.22
+====================================================================================================
+INPUT:*CACTUS 1
+INPUT:*geomin
+INPUT:*symmetry 0 0 0
+INPUT:*#assembly_geom_cactus
+INPUT:*endgeom
+INPUT:*azimuthal 11 0.02
+INPUT:*polar 4
+INPUT:*begin
+INPUT:STOP
+
+Finished WIMS

@@ -1,0 +1,71 @@
+DEFINE pwr_geom
+    xgrid 1 1.260         * x pitch = 1.260 cm  
+    ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+    map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+    rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+    rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+END_DEFINE
+
+DO I 1 22
+
+HEAD 2 1                  * initialize, read from 2 when possible
+
+material  1 density 10.50 temperature 900 class 1    
+U235 0.3657
+U238 8.8899
+O    1.2444
+
+material  2 density 0.66639 temperature 600 class 3
+H  1.1191E-1 
+O  8.8809E-1 
+
+
+#pwr_geom                 * fill in geometry
+
+burn 1                    * track FP of 1
+
+square                    * square pin
+
+begin
+
+
+PERSEUS 1
+#pwr_geom
+begin
+
+
+PIP 1
+begin
+
+SETVAL days = 3
+IF ($I == 1) THEN
+    SETVAL days = 0.3
+ENDIF
+IF ($I == 2) THEN
+    SETVAL days = 1.5
+ENDIF
+
+BURNUP 1 2
+rating 38       * 38 MW/T
+steps 10 $days  * 10 x days
+begin
+
+EDIT 1
+nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+begin
+
+ENDDO
+STOP
+
+
+************************************ Exercise 4 ************************************
+* Perform burn-up calculations for the reference fuel unit cell. Plot nuclide density as a function
+* of burnup for the following isotopes: U238, U235, Pu239-242. Explain the trends you observe.
+* It is advisable when performing burnup to take some short initial burnup steps to reach
+* equilibrium for important products like xenon. Use IF statements so that the first step is 3 days
+* long, the second step is 15 days, and then a further 10 to 20 steps to the end of burnup (choose
+* an appropriate total burnup time) 
+
+
+
+

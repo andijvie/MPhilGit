@@ -1,0 +1,2334 @@
+          **********************************************************
+          **********************************************************
+          **********************************************************
+          ***                                                    ***
+          ***   ANSWERS PROGRAM                                  ***
+          ***   WIMS Version 10A Release Update 0                ***
+          ***   LINUX VERSION                                    ***
+          ***                                                    ***
+          **********************************************************
+          **********************************************************
+          **********************************************************
+
+
+
+          **********************************************************
+          * This is the ANSWERS QA Set version of the program.     *
+          *                                                        *
+          * This program has successfully executed the designated  *
+          * set of test cases on the ANSWERS QA Set computer       *
+          * systems.                                               *
+          **********************************************************
+
+
+
+          **********************************************************
+          * This computer program is supplied under licence by     *
+          * Energy, Safety and Risk Consultants (UK) Limited.      *
+          **********************************************************
+
+
+
+          **********************************************************
+          * Copyright Energy, Safety and Risk Consultants (UK)     *
+          * Limited, part of AMEC plc.                             *
+          *                                                        *
+          * All rights reserved. This computer program is          *
+          * protected by copyright law and international           *
+          * treaties.  Save as permitted under the Copyright       *
+          * Designs and Patents Act 1988, or the terms of any      *
+          * licence granted by the copyright owner, no part of     *
+          * this program may be used, reproduced, distributed or   *
+          * modified in any way.                                   *
+          *                                                        *
+          * Warning: Any unauthorised act, including reproduction  *
+          * or distribution of this program or any portion of it,  *
+          * may result in both a civil claim for damages and       *
+          * criminal prosecution.                                  *
+          **********************************************************
+
+
+
+
+          Running on machine ray.eng.cam.ac.uk (System : Linux Processor type :)
+
+          Date and time of execution: 09/03/2026 - 14.02.59
+
+
+
+
+
+          **********************************************************
+          *                                                        *
+          *            WIMS Version 10A Release Update 0           *
+          *            ---------------------------------           *
+          *                                                        *
+          *  This release corrects the following known errors:     *
+          *                                                        *
+          *  ANSWERS/WIMS/ERROR/055                                *
+          *  ANSWERS/WIMS/ERROR/056                                *
+          *  ANSWERS/WIMS/ERROR/057                                *
+          *  ANSWERS/WIMS/ERROR/059                                *
+          *  ANSWERS/WIMS/ERROR/060                                *
+          *  ANSWERS/WIMS/ERROR/061                                *
+          *  ANSWERS/WIMS/ERROR/062                                *
+          *  ANSWERS/WIMS/ERROR/064                                *
+          *  ANSWERS/WIMS/ERROR/065                                *
+          *  ANSWERS/WIMS/ERROR/066                                *
+          *  ANSWERS/WIMS/ERROR/067                                *
+          *  ANSWERS/WIMS/ERROR/068                                *
+          *  ANSWERS/WIMS/ERROR/069                                *
+          *  ANSWERS/WIMS/ERROR/070                                *
+          *                                                        *
+          *  There are no known errors in this release of the      *
+          *  code.                                                 *
+          *                                                        *
+          *  August 2014                                           *
+          *                                                        *
+          **********************************************************
+
+
+
+
+
+
+          **********************************************************
+            ANSWERS Software (FlexNet Publisher based) Licensing
+            Procedure (RU5) for Feature WIMS10A_RU0
+          **********************************************************
+
+
+
+          *** The timelock password has been successfully verified.   
+          *** This password expires at midnight on 31-mar-2026                 
+
+
+          *** WARNING *** WARNING *** WARNING *** WARNING ***    
+          ****************************************************** 
+          * The PASSWORD you have supplied will expire in less * 
+          * than one month from now ...                        * 
+          *                                                    * 
+          * ... it may be renewed from now on by contacting    * 
+          * the ANSWERS Software Service.                      * 
+          ****************************************************** 
+
+
+          *** Successful authorisation (reported by FlexNet Publisher) for system with:
+          ***     HOSTNAME=ray.eng.cam.ac.uk                                                           
+          ***     "f01fafe5e3ef f01fafe694d1"                                                           
+          ***     Ethernet address "f01fafe5e3ef f01fafe694d1"                                      
+          ***     USER=                                                       
+          ***     The number of processors detected is  16
+          ***     The number of processors permitted is 76
+
+          **********************************************************
+          * This is a licensed ANSWERS software product.           *
+          *                                                        *
+          * The use of this program is restricted within the terms *
+          * of your licence agreement with Energy, Safety and Risk *
+          * Consultants (UK) Limited.                              *
+          *                                                        *
+          * This copy is registered with identifier - 8EF2BD127476 *
+          ********************************************************** 
+
+
+          **********************************************************
+            End of ANSWERS Software Licensing Procedure (RU5)
+            for Feature WIMS10A_RU0
+          **********************************************************
+
+
+
+INPUT=input
+OUTPUT=output
+SPACE= 500000000
+FLATFILE=.FF
+LIBRARY=/usr/software/answers/data_libraries/w10j312v1.dat
+
+LIBRARY NAME IS  /usr/software/answers/data_libraries/w10j312v1.dat                                              
+ LIBRARY HISTORY IS 
+     WIMS10 LIBRARY -    JEFF3.1.2 VERSION 1 - JULY 2013                             
+INPUT:DO_START LWIMS1
+INPUT:SETVAL I = 1
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.23 wall          0.23 Overall: cpu           0.26 wall          0.32
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           0.26 wall          0.32
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.393304
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu           0.35 wall          0.40
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:SETVAL days = 0.3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 0.3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP      3.000 DAYS
+
+TIMING: Module: cpu           0.28 wall          0.28 Overall: cpu           0.63 wall          0.69
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.393304  OVERALL MWd/t   0.0000E+00 BURNUP TIME   0.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   108.66    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    1.00000E-19   1:172     1.75925E-13 6.40744E-14 1.53602E-18 1.11852E-13 3.19934E-13 3.76344E-24                         
+            1     Pu240    1.00000E-19   1:172     2.30349E-13 2.29746E-13 1.06795E-18 6.04564E-16 1.88475E-15 2.03803E-26                         
+            1     Pu241    1.00000E-19   1:172     1.51095E-13 4.05638E-14 6.97527E-18 1.10538E-13 3.24196E-13 3.77058E-24                         
+            1     Pu242    1.00000E-19   1:172     2.97586E-14 2.93260E-14 2.30109E-18 4.34913E-16 1.40674E-15 1.48494E-26                         
+            1     U235     9.36971E-04   1:172     470.85      86.923      3.63046E-02 383.97      936.16      1.24085E-08                         
+            1     U238     2.24894E-02   1:172     218.67      197.10      1.0830      22.651      63.840      7.43976E-10                         
+            1     MATERIAL 1.86671E+04   1:172     690.89      285.40      1.1193      406.62      1000.00     1.31525E-08             2.69741E-09 
+ 
+            2     MATERIAL 1.87011E+04   1:172     26.824      26.824                                                                              
+ 
+ 
+                  REACTOR                1:172     717.72      312.22      1.1193      406.62      1000.00     1.31525E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           0.63 wall          0.69
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 2
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.19 wall          0.19 Overall: cpu           0.82 wall          0.88
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           0.82 wall          0.88
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.344559
+
+TIMING: Module: cpu           0.07 wall          0.06 Overall: cpu           0.88 wall          0.95
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:SETVAL days = 1.5
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 1.5  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP     18.000 DAYS
+
+TIMING: Module: cpu           0.22 wall          0.22 Overall: cpu           1.11 wall          1.18
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.344559  OVERALL MWd/t 114.0000E+00 BURNUP TIME   3.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   112.08    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    4.64382E-07   1:172     0.82345     0.30042     7.39562E-06 0.52303     1.4960      1.75983E-11                         
+            1     Pu240    1.34914E-09   1:172     3.20787E-03 3.19944E-03 1.49402E-08 8.44988E-06 2.63436E-05 2.84851E-16                         
+            1     Pu241    6.69379E-12   1:172     1.01397E-05 2.72527E-06 4.84059E-10 7.41489E-06 2.17475E-05 2.52931E-16                         
+            1     Pu242    4.40996E-15   1:172     1.35728E-09 1.33751E-09 1.05220E-13 1.98758E-11 6.42894E-11 6.78624E-22                         
+            1     U235     9.33710E-04   1:172     469.68      87.331      3.75099E-02 382.38      932.32      1.23573E-08                         
+            1     U238     2.24878E-02   1:172     224.87      202.52      1.1229      23.473      66.159      7.70983E-10                         
+            1     MATERIAL 1.92542E+04   1:172     716.79      311.57      1.1605      406.39      1000.00     1.31462E-08             2.69643E-09 
+ 
+            2     MATERIAL 1.92904E+04   1:172     26.948      26.948                                                                              
+ 
+ 
+                  REACTOR                1:172     743.74      338.51      1.1605      406.39      1000.00     1.31462E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           1.11 wall          1.18
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 3
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.21 wall          0.21 Overall: cpu           1.32 wall          1.39
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           1.32 wall          1.39
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.331272
+
+TIMING: Module: cpu           0.06 wall          0.06 Overall: cpu           1.38 wall          1.45
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP     48.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           1.70 wall          1.78
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.331272  OVERALL MWd/t 684.0000E+00 BURNUP TIME  18.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   112.97    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    6.63717E-06   1:172     11.661      4.2526      1.07188E-04 7.4081      21.190      2.49257E-10                         
+            1     Pu240    8.32071E-08   1:172     0.19893     0.19840     9.35131E-07 5.26370E-04 1.64117E-03 1.77443E-14                         
+            1     Pu241    2.51980E-09   1:172     3.78965E-03 1.01813E-03 1.84670E-07 2.77170E-03 8.12935E-03 9.45462E-14                         
+            1     Pu242    9.97161E-12   1:172     3.09646E-06 3.05128E-06 2.41369E-10 4.54167E-08 1.46914E-07 1.55067E-18                         
+            1     U235     9.17568E-04   1:172     459.66      85.707      3.73777E-02 373.99      911.88      1.20861E-08                         
+            1     U238     2.24799E-02   1:172     226.38      203.80      1.1388      23.722      66.868      7.79174E-10                         
+            1     MATERIAL 1.94071E+04   1:172     724.31      320.34      1.1769      405.15      1000.00     1.31154E-08             2.69171E-09 
+ 
+            2     MATERIAL 1.94438E+04   1:172     26.855      26.855                                                                              
+ 
+ 
+                  REACTOR                1:172     751.16      347.19      1.1769      405.15      1000.00     1.31154E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           1.70 wall          1.78
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 4
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.25 wall          0.25 Overall: cpu           1.95 wall          2.03
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           1.95 wall          2.03
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.317292
+
+TIMING: Module: cpu           0.06 wall          0.06 Overall: cpu           2.01 wall          2.10
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP     78.000 DAYS
+
+TIMING: Module: cpu           0.30 wall          0.30 Overall: cpu           2.32 wall          2.41
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.317292  OVERALL MWd/t   1.8240E+03 BURNUP TIME  48.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   113.84    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    1.92413E-05   1:172     33.088      12.053      3.16626E-04 21.036      60.173      7.07781E-10                         
+            1     Pu240    6.26704E-07   1:172     1.4816      1.4776      7.18828E-06 4.00172E-03 1.24804E-02 1.34901E-13                         
+            1     Pu241    5.28417E-08   1:172     7.82240E-02 2.09899E-02 3.94115E-06 5.72381E-02 0.16788     1.95246E-12                         
+            1     Pu242    5.80212E-10   1:172     1.81771E-04 1.79111E-04 1.43230E-08 2.67380E-06 8.65044E-06 9.12922E-17                         
+            1     U235     8.86236E-04   1:172     439.87      82.334      3.67808E-02 357.57      871.86      1.15555E-08                         
+            1     U238     2.24640E-02   1:172     227.73      204.89      1.1607      24.006      67.679      7.88474E-10                         
+            1     MATERIAL 1.95550E+04   1:172     732.52      331.00      1.1994      402.72      1000.00     1.30552E-08             2.68254E-09 
+ 
+            2     MATERIAL 1.95922E+04   1:172     26.619      26.619                                                                              
+ 
+ 
+                  REACTOR                1:172     759.13      357.62      1.1994      402.72      1000.00     1.30552E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           2.32 wall          2.41
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 5
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.26 wall          0.27 Overall: cpu           2.58 wall          2.68
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           2.58 wall          2.68
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.303278
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           2.66 wall          2.75
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    108.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           2.97 wall          3.07
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.303278  OVERALL MWd/t   2.9640E+03 BURNUP TIME  78.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   114.77    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    3.05884E-05   1:172     51.715      18.817      5.12435E-04 32.899      94.112      1.10694E-09                         
+            1     Pu240    1.55953E-06   1:172     3.6008      3.5908      1.82366E-05 1.00393E-02 3.13216E-02 3.38433E-13                         
+            1     Pu241    2.14535E-07   1:172     0.31393     8.41503E-02 1.62722E-05 0.22980     0.67401     7.83865E-12                         
+            1     Pu242    3.92477E-09   1:172     1.24085E-03 1.22265E-03 9.87112E-08 1.82997E-05 5.92119E-05 6.24812E-16                         
+            1     U235     8.56075E-04   1:172     422.36      79.323      3.61667E-02 343.08      836.53      1.10871E-08                         
+            1     U238     2.24478E-02   1:172     229.28      206.17      1.1818      24.289      68.489      7.97782E-10                         
+            1     MATERIAL 1.97148E+04   1:172     740.84      341.49      1.2211      400.57      1000.00     1.30020E-08             2.67478E-09 
+ 
+            2     MATERIAL 1.97524E+04   1:172     26.463      26.463                                                                              
+ 
+ 
+                  REACTOR                1:172     767.30      367.95      1.2211      400.57      1000.00     1.30020E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           2.97 wall          3.07
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 6
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.29 wall          0.29 Overall: cpu           3.26 wall          3.36
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           3.26 wall          3.36
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.288775
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           3.33 wall          3.43
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    138.000 DAYS
+
+TIMING: Module: cpu           0.30 wall          0.30 Overall: cpu           3.64 wall          3.74
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.288775  OVERALL MWd/t   4.1040E+03 BURNUP TIME 108.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   115.79    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    4.08470E-05   1:172     68.190      24.789      6.96421E-04 43.402      124.16      1.46032E-09                         
+            1     Pu240    2.77268E-06   1:172     6.2092      6.1912      3.30395E-05 1.79900E-02 5.61492E-02 6.06456E-13                         
+            1     Pu241    5.21286E-07   1:172     0.75600     0.20244     4.02008E-05 0.55361     1.6238      1.88842E-11                         
+            1     Pu242    1.34920E-08   1:172     4.30674E-03 4.24341E-03 3.45590E-07 6.36728E-05 2.06047E-04 2.17400E-15                         
+            1     U235     8.26967E-04   1:172     406.53      76.584      3.55530E-02 329.98      804.62      1.06639E-08                         
+            1     U238     2.24315E-02   1:172     231.06      207.68      1.2028      24.582      69.326      8.07413E-10                         
+            1     MATERIAL 1.98903E+04   1:172     749.57      352.19      1.2427      398.62      1000.00     1.29538E-08             2.66804E-09 
+ 
+            2     MATERIAL 1.99285E+04   1:172     26.365      26.365                                                                              
+ 
+ 
+                  REACTOR                1:172     775.93      378.56      1.2427      398.62      1000.00     1.29538E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           3.64 wall          3.74
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 7
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.31 wall          0.32 Overall: cpu           3.95 wall          4.06
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           3.95 wall          4.06
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.274308
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           4.02 wall          4.13
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    168.000 DAYS
+
+TIMING: Module: cpu           0.30 wall          0.30 Overall: cpu           4.32 wall          4.44
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.274308  OVERALL MWd/t   5.2440E+03 BURNUP TIME 138.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   116.87    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    5.01551E-05   1:172     82.844      30.088      8.69859E-04 52.757      150.93      1.77509E-09                         
+            1     Pu240    4.19179E-06   1:172     9.0732      9.0458      5.08707E-05 2.74087E-02 8.55805E-02 9.23965E-13                         
+            1     Pu241    9.84221E-07   1:172     1.4187      0.37970     7.71412E-05 1.0391      3.0479      3.54456E-11                         
+            1     Pu242    3.31979E-08   1:172     1.07018E-02 1.05441E-02 8.65554E-07 1.58575E-04 5.13207E-04 5.41428E-15                         
+            1     U235     7.98827E-04   1:172     392.06      74.064      3.49322E-02 318.04      775.50      1.02779E-08                         
+            1     U238     2.24150E-02   1:172     232.95      209.30      1.2235      24.877      70.167      8.17098E-10                         
+            1     MATERIAL 2.00751E+04   1:172     758.43      362.85      1.2640      396.84      1000.00     1.29098E-08             2.66212E-09 
+ 
+            2     MATERIAL 2.01138E+04   1:172     26.316      26.316                                                                              
+ 
+ 
+                  REACTOR                1:172     784.74      389.17      1.2640      396.84      1000.00     1.29098E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           4.33 wall          4.44
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 8
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.32 wall          0.33 Overall: cpu           4.65 wall          4.78
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           4.65 wall          4.78
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.260151
+
+TIMING: Module: cpu           0.06 wall          0.06 Overall: cpu           4.72 wall          4.84
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    198.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           5.03 wall          5.16
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.260151  OVERALL MWd/t   6.3840E+03 BURNUP TIME 168.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   117.97    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    5.86285E-05   1:172     96.037      34.849      1.03372E-03 61.189      175.06      2.05879E-09                         
+            1     Pu240    5.76200E-06   1:172     12.039      12.001      7.11670E-05 3.79634E-02 0.11858     1.27977E-12                         
+            1     Pu241    1.60036E-06   1:172     2.2966      0.61408     1.27412E-04 1.6826      4.9355      5.73969E-11                         
+            1     Pu242    6.69922E-08   1:172     2.18071E-02 2.14851E-02 1.77676E-06 3.23825E-04 1.04811E-03 1.10565E-14                         
+            1     U235     7.71580E-04   1:172     378.66      71.711      3.42990E-02 306.99      748.56      9.92075E-09                         
+            1     U238     2.23983E-02   1:172     234.92      211.00      1.2437      25.169      70.998      8.26677E-10                         
+            1     MATERIAL 2.02642E+04   1:172     767.25      373.35      1.2849      395.19      1000.00     1.28689E-08             2.65684E-09 
+ 
+            2     MATERIAL 2.03034E+04   1:172     26.304      26.304                                                                              
+ 
+ 
+                  REACTOR                1:172     793.56      399.66      1.2849      395.19      1000.00     1.28689E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           5.03 wall          5.16
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 9
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.34 wall          0.34 Overall: cpu           5.37 wall          5.49
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           5.37 wall          5.49
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.246438
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           5.43 wall          5.56
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    228.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           5.74 wall          5.88
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.246438  OVERALL MWd/t   7.5240E+03 BURNUP TIME 198.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   119.08    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    6.63593E-05   1:172     108.01      39.161      1.18876E-03 68.847      196.98      2.31648E-09                         
+            1     Pu240    7.44533E-06   1:172     15.015      14.966      9.35272E-05 4.94240E-02 0.15444     1.66612E-12                         
+            1     Pu241    2.35873E-06   1:172     3.3752      0.90173     1.90646E-04 2.4737      7.2558      8.43802E-11                         
+            1     Pu242    1.18518E-07   1:172     3.89468E-02 3.83704E-02 3.19542E-06 5.79562E-04 1.87601E-03 1.97881E-14                         
+            1     U235     7.45170E-04   1:172     366.13      69.495      3.36528E-02 296.67      723.42      9.58740E-09                         
+            1     U238     2.23814E-02   1:172     236.92      212.73      1.2635      25.455      71.814      8.36071E-10                         
+            1     MATERIAL 2.04548E+04   1:172     775.96      383.63      1.3053      393.64      1000.00     1.28307E-08             2.65210E-09 
+ 
+            2     MATERIAL 2.04946E+04   1:172     26.323      26.323                                                                              
+ 
+ 
+                  REACTOR                1:172     802.29      409.95      1.3053      393.64      1000.00     1.28307E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           5.75 wall          5.88
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 10
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.39 wall          0.39 Overall: cpu           6.13 wall          6.27
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           6.13 wall          6.27
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.233139
+
+TIMING: Module: cpu           0.06 wall          0.07 Overall: cpu           6.20 wall          6.33
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    258.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           6.51 wall          6.65
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.233139  OVERALL MWd/t   8.6640E+03 BURNUP TIME 228.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   120.19    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    7.34244E-05   1:172     118.94      43.092      1.33561E-03 75.848      217.02      2.55201E-09                         
+            1     Pu240    9.21403E-06   1:172     17.952      17.891      1.17647E-04 6.16255E-02 0.19263     2.07744E-12                         
+            1     Pu241    3.24444E-06   1:172     4.6359      1.2376      2.66084E-04 3.3986      9.9689      1.15931E-10                         
+            1     Pu242    1.91039E-07   1:172     6.33526E-02 6.24130E-02 5.23295E-06 9.44818E-04 3.05856E-03 3.22592E-14                         
+            1     U235     7.19549E-04   1:172     354.33      67.389      3.29949E-02 286.97      699.77      9.27395E-09                         
+            1     U238     2.23643E-02   1:172     238.97      214.51      1.2827      25.735      72.614      8.45293E-10                         
+            1     MATERIAL 2.06465E+04   1:172     784.57      393.72      1.3252      392.18      1000.00     1.27946E-08             2.64780E-09 
+ 
+            2     MATERIAL 2.06869E+04   1:172     26.367      26.367                                                                              
+ 
+ 
+                  REACTOR                1:172     810.94      420.09      1.3252      392.18      1000.00     1.27946E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           6.52 wall          6.65
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 11
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.41 wall          0.41 Overall: cpu           6.92 wall          7.06
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           6.92 wall          7.06
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.220361
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           6.99 wall          7.13
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    288.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           7.30 wall          7.44
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.220361  OVERALL MWd/t   9.8040E+03 BURNUP TIME 258.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   121.31    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    7.98904E-05   1:172     128.98      46.697      1.47482E-03 82.284      235.44      2.76858E-09                         
+            1     Pu240    1.10473E-05   1:172     20.822      20.748      1.43285E-04 7.44377E-02 0.23276     2.50935E-12                         
+            1     Pu241    4.24109E-06   1:172     6.0580      1.6161      3.52738E-04 4.4423      13.030      1.51531E-10                         
+            1     Pu242    2.87386E-07   1:172     9.61865E-02 9.47575E-02 7.99315E-06 1.43697E-03 4.65210E-03 4.90629E-14                         
+            1     U235     6.94679E-04   1:172     343.15      65.382      3.23257E-02 277.80      677.41      8.97749E-09                         
+            1     U238     2.23470E-02   1:172     241.00      216.29      1.3015      26.009      73.393      8.54276E-10                         
+            1     MATERIAL 2.08374E+04   1:172     793.00      403.55      1.3446      390.79      1000.00     1.27605E-08             2.64387E-09 
+ 
+            2     MATERIAL 2.08784E+04   1:172     26.434      26.434                                                                              
+ 
+ 
+                  REACTOR                1:172     819.43      429.98      1.3446      390.79      1000.00     1.27605E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           7.31 wall          7.45
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 12
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.40 wall          0.40 Overall: cpu           7.71 wall          7.85
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           7.71 wall          7.85
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.208030
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           7.77 wall          7.91
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    318.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           8.08 wall          8.23
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.208030  OVERALL MWd/t  10.9440E+03 BURNUP TIME 288.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   122.42    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    8.58125E-05   1:172     138.25      50.018      1.60688E-03 88.230      252.46      2.96865E-09                         
+            1     Pu240    1.29290E-05   1:172     23.612      23.525      1.70253E-04 8.77648E-02 0.27452     2.95861E-12                         
+            1     Pu241    5.33233E-06   1:172     7.6219      2.0319      4.49555E-04 5.5904      16.398      1.90697E-10                         
+            1     Pu242    4.09928E-07   1:172     0.13834     0.13628     1.15707E-05 2.07162E-03 6.70722E-03 7.07321E-14                         
+            1     U235     6.70524E-04   1:172     332.50      63.458      3.16474E-02 269.08      656.15      8.69574E-09                         
+            1     U238     2.23295E-02   1:172     243.03      218.07      1.3199      26.276      74.154      8.63055E-10                         
+            1     MATERIAL 2.10277E+04   1:172     801.28      413.17      1.3636      389.47      1000.00     1.27279E-08             2.64027E-09 
+ 
+            2     MATERIAL 2.10693E+04   1:172     26.519      26.519                                                                              
+ 
+ 
+                  REACTOR                1:172     827.80      439.69      1.3636      389.47      1000.00     1.27279E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           8.09 wall          8.23
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 13
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.40 wall          0.40 Overall: cpu           8.49 wall          8.63
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           8.49 wall          8.63
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.196119
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           8.56 wall          8.70
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    348.000 DAYS
+
+TIMING: Module: cpu           0.32 wall          0.32 Overall: cpu           8.88 wall          9.02
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.196119  OVERALL MWd/t  12.0840E+03 BURNUP TIME 318.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   123.52    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    9.12394E-05   1:172     146.84      53.093      1.73223E-03 93.748      268.26      3.15431E-09                         
+            1     Pu240    1.48465E-05   1:172     26.318      26.217      1.98392E-04 0.10153     0.31766     3.42260E-12                         
+            1     Pu241    6.50246E-06   1:172     9.3092      2.4802      5.55456E-04 6.8295      20.033      2.32964E-10                         
+            1     Pu242    5.60624E-07   1:172     0.19069     0.18785     1.60517E-05 2.86268E-03 9.26900E-03 9.77412E-14                         
+            1     U235     6.47054E-04   1:172     322.33      61.606      3.09621E-02 260.76      635.87      8.42689E-09                         
+            1     U238     2.23118E-02   1:172     245.06      219.86      1.3379      26.538      74.900      8.71647E-10                         
+            1     MATERIAL 2.12175E+04   1:172     809.42      422.59      1.3822      388.21      1000.00     1.26968E-08             2.63696E-09 
+ 
+            2     MATERIAL 2.12597E+04   1:172     26.622      26.622                                                                              
+ 
+ 
+                  REACTOR                1:172     836.04      449.21      1.3822      388.21      1000.00     1.26968E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           8.88 wall          9.02
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 14
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.40 wall          0.40 Overall: cpu           9.28 wall          9.42
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           9.28 wall          9.43
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.184593
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu           9.35 wall          9.49
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    378.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu           9.66 wall          9.81
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.184593  OVERALL MWd/t  13.2240E+03 BURNUP TIME 348.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   124.62    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    9.62141E-05   1:172     154.84      55.951      1.85129E-03 98.889      282.97      3.32728E-09                         
+            1     Pu240    1.67893E-05   1:172     28.940      28.825      2.27569E-04 0.11567     0.36198     3.89916E-12                         
+            1     Pu241    7.73693E-06   1:172     11.103      2.9564      6.69386E-04 8.1472      23.898      2.77910E-10                         
+            1     Pu242    7.41045E-07   1:172     0.25394     0.25014     2.15131E-05 3.82233E-03 1.23770E-02 1.30507E-13                         
+            1     U235     6.24245E-04   1:172     312.58      59.821      3.02714E-02 252.79      616.45      8.16943E-09                         
+            1     U238     2.22939E-02   1:172     247.10      221.66      1.3555      26.794      75.630      8.80065E-10                         
+            1     MATERIAL 2.14067E+04   1:172     817.43      431.84      1.4005      387.00      1000.00     1.26670E-08             2.63389E-09 
+ 
+            2     MATERIAL 2.14495E+04   1:172     26.741      26.741                                                                              
+ 
+ 
+                  REACTOR                1:172     844.17      458.58      1.4005      387.00      1000.00     1.26670E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           9.67 wall          9.81
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 15
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.41 wall          0.41 Overall: cpu          10.08 wall         10.22
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          10.08 wall         10.22
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.173418
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu          10.14 wall         10.29
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    408.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          10.46 wall         10.60
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.173418  OVERALL MWd/t  14.3640E+03 BURNUP TIME 378.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   125.72    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    1.00775E-04   1:172     162.31      58.617      1.96444E-03 103.70      296.74      3.48900E-09                         
+            1     Pu240    1.87489E-05   1:172     31.482      31.352      2.57671E-04 0.13012     0.40732     4.38649E-12                         
+            1     Pu241    9.02242E-06   1:172     12.988      3.4564      7.90345E-04 9.5322      27.961      3.25154E-10                         
+            1     Pu242    9.52409E-07   1:172     0.32867     0.32373     2.80238E-05 4.96120E-03 1.60658E-02 1.69392E-13                         
+            1     U235     6.02072E-04   1:172     303.21      58.094      2.95770E-02 245.14      597.79      7.92215E-09                         
+            1     U238     2.22759E-02   1:172     249.13      223.46      1.3728      27.046      76.347      8.88331E-10                         
+            1     MATERIAL 2.15954E+04   1:172     825.34      440.93      1.4185      385.83      1000.00     1.26382E-08             2.63105E-09 
+ 
+            2     MATERIAL 2.16388E+04   1:172     26.873      26.873                                                                              
+ 
+ 
+                  REACTOR                1:172     852.21      467.81      1.4185      385.83      1000.00     1.26382E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          10.46 wall         10.61
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 16
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.42 wall          0.42 Overall: cpu          10.88 wall         11.03
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          10.88 wall         11.03
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.162555
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu          10.94 wall         11.10
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    438.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          11.26 wall         11.41
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.162555  OVERALL MWd/t  15.5040E+03 BURNUP TIME 408.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   126.82    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    1.04955E-04   1:172     169.33      61.118      2.07207E-03 108.21      309.67      3.64102E-09                         
+            1     Pu240    2.07179E-05   1:172     33.949      33.805      2.88601E-04 0.14485     0.45353     4.88312E-12                         
+            1     Pu241    1.03469E-05   1:172     14.952      3.9770      9.17403E-04 10.975      32.195      3.74385E-10                         
+            1     Pu242    1.19562E-06   1:172     0.41536     0.40911     3.56449E-05 6.28853E-03 2.03652E-02 2.14711E-13                         
+            1     U235     5.80514E-04   1:172     294.13      56.401      2.88809E-02 237.76      579.80      7.68366E-09                         
+            1     U238     2.22576E-02   1:172     251.18      225.27      1.3899      27.293      77.052      8.96468E-10                         
+            1     MATERIAL 2.17844E+04   1:172     833.16      449.90      1.4363      384.70      1000.00     1.26104E-08             2.62841E-09 
+ 
+            2     MATERIAL 2.18284E+04   1:172     27.021      27.021                                                                              
+ 
+ 
+                  REACTOR                1:172     860.18      476.92      1.4363      384.70      1000.00     1.26104E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          11.26 wall         11.41
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 17
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.41 wall          0.42 Overall: cpu          11.67 wall         11.83
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          11.67 wall         11.83
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.151994
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu          11.74 wall         11.90
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    468.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          12.06 wall         12.21
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.151994  OVERALL MWd/t  16.6440E+03 BURNUP TIME 438.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   127.92    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    1.08786E-04   1:172     175.93      63.467      2.17448E-03 112.47      321.85      3.78415E-09                         
+            1     Pu240    2.26904E-05   1:172     36.346      36.187      3.20268E-04 0.15982     0.50049     5.38763E-12                         
+            1     Pu241    1.16999E-05   1:172     16.981      4.5148      1.04968E-03 12.468      36.572      4.25287E-10                         
+            1     Pu242    1.47134E-06   1:172     0.51437     0.50660     4.44302E-05 7.81219E-03 2.53009E-02 2.66734E-13                         
+            1     U235     5.59555E-04   1:172     285.36      54.755      2.81838E-02 230.64      562.42      7.45338E-09                         
+            1     U238     2.22392E-02   1:172     253.23      227.10      1.4067      27.537      77.747      9.04476E-10                         
+            1     MATERIAL 2.19733E+04   1:172     840.88      458.73      1.4538      383.60      1000.00     1.25836E-08             2.62594E-09 
+ 
+            2     MATERIAL 2.20178E+04   1:172     27.180      27.180                                                                              
+ 
+ 
+                  REACTOR                1:172     868.06      485.91      1.4538      383.60      1000.00     1.25836E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          12.06 wall         12.22
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 18
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.42 wall          0.42 Overall: cpu          12.48 wall         12.63
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          12.48 wall         12.63
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.141694
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu          12.54 wall         12.70
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    498.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          12.86 wall         13.01
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.141694  OVERALL MWd/t  17.7840E+03 BURNUP TIME 468.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   129.02    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    1.12295E-04   1:172     182.16      65.680      2.27199E-03 116.48      333.35      3.91925E-09                         
+            1     Pu240    2.46609E-05   1:172     38.677      38.503      3.52594E-04 0.17499     0.54809     5.89890E-12                         
+            1     Pu241    1.30717E-05   1:172     19.067      5.0670      1.18639E-03 14.001      41.069      4.77583E-10                         
+            1     Pu242    1.77996E-06   1:172     0.62594     0.61646     5.44274E-05 9.53898E-03 3.08950E-02 3.25692E-13                         
+            1     U235     5.39178E-04   1:172     276.87      53.155      2.74873E-02 223.74      545.62      7.23064E-09                         
+            1     U238     2.22205E-02   1:172     255.28      228.92      1.4233      27.778      78.433      9.12384E-10                         
+            1     MATERIAL 2.21621E+04   1:172     848.54      467.47      1.4711      382.54      1000.00     1.25576E-08             2.62365E-09 
+ 
+            2     MATERIAL 2.22073E+04   1:172     27.351      27.351                                                                              
+ 
+ 
+                  REACTOR                1:172     875.89      494.82      1.4711      382.54      1000.00     1.25576E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          12.86 wall         13.02
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 19
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.42 wall          0.42 Overall: cpu          13.28 wall         13.44
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          13.28 wall         13.44
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.131634
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu          13.35 wall         13.51
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    528.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          13.66 wall         13.82
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.131634  OVERALL MWd/t  18.9240E+03 BURNUP TIME 498.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   130.13    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    1.15507E-04   1:172     188.05      67.771      2.36491E-03 120.28      344.23      4.04711E-09                         
+            1     Pu240    2.66246E-05   1:172     40.947      40.757      3.85507E-04 0.19032     0.59623     6.41585E-12                         
+            1     Pu241    1.44539E-05   1:172     21.197      5.6309      1.32679E-03 15.568      45.666      5.31035E-10                         
+            1     Pu242    2.12166E-06   1:172     0.75023     0.73882     6.56776E-05 1.14745E-02 3.71658E-02 3.91777E-13                         
+            1     U235     5.19367E-04   1:172     268.63      51.597      2.67926E-02 217.06      529.33      7.01480E-09                         
+            1     U238     2.22017E-02   1:172     257.34      230.76      1.4397      28.016      79.111      9.20202E-10                         
+            1     MATERIAL 2.23512E+04   1:172     856.15      476.13      1.4883      381.51      1000.00     1.25323E-08             2.62151E-09 
+ 
+            2     MATERIAL 2.23970E+04   1:172     27.532      27.532                                                                              
+ 
+ 
+                  REACTOR                1:172     883.68      503.66      1.4883      381.51      1000.00     1.25323E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          13.66 wall         13.82
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 20
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.42 wall          0.42 Overall: cpu          14.08 wall         14.25
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          14.08 wall         14.25
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.121789
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu          14.15 wall         14.31
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    558.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          14.46 wall         14.63
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.121789  OVERALL MWd/t  20.0640E+03 BURNUP TIME 528.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   131.23    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    1.18444E-04   1:172     193.64      69.751      2.45349E-03 123.89      354.55      4.16841E-09                         
+            1     Pu240    2.85773E-05   1:172     43.160      42.955      4.18938E-04 0.20580     0.64481     6.93751E-12                         
+            1     Pu241    1.58391E-05   1:172     23.365      6.2044      1.47022E-03 17.162      50.343      5.85426E-10                         
+            1     Pu242    2.49644E-06   1:172     0.88732     0.87377     7.82160E-05 1.36234E-02 4.41283E-02 4.65149E-13                         
+            1     U235     5.00108E-04   1:172     260.63      50.078      2.61006E-02 210.58      513.52      6.80529E-09                         
+            1     U238     2.21827E-02   1:172     259.40      232.60      1.4560      28.252      79.783      9.27945E-10                         
+            1     MATERIAL 2.25407E+04   1:172     863.71      484.71      1.5053      380.51      1000.00     1.25077E-08             2.61950E-09 
+ 
+            2     MATERIAL 2.25870E+04   1:172     27.722      27.722                                                                              
+ 
+ 
+                  REACTOR                1:172     891.43      512.43      1.5053      380.51      1000.00     1.25077E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          14.46 wall         14.63
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 21
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.43 wall          0.43 Overall: cpu          14.89 wall         15.05
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          14.89 wall         15.06
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.112145
+
+TIMING: Module: cpu           0.07 wall          0.07 Overall: cpu          14.96 wall         15.13
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    588.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          15.27 wall         15.44
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.112145  OVERALL MWd/t  21.2040E+03 BURNUP TIME 558.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   132.34    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    1.21127E-04   1:172     198.94      71.630      2.53802E-03 127.32      364.37      4.28377E-09                         
+            1     Pu240    3.05153E-05   1:172     45.321      45.100      4.52830E-04 0.22138     0.69376     7.46303E-12                         
+            1     Pu241    1.72208E-05   1:172     25.563      6.7854      1.61606E-03 18.779      55.085      6.40568E-10                         
+            1     Pu242    2.90411E-06   1:172     1.0372      1.0213      9.20735E-05 1.59896E-02 5.17951E-02 5.45936E-13                         
+            1     U235     4.81387E-04   1:172     252.85      48.596      2.54122E-02 204.28      498.16      6.60167E-09                         
+            1     U238     2.21635E-02   1:172     261.47      234.45      1.4721      28.486      80.449      9.35624E-10                         
+            1     MATERIAL 2.27306E+04   1:172     871.24      493.23      1.5222      379.53      1000.00     1.24839E-08             2.61763E-09 
+ 
+            2     MATERIAL 2.27775E+04   1:172     27.921      27.921                                                                              
+ 
+ 
+                  REACTOR                1:172     899.16      521.15      1.5222      379.53      1000.00     1.24839E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          15.28 wall         15.44
+====================================================================================================
+INPUT:DO_CYCLE LWIMS1
+INPUT:SETVAL I = 22
+INPUT:HEAD 2 1                  * initialize, read from 2 when possible
+
+CALLING HEAD(INPUT_INTERFACE_NO=  2,OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:burn 1                    * track FP of 1
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.42 wall          0.42 Overall: cpu          15.70 wall         15.86
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of 0.4095 cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          15.70 wall         15.86
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.102687
+
+TIMING: Module: cpu           0.08 wall          0.08 Overall: cpu          15.77 wall         15.94
+====================================================================================================
+INPUT:SETVAL days = 3
+INPUT:BURNUP 1 2
+
+CALLING BURNUP_INTERFACE(IN_INTERFACE_NO=  1,OUT_INTERFACE_NO=  2)
+
+INPUT:rating 38       * 38 MW/T
+INPUT:steps 10 3  * 10 x days
+INPUT:begin
+
+TOTAL FUEL IRRADIATION TIME, AFTER THIS BURNUP STEP    618.000 DAYS
+
+TIMING: Module: cpu           0.31 wall          0.31 Overall: cpu          16.09 wall         16.25
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238 U235 Pu239 Pu240 Pu241 Pu242
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.102687  OVERALL MWd/t  22.3440E+03 BURNUP TIME 588.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   133.45    
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     Pu239    1.23576E-04   1:172     204.00      73.418      2.61872E-03 130.58      373.73      4.39372E-09                         
+            1     Pu240    3.24352E-05   1:172     47.433      47.196      4.87121E-04 0.23706     0.74300     7.99156E-12                         
+            1     Pu241    1.85931E-05   1:172     27.783      7.3722      1.76374E-03 20.412      59.877      6.96289E-10                         
+            1     Pu242    3.34438E-06   1:172     1.1998      1.1813      1.07275E-04 1.85758E-02 6.01756E-02 6.34239E-13                         
+            1     U235     4.63191E-04   1:172     245.27      47.150      2.47282E-02 198.15      483.20      6.40351E-09                         
+            1     U238     2.21441E-02   1:172     263.54      236.31      1.4881      28.718      81.110      9.43247E-10                         
+            1     MATERIAL 2.29211E+04   1:172     878.75      501.71      1.5390      378.58      1000.00     1.24606E-08             2.61588E-09 
+ 
+            2     MATERIAL 2.29686E+04   1:172     28.129      28.129                                                                              
+ 
+ 
+                  REACTOR                1:172     906.88      529.83      1.5390      378.58      1000.00     1.24606E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu          16.09 wall         16.25
+====================================================================================================
+INPUT:DO_END LWIMS1
+INPUT:STOP
+
+Finished WIMS

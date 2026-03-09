@@ -1,0 +1,135 @@
+DEFINE grid
+  xgrid 2 1.26
+  ygrid 2 1.26
+END_DEFINE
+
+DEFINE map
+  map 1001 1 2 1 2
+  put 1002 2 2 2 2
+END_DEFINE
+
+DEFINE rodsub
+  rodsub  1 1  0.4095 1
+  rodsub  1 2  0.4750 2
+  rodsub  1 3  0.0000 3 
+  rodsub  2 1  0.4095 4
+  rodsub  2 2  0.4750 5
+  rodsub  2 3  0.0000 6 
+END_DEFINE
+
+DEFINE assembly_geom
+  #grid
+  #map
+  #rodsub
+END_DEFINE
+
+DEFINE fine
+  xfine 1 1
+  yfine 1 1
+END_DEFINE
+
+DEFINE assembly_geom_cactus
+  #grid
+  #fine
+  #map
+  #rodsub
+END_DEFINE
+
+SETVAL temp = 293.0
+
+HEAD 1
+  uranium u235 2.0
+  material 1 density 10.4 temp $temp class   1
+  u 100.0
+  material 2 density 6.44 temp $temp class   2
+  zr 97.91 sn 1.59 fe 0.5
+  material 3 density 0.73 temp $temp class   3
+  h 11.19 o 88.81 b10 0.0148504 b11 0.0651496
+
+  uranium u235 0.225 
+  plutonium pu238 1.83 pu239 57.93 pu240 22.50 pu241 11.06 pu242 5.60 am241 1.08
+  material 4 density 10.4 temp $temp class   1
+  u 91.3 pu 8.7
+  material 5 density 6.44 temp $temp class   2
+  zr 97.91 sn 1.59 fe 0.5
+  material 6 density 0.73 temp $temp class   3
+  h 11.19 o 88.81 b10 0.0148504 b11 0.0651496
+
+  #assembly_geom
+  begin
+
+CACTUS 1
+geomin
+symmetry 0 0 0
+#assembly_geom_cactus
+endgeom
+azimuthal 100 0.005
+polar 9
+begin
+
+
+STOP
+
+
+
+************************************ Exercise 5 ************************************
+*  Start from the ‘assembly’ example case. You do not need to modify the geometry or material
+* specification. First, use the method of characteristics in 172 energy groups. Investigate how
+* the calculated value of k-inf varies with changes to the ray spacing and angle. Perform a
+* parametric study by varying the number of angles and ray spacing until the changes in the kinf 
+* results are negligibly small or no longer observable. You should thereby produce a
+* ‘reference’ solution with a suitable number of azimuthal and polar angles and sufficiently
+* small spacing between characteristic rays. 
+
+* 0.04
+* A11 P4 ---> 1.175342
+
+* 0.03
+* A11 P4 ---> 1.175018
+
+* 0.025
+* A11 P4 ---> 1.175507
+
+* 0.02
+* A11 P4 ---> 1.175599    [CHOSEN]
+* A7  P3 ---> 1.174381
+
+* 0.015
+* A11 P4 ---> 1.175554
+
+* 0.01
+* A11 P4 ---> 1.175528
+* A7  P3 ---> 1.174662
+* A7  P5 ---> 1.175037
+* A7  P7 ---> 1.175220
+* A10 P7 ---> 1.174655
+* A10 P8 ---> 1.174693
+* A10 P9 ---> 1.174722
+* A12 P9 ---> 1.175341
+
+* 0.005
+* A7  P3 ---> 1.174628
+* A10 P3 ---> 1.174126
+* A10 P4 ---> 1.174367
+* A11 P4 ---> 1.175478
+* A12 P4 ---> 1.174946
+* A13 P4 ---> 1.175453
+* A14 P4 ---> 1.174916
+* A15 P2 ---> 1.174883
+* A15 P3 ---> 1.175392
+* A15 P4 ---> 1.175630
+* A15 P5 ---> 1.175762
+* A15 P6 ---> 1.175846
+* A15 P7 ---> 1.175900
+* A15 P9 ---> 1.175973
+* A16 P4 ---> 1.175178
+* A25 P4 ---> 1.175740
+* A20 P3 ---> 1.175054
+* A25 P3 ---> 1.175444
+
+
+* 0.002
+* A7  P3 ---> 1.174622
+
+* 0.001
+* A7  P3 ---> 1.174635

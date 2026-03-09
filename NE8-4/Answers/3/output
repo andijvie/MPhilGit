@@ -1,0 +1,252 @@
+          **********************************************************
+          **********************************************************
+          **********************************************************
+          ***                                                    ***
+          ***   ANSWERS PROGRAM                                  ***
+          ***   WIMS Version 10A Release Update 0                ***
+          ***   LINUX VERSION                                    ***
+          ***                                                    ***
+          **********************************************************
+          **********************************************************
+          **********************************************************
+
+
+
+          **********************************************************
+          * This is the ANSWERS QA Set version of the program.     *
+          *                                                        *
+          * This program has successfully executed the designated  *
+          * set of test cases on the ANSWERS QA Set computer       *
+          * systems.                                               *
+          **********************************************************
+
+
+
+          **********************************************************
+          * This computer program is supplied under licence by     *
+          * Energy, Safety and Risk Consultants (UK) Limited.      *
+          **********************************************************
+
+
+
+          **********************************************************
+          * Copyright Energy, Safety and Risk Consultants (UK)     *
+          * Limited, part of AMEC plc.                             *
+          *                                                        *
+          * All rights reserved. This computer program is          *
+          * protected by copyright law and international           *
+          * treaties.  Save as permitted under the Copyright       *
+          * Designs and Patents Act 1988, or the terms of any      *
+          * licence granted by the copyright owner, no part of     *
+          * this program may be used, reproduced, distributed or   *
+          * modified in any way.                                   *
+          *                                                        *
+          * Warning: Any unauthorised act, including reproduction  *
+          * or distribution of this program or any portion of it,  *
+          * may result in both a civil claim for damages and       *
+          * criminal prosecution.                                  *
+          **********************************************************
+
+
+
+
+          Running on machine ray.eng.cam.ac.uk (System : Linux Processor type :)
+
+          Date and time of execution: 09/03/2026 - 12.57.42
+
+
+
+
+
+          **********************************************************
+          *                                                        *
+          *            WIMS Version 10A Release Update 0           *
+          *            ---------------------------------           *
+          *                                                        *
+          *  This release corrects the following known errors:     *
+          *                                                        *
+          *  ANSWERS/WIMS/ERROR/055                                *
+          *  ANSWERS/WIMS/ERROR/056                                *
+          *  ANSWERS/WIMS/ERROR/057                                *
+          *  ANSWERS/WIMS/ERROR/059                                *
+          *  ANSWERS/WIMS/ERROR/060                                *
+          *  ANSWERS/WIMS/ERROR/061                                *
+          *  ANSWERS/WIMS/ERROR/062                                *
+          *  ANSWERS/WIMS/ERROR/064                                *
+          *  ANSWERS/WIMS/ERROR/065                                *
+          *  ANSWERS/WIMS/ERROR/066                                *
+          *  ANSWERS/WIMS/ERROR/067                                *
+          *  ANSWERS/WIMS/ERROR/068                                *
+          *  ANSWERS/WIMS/ERROR/069                                *
+          *  ANSWERS/WIMS/ERROR/070                                *
+          *                                                        *
+          *  There are no known errors in this release of the      *
+          *  code.                                                 *
+          *                                                        *
+          *  August 2014                                           *
+          *                                                        *
+          **********************************************************
+
+
+
+
+
+
+          **********************************************************
+            ANSWERS Software (FlexNet Publisher based) Licensing
+            Procedure (RU5) for Feature WIMS10A_RU0
+          **********************************************************
+
+
+
+          *** The timelock password has been successfully verified.   
+          *** This password expires at midnight on 31-mar-2026                 
+
+
+          *** WARNING *** WARNING *** WARNING *** WARNING ***    
+          ****************************************************** 
+          * The PASSWORD you have supplied will expire in less * 
+          * than one month from now ...                        * 
+          *                                                    * 
+          * ... it may be renewed from now on by contacting    * 
+          * the ANSWERS Software Service.                      * 
+          ****************************************************** 
+
+
+          *** Successful authorisation (reported by FlexNet Publisher) for system with:
+          ***     HOSTNAME=ray.eng.cam.ac.uk                                                           
+          ***     "f01fafe5e3ef f01fafe694d1"                                                           
+          ***     Ethernet address "f01fafe5e3ef f01fafe694d1"                                      
+          ***     USER=                                                       
+          ***     The number of processors detected is  16
+          ***     The number of processors permitted is 76
+
+          **********************************************************
+          * This is a licensed ANSWERS software product.           *
+          *                                                        *
+          * The use of this program is restricted within the terms *
+          * of your licence agreement with Energy, Safety and Risk *
+          * Consultants (UK) Limited.                              *
+          *                                                        *
+          * This copy is registered with identifier - 8EF2BD127476 *
+          ********************************************************** 
+
+
+          **********************************************************
+            End of ANSWERS Software Licensing Procedure (RU5)
+            for Feature WIMS10A_RU0
+          **********************************************************
+
+
+
+INPUT=input
+OUTPUT=output
+SPACE= 500000000
+FLATFILE=.FF
+LIBRARY=/usr/software/answers/data_libraries/w10j312v1.dat
+
+LIBRARY NAME IS  /usr/software/answers/data_libraries/w10j312v1.dat                                              
+ LIBRARY HISTORY IS 
+     WIMS10 LIBRARY -    JEFF3.1.2 VERSION 1 - JULY 2013                             
+INPUT:SETVAL rad = 0.4095
+INPUT:SETVAL len = 1.260
+INPUT:HEAD 1                    * initialize
+
+CALLING HEAD(OUTPUT_INTERFACE_NO=  1)
+
+INPUT:material  1 density 10.50 temperature 900 class 1
+INPUT:U235 0.3657
+INPUT:U238 8.8899
+INPUT:O    1.2444
+INPUT:material  2 density 0.66639 temperature 600 class 3
+INPUT:H  1.1191E-1
+INPUT:O  8.8809E-1
+INPUT:*material  2 density 0.73191 temperature 600 class 3
+INPUT:*D  2.0118E-1
+INPUT:*O  7.9882E-1
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of rad cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:square                    * square pin
+INPUT:begin
+
+TIMING: Module: cpu           0.18 wall          0.18 Overall: cpu           0.19 wall          0.25
+====================================================================================================
+INPUT:PERSEUS 1
+
+CALLING PERSEUS(IN_INTERFACE_NO=  1)
+
+INPUT:xgrid 1 1.260         * x pitch = 1.260 cm
+INPUT:ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+INPUT:map 1001 1 1 1 1      * fill 1x1 grid with rod 1
+INPUT:rodsub 1 1 0.4095 1   * rod 1 has pellet radius of rad cm of material 1
+INPUT:rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
+INPUT:begin
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           0.19 wall          0.25
+====================================================================================================
+INPUT:PIP 1
+
+CALLING PIP(IN_INTERFACE_NO=  1)
+
+INPUT:begin
+Calculation converged in   7 iterations
+k-infinity is 1.393305
+
+TIMING: Module: cpu           0.01 wall          0.01 Overall: cpu           0.21 wall          0.27
+====================================================================================================
+INPUT:EDIT 1
+
+CALLING EDIT(INTERFACE_NO=  1)
+
+INPUT:nuclides U238
+INPUT:cross
+INPUT:begin
+************************************************************************************************************************
+INTERFACE    1  EIGENVALUE  1.393305  OVERALL MWd/t   0.0000E+00 BURNUP TIME   0.0000E+00 DAYS
+
+========================================================================================================================
+RUN SET    1
+
+
+NORMALISATION
+-------------
+NORMALISED TO  1000.00     PRODUCTIONS USING FACTOR   108.66    
+
+MATERIAL CROSS SECTIONS
+-----------------------
+                                       REACTION    ABS         N,GAM       N,2N        FISS        PROD        POWER       TRAN        
+         MATERIAL NUCLIDE  NUM DENSITY GROUPS                                                                                          
+            1     U238     2.24894E-02   1:172     0.98871     0.89119     4.89679E-03 0.10242     0.28866     20.996      8.5032      
+
+MACROSCOPIC CROSS-SECTIONS BY MATERIAL
+--------------------------------------
+                  REACTION    ABS         N,GAM       N,2N        FISS        PROD        POWER       TRAN        
+         MATERIAL GROUPS                                                                                          
+            1       1:172     7.02549E-02 2.90211E-02 1.13818E-04 4.13477E-02 0.10169     8.3476      0.37857     
+                                                                                                                  
+            2       1:172     1.35219E-03 1.35219E-03                                                 0.20649     
+ 
+
+MATERIAL REACTION RATES
+-----------------------
+                           NUM DENSITY REACTION    ABS         N,GAM       N,2N        FISS        YIELD       POWER                   MW/Te       
+         MATERIAL NUCLIDE  MATL FLUX   GROUPS                                                                                                      
+            1     U238     2.24894E-02   1:172     218.67      197.10      1.0830      22.651      63.840      7.43976E-10                         
+            1     MATERIAL 1.86671E+04   1:172     690.89      285.40      1.1193      406.62      1000.00     1.31525E-08             2.69741E-09 
+ 
+            2     MATERIAL 1.87011E+04   1:172     26.824      26.824                                                                              
+ 
+ 
+                  REACTOR                1:172     717.72      312.22      1.1193      406.62      1000.00     1.31525E-08                         
+
+EDIT completed
+
+
+TIMING: Module: cpu           0.00 wall          0.00 Overall: cpu           0.21 wall          0.27
+====================================================================================================
+INPUT:STOP
+
+Finished WIMS

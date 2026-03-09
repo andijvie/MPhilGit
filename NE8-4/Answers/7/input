@@ -1,0 +1,130 @@
+DEFINE grid
+  xgrid 2 1.26
+  ygrid 2 1.26
+END_DEFINE
+
+DEFINE map
+  map 1001 1 2 1 2
+  put 1002 2 2 2 2
+END_DEFINE
+
+DEFINE rodsub
+  rodsub  1 1  0.4095 1
+  rodsub  1 2  0.4750 2
+  rodsub  1 3  0.0000 3 
+  rodsub  2 1  0.4095 4
+  rodsub  2 2  0.4750 5
+  rodsub  2 3  0.0000 6 
+END_DEFINE
+
+DEFINE assembly_geom
+  #grid
+  #map
+  #rodsub
+END_DEFINE
+
+DEFINE fine
+  xfine 1 1
+  yfine 1 1
+END_DEFINE
+
+DEFINE assembly_geom_cactus
+  #grid
+  #fine
+  #map
+  #rodsub
+END_DEFINE
+
+SETVAL temp = 293.0
+
+HEAD 1
+  uranium u235 2.0
+  material 1 density 10.4 temp $temp class   1
+  u 100.0
+  material 2 density 6.44 temp $temp class   2
+  zr 97.91 sn 1.59 fe 0.5
+  material 3 density 0.73 temp $temp class   3
+  h 11.19 o 88.81 b10 0.0148504 b11 0.0651496
+
+  uranium u235 0.225 
+  plutonium pu238 1.83 pu239 57.93 pu240 22.50 pu241 11.06 pu242 5.60 am241 1.08
+  material 4 density 10.4 temp $temp class   1
+  u 91.3 pu 8.7
+  material 5 density 6.44 temp $temp class   2
+  zr 97.91 sn 1.59 fe 0.5
+  material 6 density 0.73 temp $temp class   3
+  h 11.19 o 88.81 b10 0.0148504 b11 0.0651496
+
+  #assembly_geom
+  begin
+
+**** Now use the modules below as required ***
+* You may need to modify the interface numbers and
+* add or change some inputs.
+
+PERSEUS 1
+  #assembly_geom
+begin
+
+PIP 1
+begin
+
+COND 1 2
+*partition 172 * 1 energy group 
+*energy 820000 9118 4 0.625 0.14 0 * 6 energy groups 
+*energy 1350000 183000 9119 372 4 1.15 0.972 0.4 0.22 0.08 * 11 energy groups 
+partition 22 45 74 75 79 80 87 88 92 115 117 119 124 128 130 135 142 147 152 159 161 172 *22 energy groups
+begin
+
+CACTUS 2
+geomin
+symmetry 0 0 0
+#assembly_geom_cactus
+endgeom
+azimuthal 100 0.005
+polar 9
+begin
+
+
+STOP
+
+
+
+************************************ Exercise 7 ************************************
+* Now try a hybrid of the two methods with the following stages: 1) solve the multi-cell collision
+* probability equations, 2) obtain neutron spectra for each material, 3) generate cross sections
+* in fewer energy groups (condensation), and finally 4) calculate the few-group fluxes by the
+* method of characteristics.
+* Here, you are required to use different number of energy groups in stage 3 (i.e. 1, 6, 11 and
+* 22 groups) for condensation.
+* Identify the trade-offs of using different methods/sequences on the efficiency and accuracy
+* by comparing:
+* difference in reactivity
+* simulation (CPU) time
+
+
+* MOC CACTUS
+* k = 1.176048
+* T = 359.47 s
+
+* MCP PERSEUS
+* k = 1.174293
+* T = 0.02 s
+
+* Hybrid 1
+* k = 1.175038
+* T = 0.53 s
+
+* Hybrid 6
+* k = 1.173053
+* T = 5.84 s
+
+* Hybrid 11
+* k = 1.173532
+* T = 11.26 s
+
+* Hybrid 22
+* k = 1.176011
+* T = 37.21 s
+
+
