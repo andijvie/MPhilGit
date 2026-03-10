@@ -55,29 +55,29 @@ print(f"default Vm = {defaultVm}")
 print(f"default Vm/Vf = {defaultVm/defaultVf}")
 print("")
 
-for r in np.geomspace(0.001, 0.2, 5, False):
-    r = np.round(r, 3)
-    if r == 0.63:
-        r -= 0.01
-    Vf = np.pi * r**2
-    Vcell = 1.260 ** 2
-    Vm = Vcell - Vf
-    print(f"r = {r} --> Vf = {Vf}")
-    print(f"r = {r} --> Vm = {Vm}")
-    print(f"r = {r} --> Vm/Vf = {Vm/Vf}")
-    print("")
+for VmVf in np.geomspace(0.3, 500000, 10):
+    Vm = defaultVf * VmVf
+    Vcell = Vm + defaultVf
+    pitch = np.sqrt(Vcell)
+    
+    print(f"* pitch {pitch:.5f} == Vm/Vf {VmVf} --->")
+print("")
 
-for r in np.geomspace(0.2, 1.260/2, 10):
-    r = np.round(r, 3)
-    if r == 0.63:
-        r -= 0.01
-    Vf = np.pi * r**2
-    Vcell = 1.260 ** 2
-    Vm = Vcell - Vf
-    print(f"r = {r} --> Vf = {Vf}")
-    print(f"r = {r} --> Vm = {Vm}")
-    print(f"r = {r} --> Vm/Vf = {Vm/Vf}")
-    print("")
+for VmVf in np.geomspace(90, 600, 5):
+    Vm = defaultVf * VmVf
+    Vcell = Vm + defaultVf
+    pitch = np.sqrt(Vcell)
+    
+    print(f"* pitch {pitch:.5f} == Vm/Vf {VmVf} --->")
+print("")
+
+for VmVf in np.geomspace(3, 12, 5):
+    Vm = defaultVf * VmVf
+    Vcell = Vm + defaultVf
+    pitch = np.sqrt(Vcell)
+    
+    print(f"* pitch {pitch:.5f} == Vm/Vf {VmVf} --->")
+print("")
 
 
 ass2_rad_bins = 20

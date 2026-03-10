@@ -1,11 +1,12 @@
 
-SETVAL rad = 0.024
+SETVAL pit = 1.92034
+SETVAL rad = 0.4095
 
 DEFINE pwr_geom
-    xgrid 1 1.260         * x pitch = 1.260 cm  
-    ygrid 1 1.260         * y pitch = 1.260 cm   --> 1x1 grid
+    xgrid 1 $pit          * x pitch = pit cm  
+    ygrid 1 $pit          * y pitch = pit cm   --> 1x1 grid
     map 1001 1 1 1 1      * fill 1x1 grid with rod 1
-    rodsub 1 1 $rad 1   * rod 1 has pellet radius of rad cm of material 1
+    rodsub 1 1 $rad 1     * rod 1 has pellet radius of rad cm of material 1
     rodsub 1 2 0.00 2     * rod 1 is surrounded by material 2
 END_DEFINE
 
@@ -16,13 +17,13 @@ U235 0.3657
 U238 8.8899
 O    1.2444
 
-material  2 density 0.66639 temperature 600 class 3
-H  1.1191E-1 
-O  8.8809E-1 
+*material  2 density 0.66639 temperature 600 class 3
+*H  1.1191E-1 
+*O  8.8809E-1 
 
-*material  2 density 0.73191 temperature 600 class 3
-*D  2.0118E-1 
-*O  7.9882E-1 
+material  2 density 0.73191 temperature 600 class 3
+D  2.0118E-1 
+O  7.9882E-1 
 
 #pwr_geom                 * fill in geometry
 
@@ -47,6 +48,56 @@ STOP
 * Perform criticality calculations for different Vm/Vf by changing the pin lattice pitch, starting
 * from the ‘simple cell’ example. Use the specifications in Appendix A. Do this for 2 different
 * moderator materials
+
+
+* H2O
+* pitch 0.82756   == Vm/Vf 0.3                 ---> 0.964836
+* pitch 1.14159   == Vm/Vf 1.4737973878784933  ---> 1.330905
+* pitch 1.260     == Vm/Vf 2.0135847212666578  ---> 1.393305    [default]
+* pitch 1.45164   == Vm/Vf 3.0                 ---> 1.450173
+* pitch 1.66190   == Vm/Vf 4.242640687119285   ---> 1.471615
+* pitch 1.92034   == Vm/Vf 6.0                 ---> 1.461798
+* pitch 2.08353   == Vm/Vf 7.240262468391569   ---> 1.442372
+* pitch 4.38920   == Vm/Vf 35.56893304490063   ---> 0.925581
+* pitch 6.92388   == Vm/Vf 90.0                ---> 0.531564
+* pitch 8.75861   == Vm/Vf 144.61711541003726  ---> 0.373886
+* pitch 9.62192   == Vm/Vf 174.73800203733202  ---> 0.321927
+* pitch 11.08817  == Vm/Vf 232.37900077244493  ---> 0.255066
+* pitch 14.04419  == Vm/Vf 373.39978637308684  ---> 0.170990
+* pitch 17.79369  == Vm/Vf 600.0               ---> 0.114077
+* pitch 21.27814  == Vm/Vf 858.4280365524219   ---> 0.084405
+* pitch 47.14010  == Vm/Vf 4217.163326508749   ---> 0.026802
+* pitch 104.47390 == Vm/Vf 20717.480982885267  ---> 0.014590
+* pitch 231.55689 == Vm/Vf 101777.8978533288   ---> 0.0
+* pitch 513.23265 == Vm/Vf 500000.0            ---> 0.0
+
+
+
+
+* D2O
+* pitch 0.82756   == Vm/Vf 0.3                 ---> 0.722045
+* pitch 1.14159   == Vm/Vf 1.4737973878784933  ---> 0.770894
+* pitch 1.260     == Vm/Vf 2.0135847212666578  ---> 0.807091    [default]
+* pitch 1.45164   == Vm/Vf 3.0                 ---> 0.880641
+* pitch 1.66190   == Vm/Vf 4.242640687119285   ---> 0.970215
+* pitch 1.92034   == Vm/Vf 6.0                 ---> 1.079264
+* pitch 2.08353   == Vm/Vf 7.240262468391569   ---> 1.144106
+* pitch 4.38920   == Vm/Vf 35.56893304490063   ---> 1.633975
+* pitch 6.92388   == Vm/Vf 90.0                ---> 1.770580
+* pitch 8.75861   == Vm/Vf 144.61711541003726  ---> 1.804631
+* pitch 9.62192   == Vm/Vf 174.73800203733202  ---> 1.813239
+* pitch 11.08817  == Vm/Vf 232.37900077244493  ---> 1.821604
+* pitch 14.04419  == Vm/Vf 373.39978637308684  ---> 1.824441
+* pitch 17.79369  == Vm/Vf 600.0               ---> 1.813707
+* pitch 21.27814  == Vm/Vf 858.4280365524219   ---> 1.795571
+* pitch 47.14010  == Vm/Vf 4217.163326508749   ---> 1.549598
+* pitch 104.47390 == Vm/Vf 20717.480982885267  ---> 0.918186
+* pitch 231.55689 == Vm/Vf 101777.8978533288   ---> 0.311898
+* pitch 513.23265 == Vm/Vf 500000.0            ---> 0.081639
+
+
+
+
 
 * H2O
 * 0.001  == 505347.77530538617 ---> 0.000968
