@@ -102,7 +102,16 @@ def vertical_gantt(tasks, start_col=0, col_width=0.8, figsize=(3.2, 16.3), inver
         color="lightgrey",
         zorder=-1
     )   
+
+    ax.axhspan(
+        datetime(2026, 5, 25),
+        datetime(2026, 5, 29),
+        color="lightgrey",
+        zorder=-1
+    )   
     ax.axhline(datetime(2026, 5, 11), color = 'k', linestyle = '--', lw = 2, zorder=1)
+    ax.axhline(datetime(2026, 5, 31), color = 'k', linestyle = '--', lw = 2, zorder=1)
+    ax.axhline(datetime(2026, 7, 13), color = 'k', linestyle = '--', lw = 2, zorder=1)
     ax.axhline(datetime(2026, 7, 21), color = 'k', linestyle = '--', lw = 2, zorder=1)
     ax.axhline(datetime(2026, 8, 7), color = 'k', linestyle = '--', lw = 2, zorder=1)
     ax.axhline(datetime(2026, 8, 20), color = 'k', linestyle = '--', lw = 2, zorder=1)
