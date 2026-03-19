@@ -1,5 +1,5 @@
-R = 69.71;
-H = 200;
+R = 85;
+H = 110;
 alphaR = 0.7;
 alphaZ = 0.7;
 matCoreNa.rmax = 1000;

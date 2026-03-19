@@ -506,7 +506,7 @@ end
 % x = 0.1; matCore.u238 = 7.3614e+21 * (1-x); matCore.pu239 = 7.3614e+21 * (x); materialDefs = {matCore}; [flux, k] = CSGROV(R, H, alphaR, alphaZ, materialDefs)
 
 % ex 2b
-% matCore = rmfield(matCore, 'na')
+% matCore = rmfield(matCoreNa, 'na')
 
 % density = 11.3 g * 6.023e23 /mol /207 u = 3.2879e22 atoms / cm3
 % 50% --> 1.6440e22 atoms / cm3
@@ -517,5 +517,5 @@ end
 % [flux, k] = CSGROV(R, H, alphaR, alphaZ, materialDefs)
 
 
-% x = 0.1; matCore.u238 = 7.3614e+21 * (1-x); matCore.pu239 = 7.3614e+21 * (x); materialDefs = {matCore}; [flux, k] = CSGROV(R, H, alphaR, alphaZ, materialDefs)
+% 
 
