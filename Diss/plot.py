@@ -1,36 +1,88 @@
+# observations:
+# rerunning does not yield significantly different results
+# more than 50 active generations is not really necessary
+# the number of inactive generations should be around 1000
+# no. cores ~ 10?
+# CHANGE 6 VARIABLES FOR SCALE (maybe cross sections?)
+
+import json
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import root_scalar
+from pathlib import Path
+
+# all 1000 + 50
 
 Sigma_t = 1.
 Sigma_a = 0.01
 Sigma_s = Sigma_t-Sigma_a
 Sigma_f = Sigma_a
 Sigma_c = Sigma_a
+A = 1.0
+aHalf = 90
+LHalf = 100
+pop = 50000
+
+readFromFile = True
+file_path = Path(r"\\wsl$\Ubuntu\home\andijvie\SCONE\InputFiles\popRed.json")
+script_dir = str(Path(__file__).resolve().parent) + "\\"
+ext = "_N" + str(pop) + "L" + str(LHalf) + "a" + str(aHalf) + ".npy"
+
+with open(file_path, "r") as f:
+    data = json.load(f)
+
+if readFromFile:
+    shannon_entropy = np.load(script_dir + "S" + ext)
+else:
+    shannon_entropy = np.array(data["inactive"]["shannon_entropy"]["shannonEntropy"])
+    np.save(script_dir + "S" + ext, shannon_entropy)
+
+generations = np.arange(1, len(shannon_entropy) + 1)
+
+plt.figure()
+plt.plot(generations, shannon_entropy, marker=".", color = 'k')
+plt.xlabel("Generation")
+plt.ylabel("Shannon entropy")
+plt.tight_layout()
+plt.show()
+
+
+
+
+
+if readFromFile:
+    flux = np.load(script_dir + "F" + ext)
+else:
+    flux_res = data["active"]["flux"]["Res"]
+    flux = np.array([entry[0][0] for entry in flux_res])
+    np.save(script_dir + "F" + ext, flux)
+    
+x_centers = np.linspace(-LHalf, LHalf, len(flux), False)
+dX = x_centers[1] - x_centers[0]
+x_centers += dX/2
+
+totFlux = sum(flux) * dX
+
+flux /= totFlux
+
+plt.figure()
+plt.plot(x_centers, flux, marker=".", color = 'k')
+
+
+
 
 def getMubar():
     return 0
-
 def getD():
     return 1/(3*(Sigma_t - getMubar() * Sigma_s))
-
 def getLD():
     return np.sqrt(getD()/Sigma_c)
-
-
-# -----------------------------
-# Parameters (edit these)
-A = 1.0
-aHalf = 30
-LHalf = 50
 alpha = 1/getLD()
-print(f"LD = {1/alpha}")
 
 
 
 
-
-k_max = 3          # how far in kappa to search/plot
+k_max = 2          # how far in kappa to search/plot
 samples_per_branch = 800  # resolution per tan-branch for plotting + bracketing
 eps = 1e-6            # avoid tan singularities
 
@@ -39,18 +91,17 @@ d = aHalf - LHalf
 rhs = -alpha * np.tanh(alpha * aHalf)
 
 def f(k):
-    # f(k) = k*tan(k*(a-L)) + alpha*tanh(alpha*a)  (same equation rearranged to f=0)
+    # f(k) = k*tan(k*(a-L)) + alpha*tanh(alpha*a)  
     return k * np.tan(k * d) - rhs
 
-# --- Find roots up to k_max by scanning between tan poles ---
 absd = abs(d)
 if absd == 0:
     raise ValueError("a-L must be nonzero.")
 
-# tan poles in k>0: k*abs(d) = (m+1/2)pi  ->  k = (m+1/2)pi/abs(d)
+# poles in k>0: k*abs(d) = (m+1/2)pi  ->  k = (m+1/2)pi/abs(d)
 m_max = int(np.floor((k_max * absd) / np.pi - 0.5))
 poles = (np.arange(m_max + 1) + 0.5) * np.pi / absd
-# build branch boundaries: [0, pole0, pole1, ..., k_max]
+# [0, pole0, pole1, ..., k_max]
 bounds = np.concatenate(([0.0], poles[poles < k_max], [k_max]))
 
 roots = []
@@ -60,17 +111,14 @@ for i in range(len(bounds) - 1):
     if right - left <= 10 * eps:
         continue
 
-    # shrink away from endpoints to avoid evaluating too close to poles
     Lk = left + eps
     Rk = right - eps
     if Lk >= Rk:
         continue
 
-    # sample inside branch and locate sign changes
     ks = np.linspace(Lk, Rk, samples_per_branch)
     ys = f(ks)
 
-    # remove any non-finite values (should be rare if eps is sensible)
     finite = np.isfinite(ys)
     ks, ys = ks[finite], ys[finite]
     if len(ks) < 2:
@@ -91,6 +139,11 @@ for i in range(len(bounds) - 1):
                     roots.append(r)
         except ValueError:
             pass
+        
+        if len(roots) > 0:
+            break
+    if len(roots) > 0:
+        break
 
 roots.sort()
 
@@ -98,54 +151,55 @@ print(f"Found {len(roots)} solution(s) for kappa in (0, {k_max}]:")
 for r in roots:
     print(f"  kappa = {r:.10f}")
 
-# --- Plot f(k) with poles and mark roots ---
-plt.figure(figsize=(9, 4.5))
+if False:
+    plt.figure(figsize=(7, 3))
 
-for i in range(len(bounds) - 1):
-    left, right = bounds[i], bounds[i + 1]
-    Lk = left + eps
-    Rk = right - eps
-    if Lk >= Rk:
-        continue
-    ks = np.linspace(Lk, Rk, samples_per_branch)
-    ys = f(ks)
-    # clip extreme values so the plot stays readable (optional)
-    ys = np.clip(ys, -50, 50)
-    plt.plot(ks, ys)
+    for i in range(len(bounds) - 1):
+        left, right = bounds[i], bounds[i + 1]
+        Lk = left + eps
+        Rk = right - eps
+        if Lk >= Rk:
+            continue
+        ks = np.linspace(Lk, Rk, samples_per_branch)
+        ys = f(ks)
+        # clip extreme values so the plot stays readable (optional)
+        ys = np.clip(ys, -50, 50)
+        plt.plot(ks, ys)
 
-# zero line
-plt.axhline(0, linewidth=1)
+    # zero line
+    plt.axhline(0, linewidth=1)
 
-# poles as vertical dashed lines
-for p in poles:
-    if 0 < p < k_max:
-        plt.axvline(p, linestyle="--", linewidth=0.8, alpha=0.5)
+    # poles as vertical dashed lines
+    for p in poles:
+        if 0 < p < k_max:
+            plt.axvline(p, linestyle="--", linewidth=0.8, alpha=0.5)
 
-# roots as markers
-if roots:
-    plt.scatter(roots, np.zeros_like(roots), zorder=5)
+    # roots as markers
+    if roots:
+        plt.scatter(roots, np.zeros_like(roots), zorder=5)
 
-plt.xlim(0, k_max)
-plt.ylim(-10, 10)
-plt.xlabel(r"$\kappa$")
-plt.ylabel(r"$f(\kappa) = \kappa \tan(\kappa(a-L)) + \alpha \tanh(\alpha a)$")
-plt.title("Transcendental equation solutions (roots where f=0)")
-plt.grid(True, alpha=0.25)
-plt.tight_layout()
-plt.show()
-
-
+    plt.xlim(0, k_max)
+    plt.ylim(-10, 10)
+    plt.xlabel(r"$\kappa$")
+    plt.ylabel(r"$f(\kappa) = \kappa \tan(\kappa(a-L)) + \alpha \tanh(\alpha a)$")
+    plt.title("Transcendental equation solutions (roots where f=0)")
+    plt.grid(True, alpha=0.25)
+    plt.tight_layout()
+    plt.show()
 
 
 
 
 
 
-kappa = 0.0614837729
+
+
+kappa = roots[0]
 # -----------------------------
 
 # x grid on (-L, L)
 x = np.linspace(-LHalf, LHalf, 4000)
+dx = x[1] - x[0]
 
 # Precompute constants used in the outer pieces
 C_left  = A * np.cosh(alpha * aHalf) / np.cos(kappa * (aHalf - LHalf))   # for -L < x < -a
@@ -162,18 +216,20 @@ phi[mask_left]   = C_left  * np.cos(kappa * (x[mask_left]  + LHalf))
 phi[mask_middle] = A * np.cosh(alpha * x[mask_middle])
 phi[mask_right]  = C_right * np.cos(kappa * (x[mask_right] - LHalf))
 
+totFlux = sum(phi) * dx
+
 # Plot
-plt.figure(figsize=(16, 8))
 plt.axvline(-aHalf, linestyle='--', color = 'lightgrey', lw = 1)
 plt.axvline( aHalf, linestyle='--', color = 'lightgrey', lw = 1)
 plt.axvline(-LHalf, linestyle=':', color = 'lightgrey', lw = 1)
 plt.axvline( LHalf, linestyle=':', color = 'lightgrey', lw = 1)
-plt.plot(x, phi, label=r'$\phi(x)$', color = 'k', linestyle='--', lw=2)
+plt.plot(x, phi/totFlux, label=r'$\phi(x)$', color = 'grey', linestyle='--', lw=2)
 plt.xlabel('x')
 plt.ylabel(r'$\phi$')
-plt.title('Piecewise function plot')
 plt.tight_layout()
 plt.show()
 
 
 print(f"k/nuBar={1/(1+getD() * kappa**2/Sigma_f)}")
+
+
