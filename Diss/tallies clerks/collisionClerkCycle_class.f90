@@ -10,6 +10,9 @@ module collisionClerkCycle_class
   use outputFile_class,           only : outputFile
   use scoreMemory_class,          only : scoreMemory
   use tallyClerk_inter,           only : tallyClerk, kill_super => kill
+  
+  ! NEW: use particle dungeon
+  use particleDungeon_class,      only : particleDungeon
 
   ! Nuclear Data interface
   use nuclearDatabase_inter,      only : nuclearDatabase
@@ -62,8 +65,11 @@ module collisionClerkCycle_class
     type(tallyResponseSlot),dimension(:),allocatable :: response
 
     ! NEW: track cycles
-    integer(shortInt)             :: maxCycles = 0    !! Number of tally cycles
+    integer(shortInt)             :: maxCycles = 1    !! Number of tally cycles
     integer(shortInt)             :: currentCycle = 0 !! track current cycle
+
+    ! NEW: the memory size of one cycle
+    integer(longInt)   :: cycleSize = 0
 
     ! Useful data
     integer(shortInt)  :: width = 0
@@ -80,7 +86,6 @@ module collisionClerkCycle_class
 
     ! NEW: File reports and check status -> run-time procedures
     procedure  :: reportCycleEnd
-    procedure  :: closeCycle
 
     ! File reports and check status -> run-time procedures
     procedure  :: reportInColl
@@ -133,6 +138,10 @@ contains
     ! Set width
     self % width = size(responseNames)
 
+    ! NEW: store size of one cycle
+    self % cycleSize = size(self % response)
+    if(allocated(self % map)) self % cycleSize = self % cycleSize * self % map % bins(0) 
+
     ! Handle virtual collisions
     call dict % getOrDefault(self % handleVirtual,'handleVirtual', .true.)
 
@@ -166,9 +175,10 @@ contains
     self % width   = 0
     self % handleVirtual = .true.
 
-    ! NEW: reset cycles
+    ! NEW: variables
     self % currentCycle = 0
-    self % maxCycles = 0
+    self % maxCycles = 1
+    self % cycleSize = 0
 
   end subroutine kill
 
@@ -182,7 +192,7 @@ contains
     integer(shortInt),dimension(:),allocatable :: validCodes
 
     ! NEW: can also return the cycle
-    validCodes = [inColl_CODE, cycleEnd_CODE, closeCycle_CODE]
+    validCodes = [inColl_CODE, cycleEnd_CODE]
 
   end function validReports
 
@@ -193,12 +203,12 @@ contains
   !!
   elemental function getSize(self) result(S)
     class(collisionClerkCycle), intent(in) :: self
-    integer(shortInt)                 :: S
+    integer(shortInt)                      :: S
 
     S = size(self % response)
     if(allocated(self % map)) S = S * self % map % bins(0) 
-    
-    ! NEW: size for cycles
+
+    ! NEW: size for all cycles
     S = S * self % maxCycles
 
   end function getSize
@@ -222,6 +232,9 @@ contains
 
     ! Return if collision is virtual but virtual collision handling is off
     if ((.not. self % handleVirtual) .and. virtual) return
+
+    ! NEW: return if maximum cycle is reached
+    if (self % currentCycle >= self % maxCycles) return
 
     ! Get current particle state
     state = p
@@ -251,6 +264,9 @@ contains
     ! Calculate bin address
     addr = self % getMemAddress() + self % width * (binIdx - 1)  - 1
 
+    ! NEW: increase address to match the current cycle
+    addr = addr + self % currentCycle * self % cycleSize
+
     ! Append all bins
     do i = 1, self % width
       scoreVal = self % response(i) % get(p, xsData) * flux
@@ -262,19 +278,16 @@ contains
 
 
   !!
-  !! NEW: Close cycle
+  !! NEW: reportCycleEnd, increments the cycle number
   !!
-  subroutine closeCycle(self, end, mem)
-    class(shannonEntropyClerk), intent(inout) :: self
+  subroutine reportCycleEnd(self, end, mem)
+    class(collisionClerkCycle), intent(inout) :: self
     class(particleDungeon), intent(in)        :: end
     type(scoreMemory), intent(inout)          :: mem
-    integer(shortInt)                         :: i
-    integer(longInt)                          :: ccIdx
-    real(defReal)                             :: totWgt, one_log2, prob, val
 
     self % currentCycle = self % currentCycle + 1
 
-  end subroutine closeCycle
+  end subroutine reportCycleEnd
 
 
   !!
@@ -314,10 +327,11 @@ contains
 
     ! Write results.
     ! Get shape of result array
+    ! NEW: added , self % maxCycles
     if (allocated(self % map)) then
-      resArrayShape = [size(self % response), self % map % binArrayShape()]
+      resArrayShape = [size(self % response), self % map % binArrayShape(), self % maxCycles]
     else
-      resArrayShape = [size(self % response)]
+      resArrayShape = [size(self % response), self % maxCycles]
     end if
 
     ! Start array

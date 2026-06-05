@@ -8,6 +8,7 @@
 import json
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.widgets import Slider, Button
 from scipy.optimize import root_scalar
 from pathlib import Path
 
@@ -19,14 +20,18 @@ Sigma_s = Sigma_t-Sigma_a
 Sigma_f = Sigma_a
 Sigma_c = Sigma_a
 A = 1.0
-aHalf = 90
-LHalf = 100
-pop = 50000
+aHalf = 25
+LHalf = 5
+pop = 100000
 
 readFromFile = True
+isHomg = True
 file_path = Path(r"\\wsl$\Ubuntu\home\andijvie\SCONE\InputFiles\popRed.json")
-script_dir = str(Path(__file__).resolve().parent) + "\\"
+script_dir = str(Path(__file__).resolve().parent) + "\\data\\"
 ext = "_N" + str(pop) + "L" + str(LHalf) + "a" + str(aHalf) + ".npy"
+if ext:
+    script_dir += "homg_"
+    ext = "_N" + str(pop) + "L" + str(LHalf) + ".npy"
 
 with open(file_path, "r") as f:
     data = json.load(f)
@@ -50,23 +55,98 @@ plt.show()
 
 
 
+#if readFromFile:
+#    flux = np.load(script_dir + "F" + ext)
+#else:
+#    flux_res = data["active"]["flux"]["Res"]
+#    flux = np.array([entry[0][0] for entry in flux_res])
+#    np.save(script_dir + "F" + ext, flux)
+#    
+#x_centers = np.linspace(-LHalf, LHalf, len(flux), False)
+#dX = x_centers[1] - x_centers[0]
+#x_centers += dX/2
+#
+#totFlux = sum(flux) * dX
+#
+#flux /= totFlux
+#
+#plt.figure()
+#plt.plot(x_centers, flux, marker=".", color = 'k')
+
+
+
 if readFromFile:
     flux = np.load(script_dir + "F" + ext)
+    fluxCycles = flux.shape[0]
 else:
-    flux_res = data["active"]["flux"]["Res"]
-    flux = np.array([entry[0][0] for entry in flux_res])
+    flux_res = data["inactive"]["flux"]["Res"]
+    fluxCycles = np.array(flux_res).shape[0]
+
+    # [cycle][bin][0][0=value, 1=std]
+    flux = np.array([
+        [entry[0][0] for entry in flux_res[cycle]]
+        for cycle in range(fluxCycles)
+    ])
+
     np.save(script_dir + "F" + ext, flux)
-    
-x_centers = np.linspace(-LHalf, LHalf, len(flux), False)
+
+x_centers = np.linspace(-LHalf, LHalf, flux.shape[1], False)
 dX = x_centers[1] - x_centers[0]
-x_centers += dX/2
+x_centers += dX / 2
 
-totFlux = sum(flux) * dX
+totFlux = np.sum(flux, axis=1) * dX
+flux = flux / totFlux[:, None]
 
-flux /= totFlux
+fig, ax = plt.subplots()
+plt.subplots_adjust(bottom=0.25)
 
-plt.figure()
-plt.plot(x_centers, flux, marker=".", color = 'k')
+cycle0 = 0
+(line,) = ax.plot(x_centers, flux[cycle0], marker=".", color="k")
+
+ax.set_title(f"Cycle {cycle0}")
+ax.set_xlabel("x")
+ax.set_ylabel("Normalized flux")
+
+ax_slider = plt.axes([0.2, 0.1, 0.6, 0.03])
+cycle_slider = Slider(
+    ax=ax_slider,
+    label="Cycle",
+    valmin=0,
+    valmax=fluxCycles - 1,
+    valinit=cycle0,
+    valstep=1
+)
+ax_prev = plt.axes([0.05, 0.1, 0.08, 0.04])
+btn_prev = Button(ax_prev, "◀")
+ax_next = plt.axes([0.85, 0.1, 0.08, 0.04])
+btn_next = Button(ax_next, "▶")
+
+def prev_cycle(event):
+    cycle = int(cycle_slider.val)
+    if cycle > 0:
+        cycle_slider.set_val(cycle - 1)
+
+def next_cycle(event):
+    cycle = int(cycle_slider.val)
+    if cycle < fluxCycles - 1:
+        cycle_slider.set_val(cycle + 1)
+
+btn_prev.on_clicked(prev_cycle)
+btn_next.on_clicked(next_cycle)
+
+def update(val):
+    cycle = int(cycle_slider.val)
+    line.set_ydata(flux[cycle])
+    ax.set_title(f"Cycle {cycle}")
+    ax.relim()
+    ax.autoscale_view()
+    fig.canvas.draw_idle()
+
+cycle_slider.on_changed(update)
+
+if isHomg:
+    plt.show()
+    exit()
 
 
 
@@ -219,14 +299,12 @@ phi[mask_right]  = C_right * np.cos(kappa * (x[mask_right] - LHalf))
 totFlux = sum(phi) * dx
 
 # Plot
-plt.axvline(-aHalf, linestyle='--', color = 'lightgrey', lw = 1)
-plt.axvline( aHalf, linestyle='--', color = 'lightgrey', lw = 1)
-plt.axvline(-LHalf, linestyle=':', color = 'lightgrey', lw = 1)
-plt.axvline( LHalf, linestyle=':', color = 'lightgrey', lw = 1)
-plt.plot(x, phi/totFlux, label=r'$\phi(x)$', color = 'grey', linestyle='--', lw=2)
-plt.xlabel('x')
-plt.ylabel(r'$\phi$')
-plt.tight_layout()
+ax.axvline(-aHalf, linestyle='--', color = 'lightgrey', lw = 1)
+ax.axvline( aHalf, linestyle='--', color = 'lightgrey', lw = 1)
+ax.axvline(-LHalf, linestyle=':', color = 'lightgrey', lw = 1)
+ax.axvline( LHalf, linestyle=':', color = 'lightgrey', lw = 1)
+ax.plot(x, phi/totFlux, label=r'$\phi(x)$', color = 'grey', linestyle='--', lw=2)
+
 plt.show()
 
 
