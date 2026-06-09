@@ -9,7 +9,7 @@ file_path = Path(r"\\wsl$\Ubuntu\home\andijvie\SCONE\InputFiles\popRed.json")
 script_dir = str(Path(__file__).resolve().parent) + "\\data\\"
 
 clrs = np.array(["black", "dimgrey", "darkgrey", "black", "dimgrey", "darkgrey", "black", "dimgrey", "darkgrey"])
-clrs = np.array(["black", "blue", "red", "lime", "magenta" ,"black", "blue", "red", "lime","black", "blue", "red", "lime"])
+clrs = np.array(["black", "blue", "red", "lime", "magenta" ,"darkgrey", "black", "blue", "red", "lime","black", "blue", "red", "lime"])
 lnstls = np.array(['-','-','-','--','--','--',':',':',':','-.','-.','-.'])
 lnstls = np.array(['-','--', ':','-.','-','--', ':','-.','-','--', ':','-.'])
 
@@ -22,7 +22,7 @@ def Sanalytic(N):
 aHalf = 25
 LHalf = 30
 pops = np.array([100, 500, 1000, 5000, 10000, 50000, 100000])
-pops = np.array([100, 1000, 10000, 100000])
+pops = np.array([100, 1000, 10000, 100000, 1000000])
 
 plt.figure(figsize=(8,3))
 
@@ -97,12 +97,23 @@ plt.show()
 
 
 
+
+
+
 # vary a, L=a+5
-aHalfs = [5, 10, 20, 50]
+aHalfs = [5, 10, 20, 50, 100, 200]
 LFiss = 5
 pop = 10000
 
-plt.figure(figsize=(8,3))
+#aHalfs = [5, 10, 20, 50, 100, 200]
+#LFiss = 5
+#pop = 100000
+
+#aHalfs = [5, 10, 20, 50, 100, 200]
+#LFiss = 5
+#pop = 2000
+
+plt.figure(figsize=(8,5))
 
 i = 0
 for aHalf in aHalfs:

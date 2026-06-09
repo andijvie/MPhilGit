@@ -20,16 +20,16 @@ Sigma_s = Sigma_t-Sigma_a
 Sigma_f = Sigma_a
 Sigma_c = Sigma_a
 A = 1.0
-aHalf = 25
-LHalf = 5
+aHalf = 200
+LHalf = 205
 pop = 100000
 
-readFromFile = True
-isHomg = True
+readFromFile = False
+isHomg = False
 file_path = Path(r"\\wsl$\Ubuntu\home\andijvie\SCONE\InputFiles\popRed.json")
 script_dir = str(Path(__file__).resolve().parent) + "\\data\\"
 ext = "_N" + str(pop) + "L" + str(LHalf) + "a" + str(aHalf) + ".npy"
-if ext:
+if isHomg:
     script_dir += "homg_"
     ext = "_N" + str(pop) + "L" + str(LHalf) + ".npy"
 
